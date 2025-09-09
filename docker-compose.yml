@@ -11,33 +11,153 @@ services:
     working_dir: /home/node/app/
     command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
     depends_on:
-      - mongo
+      - postgres
       # - postgres
     env_file:
       - .env
 
-  # Ensure your DATABASE_URI uses 'mongo' as the hostname ie. mongodb://mongo/my-db-name
-  mongo:
-    image: mongo:latest
+  # PostgreSQL Datenbank (alternative/zusätzliche DB)
+  postgres:
+    image: postgres:latest                       # PostgreSQL 
+    container_name: postgres_sol
+    environment:
+      POSTGRES_USER: lukas                      # Datenbankbenutzer
+      POSTGRES_PASSWORD: lukaspassword              # Datenbankpasswort
+      POSTGRES_DB: sol                          # Name der Standarddatenbank
     ports:
-      - '27017:27017'
-    command:
-      - --storageEngine=wiredTiger
+      - "5434:5432"                             # Host-Port 5434 → Container-Port 5432
     volumes:
-      - data:/data/db
-    logging:
-      driver: none
-
-  # Uncomment the following to use postgres
-  # postgres:
-  #   restart: always
-  #   image: postgres:latest
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-
+      - ./pgdata:/var/lib/postgresql/data        # Persistente Datenspeicherung
 volumes:
   data:
   # pgdata:
   node_modules:
+
+# ========================================
+# WICHTIGE DOCKER COMPOSE BEFEHLE
+# ========================================
+#
+# SERVICES STARTEN:
+# docker-compose up                              # Alle Services starten
+# docker-compose up -d                           # Alle Services im Hintergrund starten
+# docker-compose up payload                      # Nur PayloadCMS starten (startet automatisch mongo)
+# docker-compose up mongo                        # Nur MongoDB starten
+# docker-compose up postgres                     # Nur PostgreSQL starten
+# docker-compose up mongo postgres               # Mehrere Services gleichzeitig starten
+# docker-compose up --build                      # Services neu bauen und starten
+#
+# SERVICES STOPPEN:
+# docker-compose down                            # Alle Services stoppen und Container entfernen
+# docker-compose stop                            # Alle Services stoppen (Container bleiben)
+# docker-compose stop payload                    # Spezifischen Service stoppen
+# docker-compose down -v                         # Services stoppen und Volumes löschen
+#
+# LOGS ANZEIGEN:
+# docker-compose logs                            # Logs aller Services anzeigen
+# docker-compose logs payload                    # Logs eines spezifischen Services
+# docker-compose logs postgres                   # PostgreSQL Logs anzeigen (für Fehlermeldungen)
+# docker-compose logs -f payload                 # Logs live verfolgen
+# docker-compose logs --tail=50 payload          # Nur die letzten 50 Zeilen anzeigen
+# docker-compose logs --tail=100 postgres        # PostgreSQL Fehlerlog der letzten 100 Zeilen
+#
+# DEBUGGING:
+# docker-compose ps                              # Zeigt Status und Ports aller Container
+# docker-compose logs postgres | grep ERROR      # Nur Fehler aus PostgreSQL Logs
+# docker-compose up postgres                     # PostgreSQL einzeln starten (zeigt Fehler direkt)
+# netstat -tulpn | grep 5433                     # Prüfen ob Port 5433 belegt ist
+# docker-compose exec postgres pg_isready -U myuser  # PostgreSQL Verbindung testen
+#
+# CONTAINER VERWALTEN:
+# docker-compose ps                              # Status aller Services anzeigen
+# docker-compose exec payload sh                 # Shell im payload Container öffnen
+# docker-compose exec mongo mongosh              # MongoDB Shell öffnen
+# docker-compose exec postgres psql -U myuser -d sol  # PostgreSQL Shell öffnen
+# docker-compose restart payload                 # Service neu starten
+#
+# ENTWICKLUNG:
+# docker-compose up payload --build              # PayloadCMS mit Rebuild starten
+# docker-compose exec payload yarn install       # Dependencies im Container installieren
+# docker-compose exec payload yarn dev           # Development Server manuell starten
+#
+# CLEANUP:
+# docker-compose down --rmi all                  # Services stoppen und Images entfernen
+# docker system prune                            # Ungenutzte Docker Ressourcen aufräumen
+# docker volume prune                            # Ungenutzte Volumes löschen
+
+
+# ------------------------------
+# Container Management
+# ------------------------------
+
+# Liste aller laufenden Container
+# docker ps
+#
+# Liste aller Container (auch gestoppte)
+# docker ps -a
+#
+# Neuen Container starten (im Hintergrund)
+# docker run -d --name mein-container nginx
+#
+# Container stoppen
+# docker stop mein-container
+#
+# Gestoppten Container starten
+# docker start mein-container
+#
+# Container löschen
+# docker rm mein-container
+#
+# Alle Container löschen (vorsicht!)
+# docker rm -f $(docker ps -aq)
+
+# ------------------------------
+# Images
+# ------------------------------
+
+# Liste aller Images
+# docker images
+#
+# Neues Image bauen (Dockerfile im aktuellen Ordner)
+# docker build -t mein-image .
+#
+# Image löschen
+# docker rmi mein-image
+#
+# Alle ungenutzten Images löschen
+# docker image prune -a
+
+# ------------------------------
+# Volumes & Netzwerke
+# ------------------------------
+
+# Liste aller Volumes
+# docker volume ls
+#
+# Volume löschen
+# docker volume rm mein-volume
+#
+# Liste aller Netzwerke
+# docker network ls
+#
+# Netzwerk löschen
+# docker network rm mein-netzwerk
+
+# ------------------------------
+# Debugging & Zugriff
+# ------------------------------
+
+# In einen laufenden Container einloggen
+# docker exec -it mein-container bash
+#
+# Logs eines Containers anzeigen
+# docker logs -f mein-container
+#
+# Details eines Containers (inkl. Ports, Mounts, Env)
+# docker inspect mein-container
+
+# ------------------------------
+# Cleanup
+# ------------------------------
+
+# Alles nicht mehr Benötigte aufräumen
+# docker system prune -a
