@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 
 import config from '@/payload.config'
 import './styles.css'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -18,6 +19,10 @@ export default async function HomePage() {
   return (
     <div className="home">
       <div className="content">
+        <Alert variant="destructive">
+          <AlertTitle>Success! Your changes have been saved</AlertTitle>
+          <AlertDescription>This is an alert with icon, title and description.</AlertDescription>
+        </Alert>
         <picture>
           <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />
           <Image
@@ -29,14 +34,15 @@ export default async function HomePage() {
         </picture>
         {!user && <h1>Welcome to your new project.</h1>}
         {user && <h1>Welcome back, {user.email}</h1>}
+        <p className="text-amber-300">test</p>
         <div className="links">
           <a
-            className="admin"
+            className="admin text-9xl"
             href={payloadConfig.routes.admin}
             rel="noopener noreferrer"
             target="_blank"
           >
-            Go to admin panel
+            Go to admin panel test
           </a>
           <a
             className="docs"

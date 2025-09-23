@@ -18,21 +18,20 @@ services:
 
   # PostgreSQL Datenbank (alternative/zusätzliche DB)
   postgres:
-    image: postgres:latest                       # PostgreSQL 
+    image: postgres:latest # PostgreSQL
     container_name: postgres_sol
     environment:
-      POSTGRES_USER: lukas                      # Datenbankbenutzer
-      POSTGRES_PASSWORD: lukaspassword              # Datenbankpasswort
-      POSTGRES_DB: sol                          # Name der Standarddatenbank
+      POSTGRES_USER: lukas # Datenbankbenutzer
+      POSTGRES_PASSWORD: lukaspassword # Datenbankpasswort
+      POSTGRES_DB: sol # Name der Standarddatenbank
     ports:
-      - "5434:5432"                             # Host-Port 5434 → Container-Port 5432
+      - '5434:5432' # Host-Port 5434 → Container-Port 5432
     volumes:
-      - ./pgdata:/var/lib/postgresql/data        # Persistente Datenspeicherung
+      - ~/.docker/pgdata:/var/lib/postgresql/data # Persistente Datenspeicherung
 volumes:
   data:
   # pgdata:
   node_modules:
-
 # ========================================
 # WICHTIGE DOCKER COMPOSE BEFEHLE
 # ========================================
@@ -83,7 +82,6 @@ volumes:
 # docker-compose down --rmi all                  # Services stoppen und Images entfernen
 # docker system prune                            # Ungenutzte Docker Ressourcen aufräumen
 # docker volume prune                            # Ungenutzte Volumes löschen
-
 
 # ------------------------------
 # Container Management

@@ -42,6 +42,9 @@ next-env.d.ts
 
 /media
 
+# PostgreSQL data
+/pgdata
+
 # Playwright
 node_modules/
 /test-results/
