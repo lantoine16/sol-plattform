@@ -1,9 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useFormFields } from '@payloadcms/ui'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-
 export default function BulkClassField() {
   const [result, setResult] = useState<{ name: string; ok: boolean; msg?: string }[]>([])
   const [names, setNames] = useState<string[]>([])
@@ -38,8 +36,8 @@ export default function BulkClassField() {
   }
   return (
     <>
-      <div className="w-3xl">Test</div>
-      <Alert id="alert-test" variant="destructive">
+      <div className="w-7xl">Test</div>
+      <Alert variant="destructive">
         <AlertTitle>Success! Your changes have been saved</AlertTitle>
         <AlertDescription>This is an alert with icon, title and description.</AlertDescription>
       </Alert>

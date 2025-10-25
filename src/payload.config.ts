@@ -21,6 +21,12 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // Custom Admin Layout Components
+    components: {
+      // afterNavLinks: [],
+      // beforeNavLinks: [],
+      // Nav: '@/components/CustomNav',
+    },
   },
   collections: [Users, Media, Class, Pupils],
   editor: lexicalEditor(),
