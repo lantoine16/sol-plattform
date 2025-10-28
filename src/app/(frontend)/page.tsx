@@ -1,10 +1,11 @@
 import { headers as getHeaders } from 'next/headers.js'
+import Link from 'next/link'
 import Image from 'next/image'
 import { getPayload } from 'payload'
 import React from 'react'
-
 import config from '@/payload.config'
-import { Button } from "@/components/ui/button"
+
+import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/toggle-dark-mode'
 
 export default async function HomePage() {
@@ -45,7 +46,9 @@ export default async function HomePage() {
         <ModeToggle />
         {user && <h1>Willkommen zurück, {user.email}</h1>}
 
-        <Button><a href={payloadConfig.routes.admin}>Admin</a></Button>
+        <Button asChild>
+          <Link href={payloadConfig.routes.admin}>Admin</Link>
+        </Button>
 
         <p className="text-amber-300">Persönlicher Schülerbereich</p>
 
