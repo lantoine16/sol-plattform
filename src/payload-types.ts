@@ -123,6 +123,7 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  role: 'admin' | 'pupil';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -176,6 +177,10 @@ export interface Class {
  */
 export interface Pupil {
   id: number;
+  /**
+   * Verknüpfung zum Benutzer-Konto
+   */
+  user: number | User;
   Vorname: string;
   Nachname: string;
   Klasse: number | Class;
@@ -252,6 +257,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -301,6 +307,7 @@ export interface ClassSelect<T extends boolean = true> {
  * via the `definition` "pupils_select".
  */
 export interface PupilsSelect<T extends boolean = true> {
+  user?: T;
   Vorname?: T;
   Nachname?: T;
   Klasse?: T;
