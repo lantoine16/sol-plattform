@@ -5,6 +5,8 @@ import React from 'react'
 
 import config from '@/payload.config'
 import { Button } from "@/components/ui/button"
+import { ModeToggle } from '@/components/toggle-dark-mode'
+
 export default async function HomePage() {
   const headers = await getHeaders()
   const payloadConfig = await config
@@ -40,9 +42,10 @@ export default async function HomePage() {
           />
         </picture>
 
+        <ModeToggle />
         {user && <h1>Willkommen zurück, {user.email}</h1>}
 
-        <Button>Button</Button>
+        <Button><a href={payloadConfig.routes.admin}>Admin</a></Button>
 
         <p className="text-amber-300">Persönlicher Schülerbereich</p>
 

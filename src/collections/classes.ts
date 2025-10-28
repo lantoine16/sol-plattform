@@ -7,20 +7,6 @@ export const Class: CollectionConfig = {
   },
   fields: [
     {
-      name: 'bulkCreate',
-      type: 'ui',
-      admin: {
-        components: {
-          Field: '@/components/BulkClassField',
-        },
-        disableListColumn: true,
-        condition: (data) => {
-          // Nur auf der Create-Seite anzeigen (wenn keine ID vorhanden)
-          return !data?.id
-        },
-      },
-    },
-    {
       name: 'Bezeichnung',
       type: 'text',
       required: true,
@@ -34,3 +20,18 @@ export const Class: CollectionConfig = {
     },
   ],
 }
+/*
+{
+  name: 'bulkCreate',
+  type: 'ui',
+  admin: {
+    components: {
+      Field: '@/components/BulkClassField',
+    },
+    disableListColumn: true,
+    condition: (data) => {
+      // Nur auf der Create-Seite anzeigen (wenn keine ID vorhanden)
+      return !data?.id
+    },
+  },
+},*/

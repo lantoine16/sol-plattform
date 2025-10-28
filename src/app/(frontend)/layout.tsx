@@ -6,7 +6,7 @@ import { Inter as FontSans } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-
+import { ThemeProvider } from '@/components/theme-provider'
 export const metadata = {
   description: 'A blank template using Payload in a Next.js app.',
   title: 'Payload Blank Template',
@@ -33,14 +33,16 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
 
   // Only pupils can access the frontend
   return (
-    <html lang="en">
-      <body
-        className={cn(
-          'min-h-screen bg-background font-sans antialiased dark:bg-black dark:text-white',
-          fontSans.variable,
-        )}
-      >
-        <main>{children}</main>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )
