@@ -7,28 +7,13 @@ import config from '@/payload.config'
 
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/toggle-dark-mode'
+import { LogoutButton } from '@/components/LogoutButton'
 
 export default async function HomePage() {
   const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
-
-  // Lade Schüler-Daten des eingeloggten Users
-  let pupilData = null
-  if (user) {
-    const pupils = await payload.find({
-      collection: 'pupils',
-      where: {
-        user: {
-          equals: user.id,
-        },
-      },
-      depth: 1, // Lade verwandte Daten (Klasse)
-      limit: 1,
-    })
-    pupilData = pupils.docs[0] || null
-  }
 
   return (
     <div>
@@ -43,36 +28,17 @@ export default async function HomePage() {
           />
         </picture>
 
-        <ModeToggle />
+        <div className="flex justify-between items-center mb-4">
+          <ModeToggle />
+          <LogoutButton />
+        </div>
         {user && <h1>Willkommen zurück, {user.email}</h1>}
 
-        <Button asChild>
-          <Link href={payloadConfig.routes.admin}>Admin</Link>
-        </Button>
-
-        <p className="text-amber-300">Persönlicher Schülerbereich</p>
-
-        <div className="links">
-          <a
-            className="admin text-9xl"
-            href={payloadConfig.routes.admin}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Go to admin panel testfileURL
-          </a>
-          <a
-            className="docs"
-            href="https://payloadcms.com/docs"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Dokumentation
-          </a>
-        </div>
-      </div>
-      <div className="footer">
-        <p>Persönlicher Schülerbereich</p>
+        {user?.role === 'admin' && (
+          <Button asChild>
+            <Link href={payloadConfig.routes.admin}>Admin</Link>
+          </Button>
+        )}
       </div>
     </div>
   )

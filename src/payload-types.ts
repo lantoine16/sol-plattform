@@ -70,7 +70,6 @@ export interface Config {
     users: User;
     media: Media;
     class: Class;
-    pupils: Pupil;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -80,7 +79,6 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     class: ClassSelect<false> | ClassSelect<true>;
-    pupils: PupilsSelect<false> | PupilsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -123,10 +121,12 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  Vorname: string;
+  Nachname: string;
   role: 'admin' | 'pupil';
   updatedAt: string;
   createdAt: string;
-  email: string;
+  email?: string | null;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
   salt?: string | null;
@@ -173,22 +173,6 @@ export interface Class {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pupils".
- */
-export interface Pupil {
-  id: number;
-  /**
-   * Verknüpfung zum Benutzer-Konto
-   */
-  user: number | User;
-  Vorname: string;
-  Nachname: string;
-  Klasse: number | Class;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -205,10 +189,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'class';
         value: number | Class;
-      } | null)
-    | ({
-        relationTo: 'pupils';
-        value: number | Pupil;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -257,6 +237,8 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  Vorname?: T;
+  Nachname?: T;
   role?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -299,18 +281,6 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface ClassSelect<T extends boolean = true> {
   Bezeichnung?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pupils_select".
- */
-export interface PupilsSelect<T extends boolean = true> {
-  user?: T;
-  Vorname?: T;
-  Nachname?: T;
-  Klasse?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -10,7 +10,6 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Class } from './collections/classes'
-import { Pupils } from './collections/pupils'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -28,7 +27,7 @@ export default buildConfig({
       // Nav: '@/components/CustomNav',
     },
   },
-  collections: [Users, Media, Class, Pupils],
+  collections: [Users, Media, Class],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
