@@ -1,8 +1,7 @@
 import React from 'react'
 import { headers as getHeaders } from 'next/headers.js'
 import { redirect } from 'next/navigation.js'
-//import './global.css'
-import './styles.css'
+import './global.css'
 import { Inter as FontSans } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { getPayload } from 'payload'
@@ -35,7 +34,12 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   // Only pupils can access the frontend
   return (
     <html lang="en">
-      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased dark:bg-black dark:text-white',
+          fontSans.variable,
+        )}
+      >
         <main>{children}</main>
       </body>
     </html>

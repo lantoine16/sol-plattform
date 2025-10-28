@@ -4,9 +4,7 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import config from '@/payload.config'
-import './styles.css'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-
+import { Button } from "@/components/ui/button"
 export default async function HomePage() {
   const headers = await getHeaders()
   const payloadConfig = await config
@@ -44,24 +42,7 @@ export default async function HomePage() {
 
         {user && <h1>Willkommen zurück, {user.email}</h1>}
 
-        {pupilData && (
-          <div>
-            <Alert>
-              <AlertTitle>Deine persönlichen Informationen</AlertTitle>
-              <AlertDescription>
-                <p>
-                  <strong>Name:</strong> {pupilData.Vorname} {pupilData.Nachname}
-                </p>
-                <p>
-                  <strong>Klasse:</strong>{' '}
-                  {typeof pupilData.Klasse === 'object' && pupilData.Klasse !== null
-                    ? pupilData.Klasse.Bezeichnung
-                    : 'Nicht zugeordnet'}
-                </p>
-              </AlertDescription>
-            </Alert>
-          </div>
-        )}
+        <Button>Button</Button>
 
         <p className="text-amber-300">Persönlicher Schülerbereich</p>
 
