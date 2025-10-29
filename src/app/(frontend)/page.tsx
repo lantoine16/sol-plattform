@@ -8,6 +8,7 @@ import config from '@/payload.config'
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/toggle-dark-mode'
 import { LogoutButton } from '@/components/LogoutButton'
+import { SelectClass } from './select-class'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -40,6 +41,7 @@ export default async function HomePage() {
           </Button>
         )}
       </div>
+      <SelectClass />
     </div>
   )
 }
