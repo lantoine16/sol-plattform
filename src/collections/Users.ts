@@ -2,31 +2,47 @@ import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
   slug: 'users',
+  labels: {
+    singular: 'Benutzer',
+    plural: 'Benutzer',
+  },
   admin: {
-    useAsTitle: 'email',
+    useAsTitle: 'firstname',
   },
   auth: true,
   fields: [
     {
-      name: 'Vorname',
+      name: 'firstname',
+      label: 'Vorname',
       type: 'text',
       required: true,
     },
     {
-      name: 'Nachname',
+      name: 'lastname',
+      label: 'Nachname',
       type: 'text',
       required: true,
     },
     {
       name: 'email',
+      label: 'E-Mail',
       type: 'email',
       required: false,
       unique: true,
+    },
+    {
+      name: 'class',
+      label: 'Klasse',
+      type: 'relationship',
+      hasMany: true,
+      relationTo: 'classes',
+      required: false,
     },
     // Email added by default
     // Add more fields as needed
     {
       name: 'role',
+      label: 'Rolle',
       type: 'select',
       required: true,
       defaultValue: 'pupil',
@@ -38,6 +54,10 @@ export const Users: CollectionConfig = {
         {
           label: 'Schüler',
           value: 'pupil',
+        },
+        {
+          label: 'Lehrer',
+          value: 'teacher',
         },
       ],
     },

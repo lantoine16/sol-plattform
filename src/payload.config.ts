@@ -8,8 +8,10 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
 import { Users } from './collections/Users'
-import { Media } from './collections/Media'
-import { Class } from './collections/classes'
+import { Classes } from './collections/classes'
+import { Subjects } from './collections/subjects'
+import { Tasks } from './collections/tasks'
+import { TaskProgress } from './collections/task-progress'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -27,7 +29,7 @@ export default buildConfig({
       // Nav: '@/components/CustomNav',
     },
   },
-  collections: [Users, Media, Class],
+  collections: [Users, Classes, Subjects, Tasks, TaskProgress],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

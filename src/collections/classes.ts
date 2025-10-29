@@ -1,22 +1,27 @@
 import type { CollectionConfig } from 'payload'
 
-export const Class: CollectionConfig = {
-  slug: 'class',
+export const Classes: CollectionConfig = {
+  slug: 'classes',
+  labels: {
+    singular: 'Klasse',
+    plural: 'Klassen',
+  },
   admin: {
-    useAsTitle: 'Bezeichnung',
+    useAsTitle: 'description',
   },
   fields: [
     {
-      name: 'Bezeichnung',
+      name: 'description',
+      label: 'Bezeichnung',
       type: 'text',
       required: true,
       unique: true,
-      admin: {
+      /*admin: {
         condition: (data) => {
           // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
           return data?.id
         },
-      },
+      }, */
     },
   ],
 }

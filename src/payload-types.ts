@@ -68,8 +68,10 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
-    media: Media;
-    class: Class;
+    classes: Class;
+    subjects: Subject;
+    tasks: Task;
+    'task-progress': TaskProgress;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -77,8 +79,10 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
-    class: ClassSelect<false> | ClassSelect<true>;
+    classes: ClassesSelect<false> | ClassesSelect<true>;
+    subjects: SubjectsSelect<false> | SubjectsSelect<true>;
+    tasks: TasksSelect<false> | TasksSelect<true>;
+    'task-progress': TaskProgressSelect<false> | TaskProgressSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -121,9 +125,10 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
-  Vorname: string;
-  Nachname: string;
-  role: 'admin' | 'pupil';
+  firstname: string;
+  lastname: string;
+  class?: (number | Class)[] | null;
+  role: 'admin' | 'pupil' | 'teacher';
   updatedAt: string;
   createdAt: string;
   email?: string | null;
@@ -144,30 +149,46 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "class".
+ * via the `definition` "classes".
  */
 export interface Class {
   id: number;
-  Bezeichnung?: string | null;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subjects".
+ */
+export interface Subject {
+  id: number;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tasks".
+ */
+export interface Task {
+  id: number;
+  description: string;
+  class: (number | Class)[];
+  subject: number | Subject;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "task-progress".
+ */
+export interface TaskProgress {
+  id: number;
+  student: number | User;
+  task: number | Task;
+  status: 'not-started' | 'in-progress' | 'need-help' | 'finished';
+  note?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -183,12 +204,20 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
-        relationTo: 'media';
-        value: number | Media;
+        relationTo: 'classes';
+        value: number | Class;
       } | null)
     | ({
-        relationTo: 'class';
-        value: number | Class;
+        relationTo: 'subjects';
+        value: number | Subject;
+      } | null)
+    | ({
+        relationTo: 'tasks';
+        value: number | Task;
+      } | null)
+    | ({
+        relationTo: 'task-progress';
+        value: number | TaskProgress;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -237,8 +266,9 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  Vorname?: T;
-  Nachname?: T;
+  firstname?: T;
+  lastname?: T;
+  class?: T;
   role?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -259,28 +289,42 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
+ * via the `definition` "classes_select".
  */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
+export interface ClassesSelect<T extends boolean = true> {
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "class_select".
+ * via the `definition` "subjects_select".
  */
-export interface ClassSelect<T extends boolean = true> {
-  Bezeichnung?: T;
+export interface SubjectsSelect<T extends boolean = true> {
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tasks_select".
+ */
+export interface TasksSelect<T extends boolean = true> {
+  description?: T;
+  class?: T;
+  subject?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "task-progress_select".
+ */
+export interface TaskProgressSelect<T extends boolean = true> {
+  student?: T;
+  task?: T;
+  status?: T;
+  note?: T;
   updatedAt?: T;
   createdAt?: T;
 }
