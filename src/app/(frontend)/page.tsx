@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/toggle-dark-mode'
 import { LogoutButton } from '@/components/LogoutButton'
 import { SelectElement } from './select-element'
-
+import { DataTable } from './data-table'
 export default async function HomePage({
   searchParamsPromise,
 }: {
@@ -38,7 +38,7 @@ export default async function HomePage({
       ? Number(searchParams[subjectSearchParamName])
       : subjects.docs[0].id
 
-  const [tasksRes, usersRes] =
+  const [filteredTasks, filteredUsers] =
     selectedClassId !== undefined && selectedSubjectId !== undefined
       ? await Promise.all([
           payload.find({
@@ -111,9 +111,9 @@ export default async function HomePage({
       {selectedClassId !== undefined && (
         <div className="mt-4">
           <h2 className="text-lg font-semibold">Aufgaben</h2>
-          {tasksRes && tasksRes.docs.length > 0 ? (
+          {filteredTasks && filteredTasks.docs.length > 0 ? (
             <ul className="list-disc pl-6 mt-2">
-              {tasksRes.docs.map((t: any) => (
+              {filteredTasks.docs.map((t: any) => (
                 <li key={t.id}>{t.description}</li>
               ))}
             </ul>
@@ -124,9 +124,9 @@ export default async function HomePage({
       )}
       <div className="mt-4">
         <h2 className="text-lg font-semibold">Schüler</h2>
-        {usersRes && usersRes.docs.length > 0 ? (
+        {filteredUsers && filteredUsers.docs.length > 0 ? (
           <ul className="list-disc pl-6 mt-2">
-            {usersRes.docs.map((u: any) => (
+            {filteredUsers.docs.map((u: any) => (
               <li key={u.id}>
                 {u.firstname} {u.lastname}
               </li>
@@ -135,6 +135,9 @@ export default async function HomePage({
         ) : (
           <p className="text-sm text-muted-foreground mt-2">Keine Schüler gefunden.</p>
         )}
+      </div>
+      <div className="container mx-auto py-10">
+        <DataTable columns={filteredTasks?.docs ?? []} data={filteredUsers?.docs ?? []} />
       </div>
     </div>
   )
