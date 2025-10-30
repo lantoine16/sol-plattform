@@ -11,10 +11,11 @@ import { LogoutButton } from '@/components/LogoutButton'
 import { SelectElement } from './select-element'
 
 export default async function HomePage({
-  searchParams,
+  searchParamsPromise,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined }
+  searchParamsPromise: Promise<Record<string, string | string[] | undefined>>
 }) {
+  const searchParams = await searchParamsPromise
   const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
@@ -58,7 +59,11 @@ export default async function HomePage({
               class: {
                 equals: selectedClassId,
               },
+              role: {
+                equals: 'pupil',
+              },
             },
+            sort: 'lastname',
           }),
         ])
       : [null, null]
@@ -117,20 +122,20 @@ export default async function HomePage({
           )}
         </div>
       )}
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold">Schüler</h2>
-          {usersRes && usersRes.docs.length > 0 ? (
-            <ul className="list-disc pl-6 mt-2">
-              {usersRes.docs.map((u: any) => (
-                <li key={u.id}>
-                  {u.firstname} {u.lastname}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground mt-2">Keine Schüler gefunden.</p>
-          )}
-        </div>
+      <div className="mt-4">
+        <h2 className="text-lg font-semibold">Schüler</h2>
+        {usersRes && usersRes.docs.length > 0 ? (
+          <ul className="list-disc pl-6 mt-2">
+            {usersRes.docs.map((u: any) => (
+              <li key={u.id}>
+                {u.firstname} {u.lastname}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground mt-2">Keine Schüler gefunden.</p>
+        )}
+      </div>
     </div>
   )
 }
