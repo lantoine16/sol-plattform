@@ -8,13 +8,60 @@ import config from '@/payload.config'
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/toggle-dark-mode'
 import { LogoutButton } from '@/components/LogoutButton'
-import { SelectClass } from './select-class'
+import { SelectElement } from './select-element'
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined }
+}) {
   const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
+
+  const [classes, subjects] = await Promise.all([
+    payload.find({ collection: 'classes', sort: 'description' }),
+    payload.find({ collection: 'subjects', sort: 'description' }),
+  ])
+
+  const classSearchParamName = 'class'
+  const selectedClassId =
+    typeof searchParams?.[classSearchParamName] === 'string'
+      ? Number(searchParams[classSearchParamName])
+      : classes.docs[0].id
+
+  const subjectSearchParamName = 'subject'
+  const selectedSubjectId =
+    typeof searchParams?.[subjectSearchParamName] === 'string'
+      ? Number(searchParams[subjectSearchParamName])
+      : subjects.docs[0].id
+
+  const [tasksRes, usersRes] =
+    selectedClassId !== undefined && selectedSubjectId !== undefined
+      ? await Promise.all([
+          payload.find({
+            collection: 'tasks',
+            where: {
+              subject: {
+                equals: selectedSubjectId,
+              },
+              class: {
+                equals: selectedClassId,
+              },
+            },
+            sort: 'description',
+          }),
+          payload.find({
+            collection: 'users',
+            where: {
+              class: {
+                equals: selectedClassId,
+              },
+            },
+          }),
+        ])
+      : [null, null]
 
   return (
     <div>
@@ -41,7 +88,49 @@ export default async function HomePage() {
           </Button>
         )}
       </div>
-      <SelectClass />
+      <SelectElement
+        items={classes.docs}
+        selectedId={selectedClassId}
+        placeholder="Wähle eine Klasse"
+        searchParamName={classSearchParamName}
+        itemName="Klasse"
+      />
+      <SelectElement
+        items={subjects.docs}
+        selectedId={selectedSubjectId}
+        placeholder="Wähle ein Fach"
+        searchParamName={subjectSearchParamName}
+        itemName="Fach"
+      />
+
+      {selectedClassId !== undefined && (
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold">Aufgaben</h2>
+          {tasksRes && tasksRes.docs.length > 0 ? (
+            <ul className="list-disc pl-6 mt-2">
+              {tasksRes.docs.map((t: any) => (
+                <li key={t.id}>{t.description}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground mt-2">Keine Aufgaben gefunden.</p>
+          )}
+        </div>
+      )}
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold">Schüler</h2>
+          {usersRes && usersRes.docs.length > 0 ? (
+            <ul className="list-disc pl-6 mt-2">
+              {usersRes.docs.map((u: any) => (
+                <li key={u.id}>
+                  {u.firstname} {u.lastname}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground mt-2">Keine Schüler gefunden.</p>
+          )}
+        </div>
     </div>
   )
 }
