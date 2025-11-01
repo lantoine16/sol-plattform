@@ -10,12 +10,13 @@ import { ModeToggle } from '@/components/toggle-dark-mode'
 import { LogoutButton } from '@/components/LogoutButton'
 import { SelectElement } from './select-element'
 import { DataTable } from './data-table'
+
 export default async function HomePage({
-  searchParamsPromise,
+  searchParams,
 }: {
-  searchParamsPromise: Promise<Record<string, string | string[] | undefined>>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const searchParams = await searchParamsPromise
+  const searchParamsResolved = await searchParams
   const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
@@ -28,14 +29,14 @@ export default async function HomePage({
 
   const classSearchParamName = 'class'
   const selectedClassId =
-    typeof searchParams?.[classSearchParamName] === 'string'
-      ? Number(searchParams[classSearchParamName])
+    typeof searchParamsResolved?.[classSearchParamName] === 'string'
+      ? Number(searchParamsResolved[classSearchParamName])
       : classes.docs[0].id
 
   const subjectSearchParamName = 'subject'
   const selectedSubjectId =
-    typeof searchParams?.[subjectSearchParamName] === 'string'
-      ? Number(searchParams[subjectSearchParamName])
+    typeof searchParamsResolved?.[subjectSearchParamName] === 'string'
+      ? Number(searchParamsResolved[subjectSearchParamName])
       : subjects.docs[0].id
 
   const [filteredTasks, filteredUsers] =
