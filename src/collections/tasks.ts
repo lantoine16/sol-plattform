@@ -32,5 +32,12 @@ export const Tasks: CollectionConfig = {
       relationTo: 'subjects',
       required: true,
     },
+    {
+      name: 'taskProgress',
+      type: 'join',
+      collection: 'task-progress',
+      on: 'task',
+      hasMany: true,
+    },
   ],
 }

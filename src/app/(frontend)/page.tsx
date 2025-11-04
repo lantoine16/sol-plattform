@@ -10,6 +10,7 @@ import { ModeToggle } from '@/components/toggle-dark-mode'
 import { LogoutButton } from '@/components/LogoutButton'
 import { SelectElement } from './select-element'
 import { DataTable } from './data-table'
+import { UserWithTasks, UserTaskStatus } from './types'
 
 export default async function HomePage({
   searchParams,
@@ -69,6 +70,58 @@ export default async function HomePage({
         ])
       : [null, null]
 
+  // Lade alle task-progress Einträge für die gefilterten User und Tasks
+  const taskProgressData =
+    filteredUsers !== null &&
+    filteredTasks !== null &&
+    filteredUsers.docs.length > 0 &&
+    filteredTasks.docs.length > 0
+      ? await payload.find({
+          collection: 'task-progress',
+          where: {
+            and: [
+              {
+                student: {
+                  in: filteredUsers.docs.map((user) => user.id),
+                },
+              },
+              {
+                task: {
+                  in: filteredTasks.docs.map((task) => task.id),
+                },
+              },
+            ],
+          },
+          depth: 2, // Lade student und task Relationships auf
+        })
+      : null
+  // Transformiere die Daten: Alle User zurückgeben mit ihren task-progress Einträgen
+  const usersWithTasks: UserWithTasks[] = filteredUsers
+    ? filteredUsers.docs.map((user) => {
+        // Finde alle task-progress Einträge für diesen User
+        const userTaskProgress = taskProgressData?.docs.filter((tp) => {
+          const studentId = typeof tp.student === 'object' ? tp.student?.id : tp.student
+          return studentId === user.id
+        })
+        // Transformiere zu der gewünschten Struktur
+        const tasks: UserTaskStatus[] = userTaskProgress
+          ? userTaskProgress.map((tp) => {
+              return {
+                task_id: typeof tp.task === 'object' ? tp.task?.id : tp.task,
+                status: tp.status as UserTaskStatus['status'],
+              }
+            })
+          : []
+
+        return {
+          user_id: user.id,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          tasks: tasks, // Leeres Array, wenn keine task-progress Einträge vorhanden
+        }
+      })
+    : []
+
   return (
     <div>
       <div>
@@ -108,37 +161,8 @@ export default async function HomePage({
         searchParamName={subjectSearchParamName}
         itemName="Fach"
       />
-
-      {selectedClassId !== undefined && (
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold">Aufgaben</h2>
-          {filteredTasks && filteredTasks.docs.length > 0 ? (
-            <ul className="list-disc pl-6 mt-2">
-              {filteredTasks.docs.map((t: any) => (
-                <li key={t.id}>{t.description}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground mt-2">Keine Aufgaben gefunden.</p>
-          )}
-        </div>
-      )}
-      <div className="mt-4">
-        <h2 className="text-lg font-semibold">Schüler</h2>
-        {filteredUsers && filteredUsers.docs.length > 0 ? (
-          <ul className="list-disc pl-6 mt-2">
-            {filteredUsers.docs.map((u: any) => (
-              <li key={u.id}>
-                {u.firstname} {u.lastname}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground mt-2">Keine Schüler gefunden.</p>
-        )}
-      </div>
       <div className="container mx-auto py-10">
-        <DataTable columns={filteredTasks?.docs ?? []} data={filteredUsers?.docs ?? []} />
+        <DataTable columns={filteredTasks?.docs ?? []} data={usersWithTasks ?? []} />
       </div>
     </div>
   )

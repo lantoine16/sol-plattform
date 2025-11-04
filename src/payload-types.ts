@@ -76,7 +76,14 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    users: {
+      taskProgress: 'task-progress';
+    };
+    tasks: {
+      taskProgress: 'task-progress';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     classes: ClassesSelect<false> | ClassesSelect<true>;
@@ -129,6 +136,11 @@ export interface User {
   lastname: string;
   class?: (number | Class)[] | null;
   role: 'admin' | 'pupil' | 'teacher';
+  taskProgress?: {
+    docs?: (number | TaskProgress)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
   email?: string | null;
@@ -159,11 +171,14 @@ export interface Class {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "subjects".
+ * via the `definition` "task-progress".
  */
-export interface Subject {
+export interface TaskProgress {
   id: number;
-  description: string;
+  student: number | User;
+  task: number | Task;
+  status: 'not-started' | 'in-progress' | 'need-help' | 'finished';
+  note?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -176,19 +191,21 @@ export interface Task {
   description: string;
   class: (number | Class)[];
   subject: number | Subject;
+  taskProgress?: {
+    docs?: (number | TaskProgress)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "task-progress".
+ * via the `definition` "subjects".
  */
-export interface TaskProgress {
+export interface Subject {
   id: number;
-  student: number | User;
-  task: number | Task;
-  status: 'not-started' | 'in-progress' | 'need-help' | 'finished';
-  note?: string | null;
+  description: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -270,6 +287,7 @@ export interface UsersSelect<T extends boolean = true> {
   lastname?: T;
   class?: T;
   role?: T;
+  taskProgress?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -313,6 +331,7 @@ export interface TasksSelect<T extends boolean = true> {
   description?: T;
   class?: T;
   subject?: T;
+  taskProgress?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Task } from '@/payload-types'
 import {
@@ -10,40 +11,73 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { UserWithTasks } from './types'
 
-interface DataTableProps<TPupil extends { firstname: string; lastname: string }> {
+export function DataTable<TableData>({
+  columns,
+  data,
+}: {
   // This receives the tasks array (from filteredTasks.docs)
   columns: Task[]
   // This receives the pupils array (from filteredUsers.docs)
-  data: TPupil[]
-}
-
-export function DataTable<TPupil extends { firstname: string; lastname: string }>({
-  columns,
-  data,
-}: DataTableProps<TPupil>) {
+  data: UserWithTasks[]
+}) {
   // Build table columns: Nachname, Vorname, then one column per task
-  const builtColumns: ColumnDef<TPupil>[] = [
-    {
-      accessorKey: 'lastname',
-      header: 'Nachname',
-    },
-    {
-      accessorKey: 'firstname',
-      header: 'Vorname',
-    },
-    ...columns.map(
-      (task: Task): ColumnDef<TPupil> => ({
-        id: `task-${String((task as any)?.id ?? (task as any)?._id ?? '')}`,
-        header: String((task as any)?.description ?? (task as any)?.name ?? 'Aufgabe'),
-        // Cells intentionally empty for now
-        cell: () => null,
+  const builtColumns: ColumnDef<TableData>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'lastname',
+        header: 'Nachname',
+      },
+      {
+        accessorKey: 'firstname',
+        header: 'Vorname',
+      },
+      ...columns.map(
+        (task: Task): ColumnDef<TableData> => ({
+          accessorKey: String(task.id),
+          header: task.description,
+          cell: ({ getValue }) => {
+            const status = getValue() as string | null
+            return status || '-' // Zeige Status oder '-' wenn kein Status vorhanden
+          },
+        }),
+      ),
+    ],
+    [columns],
+  )
+
+  // Transformiere die Daten: Jede Task-ID wird zu einer Eigenschaft mit dem Status als Wert
+  const tableData = useMemo(
+    () =>
+      data.map((user) => {
+        // Erstelle ein Objekt mit Task-IDs als Keys und Status als Values
+        const taskStatusMap = user.tasks.reduce(
+          (acc, task) => {
+            acc[String(task.task_id)] = task.status
+            return acc
+          },
+          {} as Record<string, string>,
+        )
+
+        return {
+          lastname: user.lastname,
+          firstname: user.firstname,
+          // Füge für jede Task-ID eine Eigenschaft hinzu (undefined, wenn kein Status vorhanden)
+          ...columns.reduce(
+            (acc, task) => {
+              acc[String(task.id)] = taskStatusMap[String(task.id)] || null
+              return acc
+            },
+            {} as Record<string, string | null>,
+          ),
+        }
       }),
-    ),
-  ]
+    [data, columns],
+  )
 
   const table = useReactTable({
-    data,
+    data: tableData as TableData[],
     columns: builtColumns,
     getCoreRowModel: getCoreRowModel(),
   })
@@ -79,7 +113,7 @@ export function DataTable<TPupil extends { firstname: string; lastname: string }
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell colSpan={builtColumns.length} className="h-24 text-center">
                 No results.
               </TableCell>
             </TableRow>
