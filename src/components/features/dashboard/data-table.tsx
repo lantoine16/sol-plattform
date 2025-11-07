@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { Task } from '@/payload-types'
+import type { Task } from '@/payload-types'
 import {
   Table,
   TableBody,
@@ -11,16 +11,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { UserWithTasks } from './types'
-import { getStatusLabel } from '@/collections/task-progress'
+import type { UserWithTasks } from '@/lib/types'
+import { getStatusLabel } from '@/domain/constants/task-status.constants'
 
 export function DataTable<TableData>({
   columns,
   data,
 }: {
-  // This receives the tasks array (from filteredTasks.docs)
+  // This receives the tasks array
   columns: Task[]
-  // This receives the pupils array (from filteredUsers.docs)
+  // This receives the pupils array
   data: UserWithTasks[]
 }) {
   // Build table columns: Nachname, Vorname, then one column per task

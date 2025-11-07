@@ -45,7 +45,7 @@ export function SelectElement({
   return (
     <Select
       onValueChange={handleChange}
-      defaultValue={selectedId !== undefined ? String(selectedId) : items[0].id.toString()}
+      defaultValue={selectedId !== undefined ? String(selectedId) : items[0]?.id.toString()}
     >
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder={placeholder} />
@@ -63,3 +63,4 @@ export function SelectElement({
     </Select>
   )
 }
+
