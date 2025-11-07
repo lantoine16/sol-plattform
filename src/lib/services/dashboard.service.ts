@@ -50,6 +50,7 @@ export class DashboardService {
     ])
 
     // Fetch task progress data if we have users and tasks
+    // depth: 2 löst Relationships 2 Ebenen tief auf (student und task werden als Objekte zurückgegeben, nicht nur IDs)
     const taskProgressData =
       users.length > 0 && tasks.length > 0
         ? await taskProgressRepository.findByStudentsAndTasks(

@@ -13,6 +13,8 @@ export function LogoutButton() {
     setIsLoading(true)
 
     try {
+      //TODO: Refactor indem man logout action nutzt
+      // Problem: Auch die Payload Doku gibt keine sinnvolle variante her
       const res = await fetch('/api/users/logout', {
         method: 'POST',
         credentials: 'include',
