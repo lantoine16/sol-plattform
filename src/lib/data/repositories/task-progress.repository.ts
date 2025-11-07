@@ -8,11 +8,11 @@ export class TaskProgressRepository {
    */
   async find(options?: {
     where?: {
-      student?: { in: number[] }
-      task?: { in: number[] }
+      student?: { in: number[] } | { equals: number }
+      task?: { in: number[] } | { equals: number }
       and?: Array<{
-        student?: { in: number[] }
-        task?: { in: number[] }
+        student?: { in: number[] } | { equals: number }
+        task?: { in: number[] } | { equals: number }
       }>
     }
     sort?: string
@@ -113,6 +113,55 @@ export class TaskProgressRepository {
       collection: 'task-progress',
       id,
     })
+  }
+
+  /**
+   * Find a task progress entry by student and task
+   */
+  async findByStudentAndTask(
+    studentId: number,
+    taskId: number,
+    options?: { depth?: number },
+  ): Promise<TaskProgress | null> {
+    const result = await this.find({
+      where: {
+        and: [
+          {
+            student: { equals: studentId },
+          },
+          {
+            task: { equals: taskId },
+          },
+        ],
+      },
+      limit: 1,
+      depth: options?.depth || 0,
+    })
+
+    return result.docs[0] || null
+  }
+
+  /**
+   * Create or update a task progress entry
+   * If an entry exists for the given student and task, it will be updated.
+   * Otherwise, a new entry will be created.
+   */
+  async createOrUpdate(data: {
+    student: number
+    task: number
+    status: TaskStatusValue
+    note?: string | null
+  }): Promise<TaskProgress> {
+    const existing = await this.findByStudentAndTask(data.student, data.task)
+
+    if (existing) {
+      return this.update(existing.id, {
+        status: data.status,
+        note: data.note,
+      })
+    }
+
+    return this.create(data)
   }
 }
 

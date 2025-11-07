@@ -38,7 +38,12 @@ export function SelectElement({
 
   const handleChange = (id: string) => {
     const params = new URLSearchParams(searchParams)
-    params.set(searchParamName, String(id))
+    if (id === '0') {
+      // Remove the search param to clear selection
+      params.delete(searchParamName)
+    } else {
+      params.set(searchParamName, String(id))
+    }
     replace(`${pathname}?${params.toString()}`)
   }
 
@@ -63,4 +68,3 @@ export function SelectElement({
     </Select>
   )
 }
-

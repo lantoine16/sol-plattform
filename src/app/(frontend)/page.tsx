@@ -10,8 +10,7 @@ import { getCurrentUser } from '@/lib/data/payload-client'
 import { dashboardService } from '@/lib/services/dashboard.service'
 import { resolveIdFromSearchParams } from '@/lib/utils'
 import config from '@/payload.config'
-import type { UserWithTasks } from '@/lib/types'
-
+import { UserTasksOverview } from '@/components/features/user-tasks-overview'
 export default async function HomePage({
   searchParams,
 }: {
@@ -23,12 +22,17 @@ export default async function HomePage({
 
   const classSearchParamName = 'class'
   const subjectSearchParamName = 'subject'
+  const userSearchParamName = 'user'
 
   // Get classes and subjects
   const { classes, subjects } = await dashboardService.getClassesAndSubjects()
 
-  const classId = resolveIdFromSearchParams(searchParamsResolved, classSearchParamName, classes)
-  const subjectId = resolveIdFromSearchParams(
+  const selectedClassId = resolveIdFromSearchParams(
+    searchParamsResolved,
+    classSearchParamName,
+    classes,
+  )
+  const selectedSubjectId = resolveIdFromSearchParams(
     searchParamsResolved,
     subjectSearchParamName,
     subjects,
@@ -36,10 +40,22 @@ export default async function HomePage({
 
   // Get dashboard data based on filters
   const { tasks, users: usersWithTasks } = await dashboardService.getUsersWithTasks({
-    classId,
-    subjectId,
+    classId: selectedClassId,
+    subjectId: selectedSubjectId,
   })
 
+  const users = [{ id: 0, description: 'Alle Schüler' }].concat(
+    usersWithTasks.map((user) => ({
+      id: user.user_id,
+      description: `${user.firstname} ${user.lastname}`,
+    })),
+  )
+
+  const selectedUserId = resolveIdFromSearchParams(searchParamsResolved, userSearchParamName, users)
+
+  const selectedUserTaskStatuses = usersWithTasks.find(
+    (user) => user.user_id === selectedUserId,
+  )?.tasks
   return (
     <div>
       <div>
@@ -67,20 +83,37 @@ export default async function HomePage({
       </div>
       <SelectElement
         items={classes}
-        selectedId={classId}
+        selectedId={selectedClassId}
         placeholder="Wähle eine Klasse"
         searchParamName={classSearchParamName}
         itemName="Klasse"
       />
       <SelectElement
         items={subjects}
-        selectedId={subjectId}
+        selectedId={selectedSubjectId}
         placeholder="Wähle ein Fach"
         searchParamName={subjectSearchParamName}
         itemName="Fach"
       />
+      <SelectElement
+        items={users}
+        selectedId={selectedUserId}
+        placeholder="Wähle einen Schüler"
+        searchParamName={userSearchParamName}
+        itemName="Schüler"
+      />
       <div className="container mx-auto py-10">
-        <DataTable columns={tasks} data={usersWithTasks} />
+        {selectedUserId === 0 ? (
+          <DataTable columns={tasks} data={usersWithTasks} />
+        ) : (
+          selectedUserId && (
+            <UserTasksOverview
+              tasks={tasks}
+              userId={selectedUserId}
+              userTaskStatuses={selectedUserTaskStatuses || []}
+            />
+          )
+        )}
       </div>
     </div>
   )
