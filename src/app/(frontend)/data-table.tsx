@@ -12,6 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { UserWithTasks } from './types'
+import { getStatusLabel } from '@/collections/task-progress'
 
 export function DataTable<TableData>({
   columns,
@@ -39,7 +40,7 @@ export function DataTable<TableData>({
           header: task.description,
           cell: ({ getValue }) => {
             const status = getValue() as string | null
-            return status || '-' // Zeige Status oder '-' wenn kein Status vorhanden
+            return getStatusLabel(status) // Zeige Label statt Wert
           },
         }),
       ),

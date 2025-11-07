@@ -1,5 +1,34 @@
 import type { CollectionConfig } from 'payload'
 
+const statusOptions = [
+  {
+    label: 'Nicht begonnen',
+    value: 'not-started',
+  },
+  {
+    label: 'In Bearbeitung',
+    value: 'in-progress',
+  },
+  {
+    label: 'Benötige Hilfe',
+    value: 'need-help',
+  },
+  {
+    label: 'Fertig',
+    value: 'finished',
+  },
+] as const
+
+// Exportiere den Standard-Status-Wert 'not-started'
+export const TASK_PROGRESS_DEFAULT_STATUS = statusOptions[0].label
+
+// Funktion zum Konvertieren von Status-Wert zu Label
+export const getStatusLabel = (value: string | null): string => {
+  if (!value) return TASK_PROGRESS_DEFAULT_STATUS
+  const option = statusOptions.find((opt) => opt.value === value)
+  return option?.label || TASK_PROGRESS_DEFAULT_STATUS
+}
+
 export const TaskProgress: CollectionConfig = {
   slug: 'task-progress',
   labels: {
@@ -29,24 +58,7 @@ export const TaskProgress: CollectionConfig = {
       label: 'Status',
       type: 'select',
       required: true,
-      options: [
-        {
-          label: 'Nicht begonnen',
-          value: 'not-started',
-        },
-        {
-          label: 'In Bearbeitung',
-          value: 'in-progress',
-        },
-        {
-          label: 'Benötige Hilfe',
-          value: 'need-help',
-        },
-        {
-          label: 'Fertig',
-          value: 'finished',
-        },
-      ],
+      options: [...statusOptions],
     },
     {
       name: 'note',
