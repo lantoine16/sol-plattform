@@ -8,6 +8,7 @@ import { LogoutButton } from '@/components/LogoutButton'
 import { SelectElement, DataTable } from '@/components/features/dashboard'
 import { getCurrentUser } from '@/lib/data/payload-client'
 import { dashboardService } from '@/lib/services/dashboard.service'
+import { resolveIdFromSearchParams } from '@/lib/utils'
 import config from '@/payload.config'
 import type { UserWithTasks } from '@/lib/types'
 
@@ -20,17 +21,24 @@ export default async function HomePage({
   const payloadConfig = await config
   const user = await getCurrentUser()
 
+  const classSearchParamName = 'class'
+  const subjectSearchParamName = 'subject'
+
   // Get classes and subjects
   const { classes, subjects } = await dashboardService.getClassesAndSubjects()
 
-  // Resolve filters from search params
-  const filters = dashboardService.resolveFilters(searchParamsResolved, classes, subjects)
+  const classId = resolveIdFromSearchParams(searchParamsResolved, classSearchParamName, classes)
+  const subjectId = resolveIdFromSearchParams(
+    searchParamsResolved,
+    subjectSearchParamName,
+    subjects,
+  )
 
   // Get dashboard data based on filters
-  const { tasks, users: usersWithTasks } = await dashboardService.getDashboardData(filters)
-
-  const classSearchParamName = 'class'
-  const subjectSearchParamName = 'subject'
+  const { tasks, users: usersWithTasks } = await dashboardService.getUsersWithTasks({
+    classId,
+    subjectId,
+  })
 
   return (
     <div>
@@ -59,14 +67,14 @@ export default async function HomePage({
       </div>
       <SelectElement
         items={classes}
-        selectedId={filters.classId}
+        selectedId={classId}
         placeholder="Wähle eine Klasse"
         searchParamName={classSearchParamName}
         itemName="Klasse"
       />
       <SelectElement
         items={subjects}
-        selectedId={filters.subjectId}
+        selectedId={subjectId}
         placeholder="Wähle ein Fach"
         searchParamName={subjectSearchParamName}
         itemName="Fach"

@@ -6,14 +6,12 @@ import { taskProgressRepository } from '../data/repositories/task-progress.repos
 import type { UserWithTasks } from '../types'
 import type { Task, Class, Subject } from '@/payload-types'
 
-export interface DashboardData {
-  classes: Class[]
-  subjects: Subject[]
+export interface UsersWithTasks {
   tasks: Task[]
   users: UserWithTasks[]
 }
 
-export interface DashboardFilters {
+export interface UsersWithTasksFilter {
   classId?: number
   subjectId?: number
 }
@@ -35,29 +33,11 @@ export class DashboardService {
   }
 
   /**
-   * Get default class and subject IDs
-   */
-  async getDefaultFilters(): Promise<{
-    defaultClassId: number | undefined
-    defaultSubjectId: number | undefined
-  }> {
-    const { classes, subjects } = await this.getClassesAndSubjects()
-    return {
-      defaultClassId: classes[0]?.id,
-      defaultSubjectId: subjects[0]?.id,
-    }
-  }
-
-  /**
    * Get dashboard data based on filters
    */
-  async getDashboardData(filters: DashboardFilters): Promise<DashboardData> {
-    const { classes, subjects } = await this.getClassesAndSubjects()
-
+  async getUsersWithTasks(filters: UsersWithTasksFilter): Promise<UsersWithTasks> {
     if (!filters.classId || !filters.subjectId) {
       return {
-        classes,
-        subjects,
         tasks: [],
         users: [],
       }
@@ -104,37 +84,8 @@ export class DashboardService {
     })
 
     return {
-      classes,
-      subjects,
       tasks,
       users: usersWithTasks,
-    }
-  }
-
-  /**
-   * Resolve class and subject IDs from search params
-   */
-  resolveFilters(
-    searchParams: Record<string, string | string[] | undefined>,
-    classes: Class[],
-    subjects: Subject[],
-  ): DashboardFilters {
-    const classSearchParamName = 'class'
-    const subjectSearchParamName = 'subject'
-
-    const classId =
-      typeof searchParams[classSearchParamName] === 'string'
-        ? Number(searchParams[classSearchParamName])
-        : classes[0]?.id
-
-    const subjectId =
-      typeof searchParams[subjectSearchParamName] === 'string'
-        ? Number(searchParams[subjectSearchParamName])
-        : subjects[0]?.id
-
-    return {
-      classId,
-      subjectId,
     }
   }
 }
