@@ -11,12 +11,6 @@ type UserTasksOverviewProps = {
   userTaskStatuses: UserTaskStatus[]
 }
 export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasksOverviewProps) {
-  // Get statuses excluding "Benötige Hilfe"
-  const statusesWithoutNeedHelp = TASK_STATUS_OPTIONS.filter(
-    (status) => status.value !== 'need-help',
-  )
-  const needHelpStatus = TASK_STATUS_OPTIONS.find((status) => status.value === 'need-help')
-
   const { notStartedTasks, inProgressTasks, finishedTasks } =
     UserTaskStatusService.groupTasksByStatus(tasks, userTaskStatuses)
   return (
@@ -25,17 +19,17 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
       <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 items-stretch">
         {/* Nicht begonnen */}
         <div className="border rounded-md p-4">
-          <h3 className="font-semibold mb-2">{statusesWithoutNeedHelp[0]?.label}</h3>
+          <h3 className="font-semibold mb-2">{TASK_STATUS_OPTIONS[0]?.label}</h3>
         </div>
         <Separator orientation="vertical" className="h-auto" />
         {/* In Bearbeitung */}
         <div className="border rounded-md p-4">
-          <h3 className="font-semibold mb-2">{statusesWithoutNeedHelp[1]?.label}</h3>
+          <h3 className="font-semibold mb-2">{TASK_STATUS_OPTIONS[1]?.label}</h3>
         </div>
         <Separator orientation="vertical" className="h-auto" />
         {/* Benötige Hilfe */}
         <div className="border rounded-md p-4">
-          <h3 className="font-semibold mb-2">{statusesWithoutNeedHelp[2]?.label}</h3>
+          <h3 className="font-semibold mb-2">{TASK_STATUS_OPTIONS[2]?.label}</h3>
         </div>
       </div>
 

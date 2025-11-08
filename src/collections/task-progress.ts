@@ -12,7 +12,7 @@ export const TaskProgress: CollectionConfig = {
   },
   fields: [
     {
-      name: 'student',
+      name: 'user',
       label: 'Schüler',
       type: 'relationship',
       relationTo: 'users',
@@ -33,9 +33,9 @@ export const TaskProgress: CollectionConfig = {
       options: [...TASK_STATUS_OPTIONS],
     },
     {
-      name: 'note',
-      label: 'Notiz',
-      type: 'textarea',
+      name: 'helpNeeded',
+      label: 'Schüler benötigt Hilfe',
+      type: 'checkbox',
       required: false,
     },
   ],

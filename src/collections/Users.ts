@@ -66,7 +66,7 @@ export const Users: CollectionConfig = {
       name: 'taskProgress',
       type: 'join',
       collection: 'task-progress',
-      on: 'student',
+      on: 'user',
       hasMany: true,
     },
   ],

@@ -8,10 +8,6 @@ export const TASK_STATUS_OPTIONS = [
     value: 'in-progress',
   },
   {
-    label: 'Benötige Hilfe',
-    value: 'need-help',
-  },
-  {
     label: 'Fertig',
     value: 'finished',
   },

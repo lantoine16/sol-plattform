@@ -50,10 +50,10 @@ export class DashboardService {
     ])
 
     // Fetch task progress data if we have users and tasks
-    // depth: 2 löst Relationships 2 Ebenen tief auf (student und task werden als Objekte zurückgegeben, nicht nur IDs)
+    // depth: 2 löst Relationships 2 Ebenen tief auf (user und task werden als Objekte zurückgegeben, nicht nur IDs)
     const taskProgressData =
       users.length > 0 && tasks.length > 0
-        ? await taskProgressRepository.findByStudentsAndTasks(
+        ? await taskProgressRepository.findByUsersAndTasks(
             users.map((u) => u.id),
             tasks.map((t) => t.id),
             { depth: 2 },
@@ -64,8 +64,8 @@ export class DashboardService {
     const usersWithTasks: UserWithTasks[] = users.map((user) => {
       // Find all task-progress entries for this user
       const userTaskProgress = taskProgressData.filter((tp) => {
-        const studentId = typeof tp.student === 'object' ? tp.student?.id : tp.student
-        return studentId === user.id
+        const taskUserId = typeof tp.user === 'object' ? tp.user?.id : tp.user
+        return taskUserId === user.id
       })
 
       // Transform to the desired structure

@@ -17,7 +17,7 @@ export async function updateTaskProgress(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await taskProgressRepository.createOrUpdate({
-      student: userId,
+      user: userId,
       task: taskId,
       status,
     })

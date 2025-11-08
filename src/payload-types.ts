@@ -175,10 +175,10 @@ export interface Class {
  */
 export interface TaskProgress {
   id: number;
-  student: number | User;
+  user: number | User;
   task: number | Task;
-  status: 'not-started' | 'in-progress' | 'need-help' | 'finished';
-  note?: string | null;
+  status: 'not-started' | 'in-progress' | 'finished';
+  helpNeeded?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -340,10 +340,10 @@ export interface TasksSelect<T extends boolean = true> {
  * via the `definition` "task-progress_select".
  */
 export interface TaskProgressSelect<T extends boolean = true> {
-  student?: T;
+  user?: T;
   task?: T;
   status?: T;
-  note?: T;
+  helpNeeded?: T;
   updatedAt?: T;
   createdAt?: T;
 }
