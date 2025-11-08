@@ -64,17 +64,8 @@ export default async function HomePage({
     (user) => user.user_id === selectedUserId,
   )?.tasks
 
-  // Liste der verfügbaren User-IDs für die Cleanup-Komponente
-  const availableUserIds = users.map((user) => user.id)
-
   return (
     <div>
-      {/* Client-seitige Bereinigung der Search-Params ohne Reload */}
-      <SearchParamsCleanup
-        userIdParamValue={userIdSearchParamValue}
-        availableUserIds={availableUserIds}
-        userSearchParamName={userSearchParamName}
-      />
       <div>
         <picture>
           <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />

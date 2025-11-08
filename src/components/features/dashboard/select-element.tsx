@@ -1,5 +1,6 @@
 'use client'
 import * as React from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 
 import {
@@ -36,6 +37,27 @@ export function SelectElement({
   const pathname = usePathname()
   const { replace } = useRouter()
 
+  // State für den aktuellen Wert, damit die UI direkt auf Änderungen reagiert
+  const [proovedSelectedId, setProovedSelectedId] = useState<string>('0')
+
+  // Aktualisiere den State, wenn sich selectedId oder items ändern
+  useEffect(() => {
+    if (selectedId !== undefined && selectedId !== '0') {
+      // Prüfe, ob der selectedId in den items vorhanden ist, wenn ja ist alles in Ordnung
+      if (items.find((item) => item.id === selectedId)) {
+        setProovedSelectedId(selectedId)
+        return
+      }
+    }
+    const newSelectedId = items[0]?.id || ''
+    // wenn die neue SelectedId nicht der aktuellen SelectedId ist, dann update diese in den SearchParams
+    // es sollte der erste in den Items die ID 0 haben und daher wird der SearchParam gelöscht
+    if (newSelectedId !== proovedSelectedId) {
+      handleChange(newSelectedId)
+    }
+    setProovedSelectedId(newSelectedId)
+  }, [selectedId, items])
+
   const handleChange = (id: string) => {
     const params = new URLSearchParams(searchParams)
     if (id === '0') {
@@ -48,10 +70,7 @@ export function SelectElement({
   }
 
   return (
-    <Select
-      onValueChange={handleChange}
-      defaultValue={selectedId !== undefined ? selectedId : items[0]?.id?.toString() || ''}
-    >
+    <Select value={proovedSelectedId} onValueChange={handleChange}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
