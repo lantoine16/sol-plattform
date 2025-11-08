@@ -7,8 +7,8 @@ export class TaskRepository {
    */
   async find(options?: {
     where?: {
-      subject?: { equals: number }
-      class?: { equals: number }
+      subject?: { equals: string }
+      class?: { equals: string }
     }
     sort?: string
     limit?: number
@@ -24,7 +24,7 @@ export class TaskRepository {
   /**
    * Find a task by ID
    */
-  async findById(id: number, options?: { depth?: number }): Promise<Task | null> {
+  async findById(id: string, options?: { depth?: number }): Promise<Task | null> {
     const payload = await getPayloadClient()
     try {
       return await payload.findByID({
@@ -41,8 +41,8 @@ export class TaskRepository {
    * Find tasks by class and subject
    */
   async findByClassAndSubject(
-    classId: number,
-    subjectId: number,
+    classId: string,
+    subjectId: string,
     options?: { sort?: string }
   ): Promise<Task[]> {
     const result = await this.find({

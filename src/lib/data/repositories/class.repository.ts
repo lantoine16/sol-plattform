@@ -19,7 +19,7 @@ export class ClassRepository {
   /**
    * Find a class by ID
    */
-  async findById(id: number): Promise<Class | null> {
+  async findById(id: string): Promise<Class | null> {
     const payload = await getPayloadClient()
     try {
       return await payload.findByID({

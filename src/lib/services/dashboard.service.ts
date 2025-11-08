@@ -12,8 +12,8 @@ export interface UsersWithTasks {
 }
 
 export interface UsersWithTasksFilter {
-  classId?: number
-  subjectId?: number
+  classId?: string
+  subjectId?: string
 }
 
 export class DashboardService {

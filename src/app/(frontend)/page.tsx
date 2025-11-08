@@ -11,6 +11,7 @@ import { dashboardService } from '@/lib/services/dashboard.service'
 import { resolveIdFromSearchParams } from '@/lib/utils'
 import config from '@/payload.config'
 import { UserTasksOverview } from '@/components/features/user-tasks-overview'
+import { SearchParamsCleanup } from '@/components/features/dashboard/search-params-cleanup'
 export default async function HomePage({
   searchParams,
 }: {
@@ -26,7 +27,6 @@ export default async function HomePage({
 
   // Get classes and subjects
   const { classes, subjects } = await dashboardService.getClassesAndSubjects()
-
   const selectedClassId = resolveIdFromSearchParams(
     searchParamsResolved,
     classSearchParamName,
@@ -44,20 +44,37 @@ export default async function HomePage({
     subjectId: selectedSubjectId,
   })
 
-  const users = [{ id: 0, description: 'Alle Schüler' }].concat(
+  const users = [{ id: '0', description: 'Alle Schüler' }].concat(
     usersWithTasks.map((user) => ({
       id: user.user_id,
       description: `${user.firstname} ${user.lastname}`,
     })),
   )
 
-  const selectedUserId = resolveIdFromSearchParams(searchParamsResolved, userSearchParamName, users)
+  const userIdSearchParamValue = resolveIdFromSearchParams(
+    searchParamsResolved,
+    userSearchParamName,
+    users,
+  )
+
+  const selectedUserId =
+    usersWithTasks.find((user) => user.user_id === userIdSearchParamValue)?.user_id || users[0]?.id
 
   const selectedUserTaskStatuses = usersWithTasks.find(
     (user) => user.user_id === selectedUserId,
   )?.tasks
+
+  // Liste der verfügbaren User-IDs für die Cleanup-Komponente
+  const availableUserIds = users.map((user) => user.id)
+
   return (
     <div>
+      {/* Client-seitige Bereinigung der Search-Params ohne Reload */}
+      <SearchParamsCleanup
+        userIdParamValue={userIdSearchParamValue}
+        availableUserIds={availableUserIds}
+        userSearchParamName={userSearchParamName}
+      />
       <div>
         <picture>
           <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />
@@ -103,7 +120,7 @@ export default async function HomePage({
         itemName="Schüler"
       />
       <div className="container mx-auto py-10">
-        {selectedUserId === 0 ? (
+        {selectedUserId === '0' ? (
           <DataTable columns={tasks} data={usersWithTasks} />
         ) : (
           selectedUserId && (

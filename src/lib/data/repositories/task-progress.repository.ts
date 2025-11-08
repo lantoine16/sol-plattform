@@ -8,11 +8,11 @@ export class TaskProgressRepository {
    */
   async find(options?: {
     where?: {
-      user?: { in: number[] } | { equals: number }
-      task?: { in: number[] } | { equals: number }
+      user?: { in: string[] } | { equals: string }
+      task?: { in: string[] } | { equals: string }
       and?: Array<{
-        user?: { in: number[] } | { equals: number }
-        task?: { in: number[] } | { equals: number }
+        user?: { in: string[] } | { equals: string }
+        task?: { in: string[] } | { equals: string }
       }>
     }
     sort?: string
@@ -29,7 +29,7 @@ export class TaskProgressRepository {
   /**
    * Find a task progress by ID
    */
-  async findById(id: number, options?: { depth?: number }): Promise<TaskProgress | null> {
+  async findById(id: string, options?: { depth?: number }): Promise<TaskProgress | null> {
     const payload = await getPayloadClient()
     try {
       return await payload.findByID({
@@ -46,8 +46,8 @@ export class TaskProgressRepository {
    * Find task progress by users and tasks
    */
   async findByUsersAndTasks(
-    userIds: number[],
-    taskIds: number[],
+    userIds: string[],
+    taskIds: string[],
     options?: { depth?: number },
   ): Promise<TaskProgress[]> {
     if (userIds.length === 0 || taskIds.length === 0) {
@@ -74,8 +74,8 @@ export class TaskProgressRepository {
    * Create a new task progress entry
    */
   async create(data: {
-    user: number
-    task: number
+    user: string
+    task: string
     status: TaskStatusValue
     note?: string | null
   }): Promise<TaskProgress> {
@@ -90,7 +90,7 @@ export class TaskProgressRepository {
    * Update a task progress entry
    */
   async update(
-    id: number,
+    id: string,
     data: {
       status?: TaskStatusValue
       note?: string | null
@@ -107,7 +107,7 @@ export class TaskProgressRepository {
   /**
    * Delete a task progress entry
    */
-  async delete(id: number): Promise<TaskProgress> {
+  async delete(id: string): Promise<TaskProgress> {
     const payload = await getPayloadClient()
     return payload.delete({
       collection: 'task-progress',
@@ -119,8 +119,8 @@ export class TaskProgressRepository {
    * Find a task progress entry by user and task
    */
   async findByUserAndTask(
-    userId: number,
-    taskId: number,
+    userId: string,
+    taskId: string,
     options?: { depth?: number },
   ): Promise<TaskProgress | null> {
     const result = await this.find({
@@ -147,8 +147,8 @@ export class TaskProgressRepository {
    * Otherwise, a new entry will be created.
    */
   async createOrUpdate(data: {
-    user: number
-    task: number
+    user: string
+    task: string
     status: TaskStatusValue
     note?: string | null
   }): Promise<TaskProgress> {

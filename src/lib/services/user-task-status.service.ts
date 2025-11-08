@@ -20,7 +20,7 @@ export class UserTaskStatusService {
     finishedTasks: Task[]
   } {
     // Create a map of task_id -> status for quick lookup
-    const statusMap = new Map<number, UserTaskStatus['status']>()
+    const statusMap = new Map<string, UserTaskStatus['status']>()
     userTaskStatuses.forEach((userTaskStatus) => {
       statusMap.set(userTaskStatus.task_id, userTaskStatus.status)
     })

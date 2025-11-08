@@ -6,7 +6,7 @@ import type { UserTaskStatus } from '@/lib/types'
 import { UserTaskStatusService } from '@/lib/services/user-task-status.service'
 
 type UserTasksOverviewProps = {
-  userId: number
+  userId: string
   tasks: Task[]
   userTaskStatuses: UserTaskStatus[]
 }

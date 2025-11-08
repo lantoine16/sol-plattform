@@ -19,7 +19,7 @@ export class SubjectRepository {
   /**
    * Find a subject by ID
    */
-  async findById(id: number): Promise<Subject | null> {
+  async findById(id: string): Promise<Subject | null> {
     const payload = await getPayloadClient()
     try {
       return await payload.findByID({

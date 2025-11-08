@@ -13,13 +13,13 @@ import {
 } from '@/components/ui/select'
 
 type Item = {
-  id: number
+  id: string
   description: string
 }
 
 type SelectItemProps = {
   items: Item[]
-  selectedId?: number
+  selectedId?: string
   searchParamName: string
   placeholder: string
   itemName: string
@@ -50,7 +50,7 @@ export function SelectElement({
   return (
     <Select
       onValueChange={handleChange}
-      defaultValue={selectedId !== undefined ? String(selectedId) : items[0]?.id.toString()}
+      defaultValue={selectedId !== undefined ? selectedId : items[0]?.id?.toString() || ''}
     >
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder={placeholder} />

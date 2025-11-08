@@ -15,9 +15,20 @@ export function cn(...inputs: ClassValue[]) {
 export function resolveIdFromSearchParams(
   searchParams: Record<string, string | string[] | undefined>,
   searchParamName: string,
-  data: Array<{ id: number }>,
-): number | undefined {
-  return typeof searchParams[searchParamName] === 'string'
-    ? Number(searchParams[searchParamName])
-    : data[0]?.id
+  data: Array<{ id: string }>,
+): string | undefined {
+  const paramValue = searchParams[searchParamName]
+
+  // Wenn paramValue ein String ist, verwende ihn direkt
+  if (typeof paramValue === 'string' && paramValue !== '') {
+    return paramValue
+  }
+
+  // Wenn paramValue ein Array ist, nimm das erste Element
+  if (Array.isArray(paramValue) && paramValue.length > 0) {
+    return paramValue[0]
+  }
+
+  // Fallback: erstes Element aus data
+  return data[0]?.id
 }

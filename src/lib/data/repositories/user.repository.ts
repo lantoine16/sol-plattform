@@ -7,7 +7,7 @@ export class UserRepository {
    */
   async find(options?: {
     where?: {
-      class?: { equals: number }
+      class?: { equals: string }
       role?: { equals: 'pupil' | 'admin' | 'teacher' }
     }
     sort?: string
@@ -24,7 +24,7 @@ export class UserRepository {
   /**
    * Find a user by ID
    */
-  async findById(id: number, options?: { depth?: number }): Promise<User | null> {
+  async findById(id: string, options?: { depth?: number }): Promise<User | null> {
     const payload = await getPayloadClient()
     try {
       return await payload.findByID({
@@ -40,7 +40,7 @@ export class UserRepository {
   /**
    * Find users by class ID
    */
-  async findByClass(classId: number, options?: { sort?: string }): Promise<User[]> {
+  async findByClass(classId: string, options?: { sort?: string }): Promise<User[]> {
     const result = await this.find({
       where: {
         class: { equals: classId },
@@ -53,7 +53,7 @@ export class UserRepository {
   /**
    * Find pupils by class ID
    */
-  async findPupilsByClass(classId: number, options?: { sort?: string }): Promise<User[]> {
+  async findPupilsByClass(classId: string, options?: { sort?: string }): Promise<User[]> {
     const result = await this.find({
       where: {
         class: { equals: classId },

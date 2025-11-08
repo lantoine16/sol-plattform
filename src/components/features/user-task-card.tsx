@@ -9,8 +9,8 @@ import { useRouter } from 'next/navigation'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 
 type UserTaskCardProps = {
-  taskId: number
-  userId: number
+  taskId: string
+  userId: string
   title: string
   description: string
   previousStatus?: TaskStatusValue

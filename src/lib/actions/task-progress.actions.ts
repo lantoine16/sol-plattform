@@ -11,8 +11,8 @@ import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
  * @returns Success status and error message if any
  */
 export async function updateTaskProgress(
-  taskId: number,
-  userId: number,
+  taskId: string,
+  userId: string,
   status: TaskStatusValue,
 ): Promise<{ success: boolean; error?: string }> {
   try {
