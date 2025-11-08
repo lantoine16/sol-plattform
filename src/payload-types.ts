@@ -95,7 +95,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: number;
+    defaultIDType: string;
   };
   globals: {};
   globalsSelect: {};
@@ -131,13 +131,13 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: number;
+  id: string;
   firstname: string;
   lastname: string;
-  class?: (number | Class)[] | null;
+  class?: (string | Class)[] | null;
   role: 'admin' | 'pupil' | 'teacher';
   taskProgress?: {
-    docs?: (number | TaskProgress)[];
+    docs?: (string | TaskProgress)[];
     hasNextPage?: boolean;
     totalDocs?: number;
   };
@@ -164,7 +164,7 @@ export interface User {
  * via the `definition` "classes".
  */
 export interface Class {
-  id: number;
+  id: string;
   description: string;
   updatedAt: string;
   createdAt: string;
@@ -174,9 +174,9 @@ export interface Class {
  * via the `definition` "task-progress".
  */
 export interface TaskProgress {
-  id: number;
-  user: number | User;
-  task: number | Task;
+  id: string;
+  user: string | User;
+  task: string | Task;
   status: 'not-started' | 'in-progress' | 'finished';
   helpNeeded?: boolean | null;
   updatedAt: string;
@@ -187,12 +187,12 @@ export interface TaskProgress {
  * via the `definition` "tasks".
  */
 export interface Task {
-  id: number;
+  id: string;
   description: string;
-  class: (number | Class)[];
-  subject: number | Subject;
+  class: (string | Class)[];
+  subject: string | Subject;
   taskProgress?: {
-    docs?: (number | TaskProgress)[];
+    docs?: (string | TaskProgress)[];
     hasNextPage?: boolean;
     totalDocs?: number;
   };
@@ -204,7 +204,7 @@ export interface Task {
  * via the `definition` "subjects".
  */
 export interface Subject {
-  id: number;
+  id: string;
   description: string;
   updatedAt: string;
   createdAt: string;
@@ -214,32 +214,32 @@ export interface Subject {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number;
+  id: string;
   document?:
     | ({
         relationTo: 'users';
-        value: number | User;
+        value: string | User;
       } | null)
     | ({
         relationTo: 'classes';
-        value: number | Class;
+        value: string | Class;
       } | null)
     | ({
         relationTo: 'subjects';
-        value: number | Subject;
+        value: string | Subject;
       } | null)
     | ({
         relationTo: 'tasks';
-        value: number | Task;
+        value: string | Task;
       } | null)
     | ({
         relationTo: 'task-progress';
-        value: number | TaskProgress;
+        value: string | TaskProgress;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -249,10 +249,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number;
+  id: string;
   user: {
     relationTo: 'users';
-    value: number | User;
+    value: string | User;
   };
   key?: string | null;
   value?:
@@ -272,7 +272,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number;
+  id: string;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;

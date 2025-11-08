@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   payload:
     image: node:18-alpine
@@ -11,23 +9,22 @@ services:
     working_dir: /home/node/app/
     command: sh -c "corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm dev"
     depends_on:
-      - postgres
-      # - postgres
+      - mongo
     env_file:
       - .env
 
-  # PostgreSQL Datenbank (alternative/zusätzliche DB)
-  postgres:
-    image: postgres:latest # PostgreSQL
-    container_name: postgres_sol
+  # MongoDB Datenbank
+  mongo:
+    image: mongo:latest
+    container_name: mongo_sol
     environment:
-      POSTGRES_USER: lukas # Datenbankbenutzer
-      POSTGRES_PASSWORD: lukaspassword # Datenbankpasswort
-      POSTGRES_DB: sol # Name der Standarddatenbank
+      MONGO_INITDB_ROOT_USERNAME: lukas
+      MONGO_INITDB_ROOT_PASSWORD: lukaspassword
+      MONGO_INITDB_DATABASE: sol
     ports:
-      - '5434:5432' # Host-Port 5434 → Container-Port 5432
+      - '27017:27017' # Host-Port 27017 → Container-Port 27017
     volumes:
-      - ~/.docker/pgdata:/var/lib/postgresql/data # Persistente Datenspeicherung
+      - ~/.docker/mongodata:/data/db # Persistente Datenspeicherung
 volumes:
   data:
   # pgdata:
