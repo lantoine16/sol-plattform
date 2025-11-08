@@ -11,7 +11,6 @@ import { dashboardService } from '@/lib/services/dashboard.service'
 import { resolveIdFromSearchParams } from '@/lib/utils'
 import config from '@/payload.config'
 import { UserTasksOverview } from '@/components/features/user-tasks-overview'
-import { SearchParamsCleanup } from '@/components/features/dashboard/search-params-cleanup'
 export default async function HomePage({
   searchParams,
 }: {
