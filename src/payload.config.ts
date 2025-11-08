@@ -7,6 +7,7 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+import { de } from '@payloadcms/translations/languages/de'
 import { Users } from './collections/Users'
 import { Classes } from './collections/classes'
 import { Subjects } from './collections/subjects'
@@ -43,4 +44,7 @@ export default buildConfig({
     payloadCloudPlugin(),
     // storage-adapter-placeholder
   ],
+  i18n: {
+    supportedLanguages: { de },
+  },
 })

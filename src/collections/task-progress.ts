@@ -4,8 +4,8 @@ import { TASK_STATUS_OPTIONS } from '@/domain/constants/task-status.constants'
 export const TaskProgress: CollectionConfig = {
   slug: 'task-progress',
   labels: {
-    singular: 'Bearbeitungsstand',
-    plural: 'Bearbeitungsstände',
+    singular: 'Aufgabenfortschritt',
+    plural: 'Aufgabenfortschritte',
   },
   admin: {
     useAsTitle: 'id',

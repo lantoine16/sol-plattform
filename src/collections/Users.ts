@@ -64,6 +64,7 @@ export const Users: CollectionConfig = {
 
     {
       name: 'taskProgress',
+      label: 'Aufgabenfortschritte',
       type: 'join',
       collection: 'task-progress',
       on: 'user',
