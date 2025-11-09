@@ -1,24 +1,14 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
 import { Home } from 'lucide-react'
+import Link from 'next/link'
 const FrontendLink: React.FC = () => {
-  const router = useRouter()
-
   return (
-    <Button
-      onClick={() => {
-        router.push('/')
-        router.refresh()
-      }}
-      variant="outline"
-      className="w-full"
-    >
+    <Link href="/">
       <Home className="h-4 w-4" />
-      Aufgabenübersicht
-    </Button>
+      <span> Aufgabenübersicht</span>
+    </Link>
   )
 }
 
