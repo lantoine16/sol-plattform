@@ -36,8 +36,8 @@ export function LogoutButton() {
   }
 
   return (
-    <Button onClick={handleLogout} variant="outline" size="sm" disabled={isLoading}>
-      <LogOut className="h-4 w-4" />
+    <Button onClick={handleLogout} variant="outline" disabled={isLoading} className="w-full">
+      <LogOut className="h-4 w-4"/>
       {isLoading ? 'Wird abgemeldet...' : 'Abmelden'}
     </Button>
   )

@@ -11,6 +11,7 @@ import { dashboardService } from '@/lib/services/dashboard.service'
 import { resolveIdFromSearchParams } from '@/lib/utils'
 import config from '@/payload.config'
 import { UserTasksOverview } from '@/components/features/user-tasks-overview'
+import { UserCog } from 'lucide-react'
 export default async function HomePage({
   searchParams,
 }: {
@@ -65,51 +66,53 @@ export default async function HomePage({
 
   return (
     <div>
-      <div>
+      <div className="flex flex-row items-center flex-wrap m-4 gap-2">
         <picture>
-          <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
-            alt="Payload Logo"
-            height={65}
-            src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg"
-            width={65}
-          />
+          <Image alt="IGS Ingelheim Logo" height={100} src="/igs-logo.png" width={100} />
         </picture>
-
-        <div className="flex justify-between items-center mb-4">
+        <div className="grow text-center flex flex-col items-center">
+          <h1 className="text-4xl font-bold"> SOL - Plattform</h1>
+          {user && (
+            <h2 className="text-xl">
+              Willkommen {user.firstname} {user.lastname}
+            </h2>
+          )}
+        </div>
+        <div className="flex flex-col items-end gap-1">
           <ModeToggle />
           <LogoutButton />
+          {user?.role !== 'pupil' && (
+            <Button className="w-full" variant="outline">
+              <UserCog className="h-4 w-4" />
+              <Link href={payloadConfig.routes.admin}>Admin</Link>
+            </Button>
+          )}
         </div>
-        {user && <h1>Willkommen zurück, {user.email}</h1>}
-
-        {user?.role === 'admin' && (
-          <Button asChild>
-            <Link href={payloadConfig.routes.admin}>Admin</Link>
-          </Button>
-        )}
       </div>
-      <SelectElement
-        items={classes}
-        selectedId={selectedClassId}
-        placeholder="Wähle eine Klasse"
-        searchParamName={classSearchParamName}
-        itemName="Klasse"
-      />
-      <SelectElement
-        items={subjects}
-        selectedId={selectedSubjectId}
-        placeholder="Wähle ein Fach"
-        searchParamName={subjectSearchParamName}
-        itemName="Fach"
-      />
-      <SelectElement
-        items={users}
-        selectedId={selectedUserId}
-        placeholder="Wähle einen Schüler"
-        searchParamName={userSearchParamName}
-        itemName="Schüler"
-      />
-      <div className="container mx-auto py-10">
+      <div className="flex flex-row items-center flex-wrap mx-4 my-8 gap-2">
+        <SelectElement
+          items={classes}
+          selectedId={selectedClassId}
+          placeholder="Wähle eine Klasse"
+          searchParamName={classSearchParamName}
+          itemName="Klasse"
+        />
+        <SelectElement
+          items={subjects}
+          selectedId={selectedSubjectId}
+          placeholder="Wähle ein Fach"
+          searchParamName={subjectSearchParamName}
+          itemName="Fach"
+        />
+        <SelectElement
+          items={users}
+          selectedId={selectedUserId}
+          placeholder="Wähle einen Schüler"
+          searchParamName={userSearchParamName}
+          itemName="Schüler"
+        />
+      </div>
+      <div className="container mx-auto">
         {selectedUserId === '0' ? (
           <DataTable columns={tasks} data={usersWithTasks} />
         ) : (
