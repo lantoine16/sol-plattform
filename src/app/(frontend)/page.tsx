@@ -4,13 +4,14 @@ import React from 'react'
 
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/toggle-dark-mode'
+import { LogoutButton } from '@/components/LogoutButton'
 import { SelectElement, DataTable } from '@/components/features/dashboard'
 import { getCurrentUser } from '@/lib/data/payload-client'
 import { dashboardService } from '@/lib/services/dashboard.service'
 import { resolveIdFromSearchParams } from '@/lib/utils'
 import config from '@/payload.config'
 import { UserTasksOverview } from '@/components/features/user-tasks-overview'
-import { LogOut, UserCog } from 'lucide-react'
+import { UserCog } from 'lucide-react'
 export default async function HomePage({
   searchParams,
 }: {
@@ -85,10 +86,7 @@ export default async function HomePage({
               <Link href={payloadConfig.routes.admin}>Admin</Link>
             </Button>
           )}
-          <Button className="w-full" variant="outline">
-            <LogOut className="h-4 w-4" />
-            <Link href="admin/logout">Abmelden</Link>
-          </Button>
+          <LogoutButton />
         </div>
       </div>
       <div className="flex flex-row items-center flex-wrap px-4 gap-2">
