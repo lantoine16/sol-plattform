@@ -25,7 +25,7 @@ export default buildConfig({
     },
     // Custom Admin Layout Components
     components: {
-      // afterNavLinks: [],
+      actions: ['@/components/admin/FrontendLink'],
       // beforeNavLinks: [],
       // Nav: '@/components/CustomNav',
     },
