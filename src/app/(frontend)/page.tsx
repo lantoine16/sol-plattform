@@ -80,13 +80,13 @@ export default async function HomePage({
         </div>
         <div className="flex flex-col items-end gap-1">
           <ModeToggle />
-          <LogoutButton />
           {user?.role !== 'pupil' && (
             <Button className="w-full" variant="outline">
               <UserCog className="h-4 w-4" />
               <Link href={payloadConfig.routes.admin}>Admin</Link>
             </Button>
           )}
+          <LogoutButton />
         </div>
       </div>
       <div className="flex flex-row items-center flex-wrap mx-4 my-8 gap-2">

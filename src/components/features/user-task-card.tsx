@@ -11,7 +11,6 @@ import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 type UserTaskCardProps = {
   taskId: string
   userId: string
-  title: string
   description: string
   previousStatus?: TaskStatusValue
   nextStatus?: TaskStatusValue
@@ -20,7 +19,6 @@ type UserTaskCardProps = {
 export function UserTaskCard({
   taskId,
   userId,
-  title,
   description,
   previousStatus,
   nextStatus,
@@ -30,11 +28,9 @@ export function UserTaskCard({
 
   const handleStatusChange = async (status: TaskStatusValue) => {
     setIsLoading(true)
-    console.log('Updating task progress to:', status)
     try {
       const result = await updateTaskProgress(taskId, userId, status)
       if (result.success) {
-        console.log('Task progress updated successfully', result)
         router.refresh()
       } else {
         console.error('Failed to update task progress:', result.error)
@@ -49,8 +45,7 @@ export function UserTaskCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="overflow-hidden text-ellipsis">{description}</CardTitle>
       </CardHeader>
       <CardFooter className="flex gap-2">
         <Button

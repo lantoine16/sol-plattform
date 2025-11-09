@@ -45,7 +45,6 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
               key={task.id}
               taskId={task.id}
               userId={userId}
-              title={`Task ${task.id}`}
               description={task.description || ''}
               previousStatus={undefined}
               nextStatus="in-progress"
@@ -60,7 +59,6 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
               key={task.id}
               taskId={task.id}
               userId={userId}
-              title={`Task ${task.id}`}
               description={task.description || ''}
               previousStatus="not-started"
               nextStatus="finished"
@@ -75,7 +73,6 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
               userId={userId}
               key={task.id}
               taskId={task.id}
-              title={`Task ${task.id}`}
               description={task.description || ''}
               previousStatus="in-progress"
               nextStatus={undefined}
