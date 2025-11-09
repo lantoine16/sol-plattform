@@ -21,16 +21,16 @@ export default async function HomePage({
   const payloadConfig = await config
   const user = await getCurrentUser()
 
-  const classSearchParamName = 'class'
+  const learningGroupSearchParamName = 'learningGroup'
   const subjectSearchParamName = 'subject'
   const userSearchParamName = 'user'
 
-  // Get classes and subjects
-  const { classes, subjects } = await dashboardService.getClassesAndSubjects()
-  const selectedClassId = resolveIdFromSearchParams(
+  // Get learning groups and subjects
+  const { learningGroups, subjects } = await dashboardService.getLearningGroupsAndSubjects()
+  const selectedLearningGroupId = resolveIdFromSearchParams(
     searchParamsResolved,
-    classSearchParamName,
-    classes,
+    learningGroupSearchParamName,
+    learningGroups,
   )
   const selectedSubjectId = resolveIdFromSearchParams(
     searchParamsResolved,
@@ -40,7 +40,7 @@ export default async function HomePage({
 
   // Get dashboard data based on filters
   const { tasks, users: usersWithTasks } = await dashboardService.getUsersWithTasks({
-    classId: selectedClassId,
+    learningGroupId: selectedLearningGroupId,
     subjectId: selectedSubjectId,
   })
 
@@ -91,11 +91,11 @@ export default async function HomePage({
       </div>
       <div className="flex flex-row items-center flex-wrap px-4 gap-2">
         <SelectElement
-          items={classes}
-          selectedId={selectedClassId}
-          placeholder="Wähle eine Klasse"
-          searchParamName={classSearchParamName}
-          itemName="Klasse"
+          items={learningGroups}
+          selectedId={selectedLearningGroupId}
+          placeholder="Wähle eine Lerngruppe"
+          searchParamName={learningGroupSearchParamName}
+          itemName="Lerngruppe"
         />
         <SelectElement
           items={subjects}

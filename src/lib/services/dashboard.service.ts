@@ -1,10 +1,10 @@
-import { classRepository } from '../data/repositories/class.repository'
+import { learningGroupRepository } from '../data/repositories/learning-group.repository'
 import { subjectRepository } from '../data/repositories/subject.repository'
 import { taskRepository } from '../data/repositories/task.repository'
 import { userRepository } from '../data/repositories/user.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
 import type { UserWithTasks } from '../types'
-import type { Task, Class, Subject } from '@/payload-types'
+import type { Task, LearningGroup, Subject } from '@/payload-types'
 
 export interface UsersWithTasks {
   tasks: Task[]
@@ -12,31 +12,31 @@ export interface UsersWithTasks {
 }
 
 export interface UsersWithTasksFilter {
-  classId?: string
+  learningGroupId?: string
   subjectId?: string
 }
 
 export class DashboardService {
   /**
-   * Get all classes and subjects for the dashboard
+   * Get all learning groups and subjects for the dashboard
    */
-  async getClassesAndSubjects(): Promise<{
-    classes: Class[]
+  async getLearningGroupsAndSubjects(): Promise<{
+    learningGroups: LearningGroup[]
     subjects: Subject[]
   }> {
-    const [classes, subjects] = await Promise.all([
-      classRepository.findAllSorted(),
+    const [learningGroups, subjects] = await Promise.all([
+      learningGroupRepository.findAllSorted(),
       subjectRepository.findAllSorted(),
     ])
 
-    return { classes, subjects }
+    return { learningGroups, subjects }
   }
 
   /**
    * Get dashboard data based on filters
    */
   async getUsersWithTasks(filters: UsersWithTasksFilter): Promise<UsersWithTasks> {
-    if (!filters.classId || !filters.subjectId) {
+    if (!filters.learningGroupId || !filters.subjectId) {
       return {
         tasks: [],
         users: [],
@@ -45,8 +45,8 @@ export class DashboardService {
 
     // Fetch tasks and users in parallel
     const [tasks, users] = await Promise.all([
-      taskRepository.findByClassAndSubject(filters.classId, filters.subjectId),
-      userRepository.findPupilsByClass(filters.classId),
+      taskRepository.findByLearningGroupAndSubject(filters.learningGroupId, filters.subjectId),
+      userRepository.findPupilsByLearningGroup(filters.learningGroupId),
     ])
 
     // Fetch task progress data if we have users and tasks

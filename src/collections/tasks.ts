@@ -18,10 +18,10 @@ export const Tasks: CollectionConfig = {
       required: true,
     },
     {
-      name: 'class',
-      label: 'Klasse',
+      name: 'learningGroup',
+      label: 'Lerngruppe',
       type: 'relationship',
-      relationTo: 'classes',
+      relationTo: 'learning-groups',
       required: true,
       hasMany: true,
     },

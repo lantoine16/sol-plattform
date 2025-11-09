@@ -68,7 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
-    classes: Class;
+    'learning-groups': LearningGroup;
     subjects: Subject;
     tasks: Task;
     'task-progress': TaskProgress;
@@ -86,7 +86,7 @@ export interface Config {
   };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
-    classes: ClassesSelect<false> | ClassesSelect<true>;
+    'learning-groups': LearningGroupsSelect<false> | LearningGroupsSelect<true>;
     subjects: SubjectsSelect<false> | SubjectsSelect<true>;
     tasks: TasksSelect<false> | TasksSelect<true>;
     'task-progress': TaskProgressSelect<false> | TaskProgressSelect<true>;
@@ -134,7 +134,7 @@ export interface User {
   id: string;
   firstname: string;
   lastname: string;
-  class?: (string | Class)[] | null;
+  learningGroup?: (string | LearningGroup)[] | null;
   role: 'admin' | 'pupil' | 'teacher';
   taskProgress?: {
     docs?: (string | TaskProgress)[];
@@ -161,11 +161,12 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "classes".
+ * via the `definition` "learning-groups".
  */
-export interface Class {
+export interface LearningGroup {
   id: string;
   description: string;
+  isClass?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -189,7 +190,7 @@ export interface TaskProgress {
 export interface Task {
   id: string;
   description: string;
-  class: (string | Class)[];
+  learningGroup: (string | LearningGroup)[];
   subject: string | Subject;
   taskProgress?: {
     docs?: (string | TaskProgress)[];
@@ -221,8 +222,8 @@ export interface PayloadLockedDocument {
         value: string | User;
       } | null)
     | ({
-        relationTo: 'classes';
-        value: string | Class;
+        relationTo: 'learning-groups';
+        value: string | LearningGroup;
       } | null)
     | ({
         relationTo: 'subjects';
@@ -285,7 +286,7 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   firstname?: T;
   lastname?: T;
-  class?: T;
+  learningGroup?: T;
   role?: T;
   taskProgress?: T;
   updatedAt?: T;
@@ -307,10 +308,11 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "classes_select".
+ * via the `definition` "learning-groups_select".
  */
-export interface ClassesSelect<T extends boolean = true> {
+export interface LearningGroupsSelect<T extends boolean = true> {
   description?: T;
+  isClass?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -329,7 +331,7 @@ export interface SubjectsSelect<T extends boolean = true> {
  */
 export interface TasksSelect<T extends boolean = true> {
   description?: T;
-  class?: T;
+  learningGroup?: T;
   subject?: T;
   taskProgress?: T;
   updatedAt?: T;

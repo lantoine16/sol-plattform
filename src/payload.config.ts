@@ -9,7 +9,7 @@ import sharp from 'sharp'
 
 import { de } from '@payloadcms/translations/languages/de'
 import { Users } from './collections/Users'
-import { Classes } from './collections/classes'
+import { LearningGroups } from './collections/learning-groups'
 import { Subjects } from './collections/subjects'
 import { Tasks } from './collections/tasks'
 import { TaskProgress } from './collections/task-progress'
@@ -30,7 +30,7 @@ export default buildConfig({
       // Nav: '@/components/CustomNav',
     },
   },
-  collections: [Users, Classes, Subjects, Tasks, TaskProgress],
+  collections: [Users, LearningGroups, Subjects, Tasks, TaskProgress],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

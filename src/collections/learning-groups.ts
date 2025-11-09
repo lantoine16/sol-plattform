@@ -1,10 +1,10 @@
 import type { CollectionConfig } from 'payload'
 
-export const Classes: CollectionConfig = {
-  slug: 'classes',
+export const LearningGroups: CollectionConfig = {
+  slug: 'learning-groups',
   labels: {
-    singular: 'Klasse',
-    plural: 'Klassen',
+    singular: 'Lerngruppe',
+    plural: 'Lerngruppen',
   },
   admin: {
     useAsTitle: 'description',
@@ -23,6 +23,12 @@ export const Classes: CollectionConfig = {
         },
       }, */
     },
+    {
+      name: 'isClass',
+      label: 'Klasse',
+      type: 'checkbox',
+      defaultValue: false,
+    },
   ],
 }
 /*
@@ -31,7 +37,7 @@ export const Classes: CollectionConfig = {
   type: 'ui',
   admin: {
     components: {
-      Field: '@/components/BulkClassField',
+      Field: '@/components/BulkLearningGroupField',
     },
     disableListColumn: true,
     condition: (data) => {
@@ -40,3 +46,4 @@ export const Classes: CollectionConfig = {
     },
   },
 },*/
+

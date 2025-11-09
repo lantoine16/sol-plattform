@@ -8,7 +8,7 @@ export class TaskRepository {
   async find(options?: {
     where?: {
       subject?: { equals: string }
-      class?: { equals: string }
+      learningGroup?: { equals: string }
     }
     sort?: string
     limit?: number
@@ -38,17 +38,17 @@ export class TaskRepository {
   }
 
   /**
-   * Find tasks by class and subject
+   * Find tasks by learning group and subject
    */
-  async findByClassAndSubject(
-    classId: string,
+  async findByLearningGroupAndSubject(
+    learningGroupId: string,
     subjectId: string,
     options?: { sort?: string }
   ): Promise<Task[]> {
     const result = await this.find({
       where: {
         subject: { equals: subjectId },
-        class: { equals: classId },
+        learningGroup: { equals: learningGroupId },
       },
       sort: options?.sort || 'description',
     })

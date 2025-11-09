@@ -31,11 +31,11 @@ export const Users: CollectionConfig = {
       unique: true,
     },
     {
-      name: 'class',
-      label: 'Klasse',
+      name: 'learningGroup',
+      label: 'Lerngruppe',
       type: 'relationship',
       hasMany: true,
-      relationTo: 'classes',
+      relationTo: 'learning-groups',
       required: false,
     },
     // Email added by default
