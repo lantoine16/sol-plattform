@@ -65,10 +65,15 @@ export default async function HomePage({
   )?.tasks
 
   return (
-    <div>
-      <div className="flex flex-row items-center flex-wrap m-4 gap-2">
+    <div className="space-y-8">
+      <div className="flex flex-row items-center flex-wrap px-4 pt-4 gap-2">
         <picture>
-          <Image alt="IGS Ingelheim Logo" height={100} src="/igs-logo.png" width={100} />
+          <Image
+            alt="IGS Ingelheim Logo"
+            height={100}
+            src="/igs-logo.png"
+            width={100}
+          />
         </picture>
         <div className="grow text-center flex flex-col items-center">
           <h1 className="text-4xl font-bold"> SOL - Plattform</h1>
@@ -89,7 +94,7 @@ export default async function HomePage({
           <LogoutButton />
         </div>
       </div>
-      <div className="flex flex-row items-center flex-wrap mx-4 my-8 gap-2">
+      <div className="flex flex-row items-center flex-wrap px-4 gap-2">
         <SelectElement
           items={classes}
           selectedId={selectedClassId}
@@ -112,16 +117,18 @@ export default async function HomePage({
           itemName="Schüler"
         />
       </div>
-      <div className="container mx-auto">
+      <div className="px-4">
         {selectedUserId === '0' ? (
           <DataTable columns={tasks} data={usersWithTasks} />
         ) : (
           selectedUserId && (
-            <UserTasksOverview
-              tasks={tasks}
-              userId={selectedUserId}
-              userTaskStatuses={selectedUserTaskStatuses || []}
-            />
+            <div className="container mx-auto">
+              <UserTasksOverview
+                tasks={tasks}
+                userId={selectedUserId}
+                userTaskStatuses={selectedUserTaskStatuses || []}
+              />
+            </div>
           )
         )}
       </div>
