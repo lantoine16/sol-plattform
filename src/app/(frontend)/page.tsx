@@ -4,14 +4,13 @@ import React from 'react'
 
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/toggle-dark-mode'
-import { LogoutButton } from '@/components/LogoutButton'
 import { SelectElement, DataTable } from '@/components/features/dashboard'
 import { getCurrentUser } from '@/lib/data/payload-client'
 import { dashboardService } from '@/lib/services/dashboard.service'
 import { resolveIdFromSearchParams } from '@/lib/utils'
 import config from '@/payload.config'
 import { UserTasksOverview } from '@/components/features/user-tasks-overview'
-import { UserCog } from 'lucide-react'
+import { LogOut, UserCog } from 'lucide-react'
 export default async function HomePage({
   searchParams,
 }: {
@@ -68,12 +67,7 @@ export default async function HomePage({
     <div className="space-y-8">
       <div className="flex flex-row items-center flex-wrap px-4 pt-4 gap-2">
         <picture>
-          <Image
-            alt="IGS Ingelheim Logo"
-            height={100}
-            src="/igs-logo.png"
-            width={100}
-          />
+          <Image alt="IGS Ingelheim Logo" height={100} src="/igs-logo.png" width={100} />
         </picture>
         <div className="grow text-center flex flex-col items-center">
           <h1 className="text-4xl font-bold"> SOL - Plattform</h1>
@@ -91,7 +85,10 @@ export default async function HomePage({
               <Link href={payloadConfig.routes.admin}>Admin</Link>
             </Button>
           )}
-          <LogoutButton />
+          <Button className="w-full" variant="outline">
+            <LogOut className="h-4 w-4" />
+            <Link href="admin/logout">Abmelden</Link>
+          </Button>
         </div>
       </div>
       <div className="flex flex-row items-center flex-wrap px-4 gap-2">
