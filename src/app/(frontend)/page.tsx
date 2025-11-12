@@ -12,12 +12,19 @@ import { resolveIdFromSearchParams } from '@/lib/utils'
 import config from '@/payload.config'
 import { UserTasksOverview } from '@/components/features/user-tasks-overview'
 import { UserCog } from 'lucide-react'
+import { Params } from 'next/dist/server/request/params'
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>
+  searchParams: Params | undefined | Promise<Params>
 }) {
-  const searchParamsResolved = await searchParams
+  if (searchParams instanceof Promise) {
+    searchParams = await searchParams
+  }
+  if (!searchParams) {
+    return <div>No search params</div>
+  }
+  //const searchParamsResolved = await searchParams
   const payloadConfig = await config
   const user = await getCurrentUser()
 
@@ -28,12 +35,12 @@ export default async function HomePage({
   // Get learning groups and subjects
   const { learningGroups, subjects } = await dashboardService.getLearningGroupsAndSubjects()
   const selectedLearningGroupId = resolveIdFromSearchParams(
-    searchParamsResolved,
+    searchParams,
     learningGroupSearchParamName,
     learningGroups,
   )
   const selectedSubjectId = resolveIdFromSearchParams(
-    searchParamsResolved,
+    searchParams,
     subjectSearchParamName,
     subjects,
   )
@@ -52,7 +59,7 @@ export default async function HomePage({
   )
 
   const userIdSearchParamValue = resolveIdFromSearchParams(
-    searchParamsResolved,
+    searchParams,
     userSearchParamName,
     users,
   )

@@ -1,17 +1,9 @@
 'use client'
 import * as React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { ReactSelect, type ReactSelectOption } from '@payloadcms/ui'
 
 type Item = {
   id: string
@@ -40,12 +32,42 @@ export function SelectElement({
   // State für den aktuellen Wert, damit die UI direkt auf Änderungen reagiert
   const [proovedSelectedId, setProovedSelectedId] = useState<string>('0')
 
+  const options = useMemo<ReactSelectOption[]>(() => {
+    return items.map((item) => ({
+      label: item.description,
+      value: item.id,
+    }))
+  }, [items])
+
+  const updateSelection = useCallback(
+    (id: string, { syncParams = true }: { syncParams?: boolean } = {}) => {
+      setProovedSelectedId(id)
+
+      if (!syncParams) {
+        return
+      }
+
+      const params = new URLSearchParams(searchParams)
+      if (id === '0' || id === '') {
+        params.delete(searchParamName)
+      } else {
+        params.set(searchParamName, String(id))
+      }
+
+      const query = params.toString()
+      replace(query ? `${pathname}?${query}` : pathname)
+    },
+    [pathname, replace, searchParamName, searchParams],
+  )
+
   // Aktualisiere den State, wenn sich selectedId oder items ändern
   useEffect(() => {
     if (selectedId !== undefined && selectedId !== '0') {
       // Prüfe, ob der selectedId in den items vorhanden ist, wenn ja ist alles in Ordnung
       if (items.find((item) => item.id === selectedId)) {
-        setProovedSelectedId(selectedId)
+        if (selectedId !== proovedSelectedId) {
+          updateSelection(selectedId, { syncParams: false })
+        }
         return
       }
     }
@@ -53,37 +75,44 @@ export function SelectElement({
     // wenn die neue SelectedId nicht der aktuellen SelectedId ist, dann update diese in den SearchParams
     // es sollte der erste in den Items die ID 0 haben und daher wird der SearchParam gelöscht
     if (newSelectedId !== proovedSelectedId) {
-      handleChange(newSelectedId)
+      updateSelection(newSelectedId)
     }
-    setProovedSelectedId(newSelectedId)
-  }, [selectedId, items])
+  }, [items, proovedSelectedId, selectedId, updateSelection])
 
-  const handleChange = (id: string) => {
-    const params = new URLSearchParams(searchParams)
-    if (id === '0') {
-      // Remove the search param to clear selection
-      params.delete(searchParamName)
-    } else {
-      params.set(searchParamName, String(id))
+  const selectedOption = useMemo(() => {
+    return options.find((option) => option.value === proovedSelectedId)
+  }, [options, proovedSelectedId])
+
+  const handleSelectChange = (option: ReactSelectOption | ReactSelectOption[]) => {
+    if (Array.isArray(option)) {
+      const firstValue = option[0]?.value
+      const nextValue =
+        typeof firstValue === 'string'
+          ? firstValue
+          : String((firstValue as string | number | undefined) ?? '0')
+      updateSelection(nextValue)
+      return
     }
-    replace(`${pathname}?${params.toString()}`)
+
+    const value = option?.value
+    const nextValue =
+      typeof value === 'string' ? value : String((value as string | number | undefined) ?? '0')
+    updateSelection(nextValue)
   }
 
   return (
-    <Select value={proovedSelectedId} onValueChange={handleChange}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>{itemName}</SelectLabel>
-          {items.map((item) => (
-            <SelectItem key={item.id} value={String(item.id)}>
-              {item.description}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <div className="min-w-[180px]">
+      <ReactSelect
+        className="react-select-dashboard"
+        options={options}
+        value={selectedOption}
+        placeholder={placeholder}
+        isClearable={false}
+        onChange={handleSelectChange}
+        customProps={{
+          valueContainerLabel: itemName,
+        }}
+      />
+    </div>
   )
 }

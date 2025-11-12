@@ -190,8 +190,9 @@ export interface TaskProgress {
 export interface Task {
   id: string;
   description: string;
-  learningGroup: (string | LearningGroup)[];
   subject: string | Subject;
+  learningGroup?: (string | LearningGroup)[] | null;
+  user?: (string | User)[] | null;
   taskProgress?: {
     docs?: (string | TaskProgress)[];
     hasNextPage?: boolean;
@@ -331,8 +332,9 @@ export interface SubjectsSelect<T extends boolean = true> {
  */
 export interface TasksSelect<T extends boolean = true> {
   description?: T;
-  learningGroup?: T;
   subject?: T;
+  learningGroup?: T;
+  user?: T;
   taskProgress?: T;
   updatedAt?: T;
   createdAt?: T;

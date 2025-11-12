@@ -25,9 +25,16 @@ export default buildConfig({
     },
     // Custom Admin Layout Components
     components: {
-      actions: ['@/components/admin/FrontendLink'],
-      // beforeNavLinks: [],
+      //actions: ['@/components/admin/FrontendLink'],
+      beforeNavLinks: ['@/components/admin/CustomNavLinks'],
       // Nav: '@/components/CustomNav',
+      views: {
+        // Frontend View - zeigt die Frontend-Seite im Admin-Bereich
+        frontendView: {
+          Component: '@/components/admin/MyCustomView',
+          path: '/analytics',
+        },
+      },
     },
   },
   collections: [Users, LearningGroups, Subjects, Tasks, TaskProgress],
