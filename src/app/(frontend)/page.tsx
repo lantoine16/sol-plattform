@@ -100,29 +100,6 @@ export default async function HomePage({
   console.log(tasksByUser)
   return (
     <div className="space-y-8">
-      <div className="flex flex-row items-center flex-wrap px-4 pt-4 gap-2">
-        <picture>
-          <Image alt="IGS Ingelheim Logo" height={100} src="/igs-logo.png" width={100} />
-        </picture>
-        <div className="grow text-center flex flex-col items-center">
-          <h1 className="text-4xl font-bold"> SOL - Plattform</h1>
-          {user && (
-            <h2 className="text-xl">
-              Willkommen {user.firstname} {user.lastname}
-            </h2>
-          )}
-        </div>
-        <div className="flex flex-col items-end gap-1">
-          <ModeToggle />
-          {user?.role !== 'pupil' && (
-            <Button className="w-full" variant="outline">
-              <UserCog className="h-4 w-4" />
-              <Link href={payloadConfig.routes.admin}>Admin</Link>
-            </Button>
-          )}
-          <LogoutButton />
-        </div>
-      </div>
       <div className="flex flex-row items-center flex-wrap px-4 gap-2">
         <SelectElement
           items={learningGroups}
