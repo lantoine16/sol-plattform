@@ -8,7 +8,7 @@ export const TaskProgress: CollectionConfig = {
     plural: 'Aufgabenfortschritte',
   },
   admin: {
-    useAsTitle: 'id',
+    useAsTitle: 'task',
   },
   fields: [
     {

@@ -71,6 +71,56 @@ export class TaskProgressRepository {
   }
 
   /**
+   * Find task progress entries for users filtered by subject
+   * Returns all tasks with their progress for the given users that belong to the specified subject
+   */
+  async findByUsersAndSubject(
+    userIds: string[],
+    subjectId: string,
+    options?: { depth?: number },
+  ): Promise<TaskProgress[]> {
+    if (userIds.length === 0 || !subjectId) {
+      return []
+    }
+
+    const payload = await getPayloadClient()
+
+    // 1. Finde alle Tasks, die zu diesem Fach gehören
+    const tasksResult = await payload.find({
+      collection: 'tasks',
+      where: {
+        subject: {
+          equals: subjectId,
+        },
+      },
+      limit: 10000, // Ausreichend groß für alle Tasks
+    })
+
+    const taskIds = tasksResult.docs.map((task) => task.id)
+
+    if (taskIds.length === 0) {
+      return []
+    }
+
+    // 2. Finde alle TaskProgress-Einträge für diese Tasks und User
+    const result = await this.find({
+      where: {
+        and: [
+          {
+            user: { in: userIds },
+          },
+          {
+            task: { in: taskIds },
+          },
+        ],
+      },
+      depth: options?.depth || 2,
+    })
+
+    return result.docs
+  }
+
+  /**
    * Create a new task progress entry
    */
   async create(data: {

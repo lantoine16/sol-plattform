@@ -5,14 +5,15 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/toggle-dark-mode'
 import { LogoutButton } from '@/components/LogoutButton'
-import { SelectElement, DataTable } from '@/components/features/dashboard'
+import { SelectElement } from '@/components/features/dashboard'
 import { getCurrentUser } from '@/lib/data/payload-client'
 import { dashboardService } from '@/lib/services/dashboard.service'
+import { userRepository } from '@/lib/data/repositories/user.repository'
 import { resolveIdFromSearchParams } from '@/lib/utils'
 import config from '@/payload.config'
-import { UserTasksOverview } from '@/components/features/user-tasks-overview'
 import { UserCog } from 'lucide-react'
 import { Params } from 'next/dist/server/request/params'
+import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 export default async function HomePage({
   searchParams,
 }: {
@@ -30,7 +31,6 @@ export default async function HomePage({
 
   const learningGroupSearchParamName = 'learningGroup'
   const subjectSearchParamName = 'subject'
-  const userSearchParamName = 'user'
 
   // Get learning groups and subjects
   const { learningGroups, subjects } = await dashboardService.getLearningGroupsAndSubjects()
@@ -45,32 +45,13 @@ export default async function HomePage({
     subjects,
   )
 
+  const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '')
   // Get dashboard data based on filters
-  const { tasks, users: usersWithTasks } = await dashboardService.getUsersWithTasks({
-    learningGroupId: selectedLearningGroupId,
-    subjectId: selectedSubjectId,
-  })
-
-  const users = [{ id: '0', description: 'Alle Schüler' }].concat(
-    usersWithTasks.map((user) => ({
-      id: user.user_id,
-      description: `${user.firstname} ${user.lastname}`,
-    })),
+  const taskProgress = await taskProgressRepository.findByUsersAndSubject(
+    users.map((user) => user.id), selectedSubjectId ?? '',
   )
 
-  const userIdSearchParamValue = resolveIdFromSearchParams(
-    searchParams,
-    userSearchParamName,
-    users,
-  )
-
-  const selectedUserId =
-    usersWithTasks.find((user) => user.user_id === userIdSearchParamValue)?.user_id || users[0]?.id
-
-  const selectedUserTaskStatuses = usersWithTasks.find(
-    (user) => user.user_id === selectedUserId,
-  )?.tasks
-
+  console.log(taskProgress)
   return (
     <div className="space-y-8">
       <div className="flex flex-row items-center flex-wrap px-4 pt-4 gap-2">
@@ -111,28 +92,9 @@ export default async function HomePage({
           searchParamName={subjectSearchParamName}
           itemName="Fach"
         />
-        <SelectElement
-          items={users}
-          selectedId={selectedUserId}
-          placeholder="Wähle einen Schüler"
-          searchParamName={userSearchParamName}
-          itemName="Schüler"
-        />
       </div>
       <div className="px-4">
-        {selectedUserId === '0' ? (
-          <DataTable columns={tasks} data={usersWithTasks} />
-        ) : (
-          selectedUserId && (
-            <div className="container mx-auto">
-              <UserTasksOverview
-                tasks={tasks}
-                userId={selectedUserId}
-                userTaskStatuses={selectedUserTaskStatuses || []}
-              />
-            </div>
-          )
-        )}
+       {/* <DataTable columns={tasks} data={usersWithTasks} /> */}
       </div>
     </div>
   )
