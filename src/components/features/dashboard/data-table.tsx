@@ -1,20 +1,11 @@
 'use client'
 
 import { useMemo } from 'react'
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import type { Task } from '@/payload-types'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import type { UserWithTasks } from '@/lib/types'
 import { getStatusLabel } from '@/domain/constants/task-status.constants'
 
-export function DataTable<TableData>({
+export function DataTable({
   columns,
   data,
 }: {
@@ -23,35 +14,10 @@ export function DataTable<TableData>({
   // This receives the pupils array
   data: UserWithTasks[]
 }) {
-  // Build table columns: Nachname, Vorname, then one column per task
-  const builtColumns: ColumnDef<TableData>[] = useMemo(
-    () => [
-      {
-        accessorKey: 'lastname',
-        header: 'Nachname',
-      },
-      {
-        accessorKey: 'firstname',
-        header: 'Vorname',
-      },
-      ...columns.map(
-        (task: Task): ColumnDef<TableData> => ({
-          accessorKey: String(task.id),
-          header: task.description,
-          cell: ({ getValue }) => {
-            const status = getValue() as string | null
-            return getStatusLabel(status) // Zeige Label statt Wert
-          },
-        }),
-      ),
-    ],
-    [columns],
-  )
-
   // Transformiere die Daten: Jede Task-ID wird zu einer Eigenschaft mit dem Status als Wert
   const tableData = useMemo(
     () =>
-      data.map((user) => {
+      data.map((user, rowIndex) => {
         // Erstelle ein Objekt mit Task-IDs als Keys und Status als Values
         const taskStatusMap = user.tasks.reduce(
           (acc, task) => {
@@ -62,12 +28,15 @@ export function DataTable<TableData>({
         )
 
         return {
+          id: user.userId,
+          rowIndex,
           lastname: user.lastname,
           firstname: user.firstname,
-          // Füge für jede Task-ID eine Eigenschaft hinzu (undefined, wenn kein Status vorhanden)
+          // Füge für jede Task-ID eine Eigenschaft hinzu (null, wenn kein Status vorhanden)
           ...columns.reduce(
             (acc, task) => {
-              acc[String(task.id)] = taskStatusMap[String(task.id)] || null
+              const status = taskStatusMap[String(task.id)] || null
+              acc[String(task.id)] = status ? getStatusLabel(status) : null
               return acc
             },
             {} as Record<string, string | null>,
@@ -77,50 +46,47 @@ export function DataTable<TableData>({
     [data, columns],
   )
 
-  const table = useReactTable({
-    data: tableData as TableData[],
-    columns: builtColumns,
-    getCoreRowModel: getCoreRowModel(),
-  })
-
   return (
-    <div className="overflow-hidden rounded-md border">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                )
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
+    <div className="table">
+      <table cellPadding="0" cellSpacing="0">
+        <thead>
+          <tr>
+            <th id="heading-lastname">Nachname</th>
+            <th id="heading-firstname">Vorname</th>
+            {columns.map((task) => (
+              <th key={task.id} id={`heading-${String(task.id).replace(/\./g, '__')}`}>
+                {task.description}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {tableData.length > 0 ? (
+            tableData.map((row) => (
+              <tr key={row.id} className={`row-${row.rowIndex + 1}`}>
+                <td className="cell-lastname">{row.lastname}</td>
+                <td className="cell-firstname">{row.firstname}</td>
+                {columns.map((task) => {
+                  const taskId = String(task.id)
+                  const rowData = row as Record<string, string | null | number>
+                  const cellValue = rowData[taskId]
+                  return (
+                    <td key={task.id} className={`cell-${taskId.replace(/\./g, '__')}`}>
+                      {typeof cellValue === 'string' ? cellValue : '-'}
+                    </td>
+                  )
+                })}
+              </tr>
             ))
           ) : (
-            <TableRow>
-              <TableCell colSpan={builtColumns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
+            <tr>
+              <td colSpan={columns.length + 2} style={{ textAlign: 'center', padding: '2rem' }}>
+                Keine Daten vorhanden.
+              </td>
+            </tr>
           )}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     </div>
   )
 }
