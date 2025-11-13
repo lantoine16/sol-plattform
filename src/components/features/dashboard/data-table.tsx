@@ -55,7 +55,7 @@ export function DataTable<TableData>({
         // Erstelle ein Objekt mit Task-IDs als Keys und Status als Values
         const taskStatusMap = user.tasks.reduce(
           (acc, task) => {
-            acc[String(task.task_id)] = task.status
+            acc[String(task.taskId)] = task.status
             return acc
           },
           {} as Record<string, string>,

@@ -5,13 +5,14 @@
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 
 export interface UserWithTasks {
-  user_id: string
+  userId: string
   firstname: string
   lastname: string
   tasks: UserTaskStatus[]
 }
 
 export interface UserTaskStatus {
-  task_id: string
+  taskId: string
   status: TaskStatusValue
+  helpNeeded?: boolean
 }

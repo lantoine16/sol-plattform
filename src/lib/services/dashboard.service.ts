@@ -71,13 +71,13 @@ export class DashboardService {
       // Transform to the desired structure
       const userTasks = userTaskProgress.map((tp) => {
         return {
-          task_id: typeof tp.task === 'object' ? tp.task?.id : tp.task,
+          taskId: typeof tp.task === 'object' ? tp.task?.id : tp.task,
           status: tp.status as UserWithTasks['tasks'][0]['status'],
         }
       })
 
       return {
-        user_id: user.id,
+        userId: user.id,
         firstname: user.firstname,
         lastname: user.lastname,
         tasks: userTasks,

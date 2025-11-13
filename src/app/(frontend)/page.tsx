@@ -5,7 +5,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { ModeToggle } from '@/components/toggle-dark-mode'
 import { LogoutButton } from '@/components/LogoutButton'
-import { SelectElement } from '@/components/features/dashboard'
+import { SelectElement, DataTable } from '@/components/features/dashboard'
 import { getCurrentUser } from '@/lib/data/payload-client'
 import { dashboardService } from '@/lib/services/dashboard.service'
 import { userRepository } from '@/lib/data/repositories/user.repository'
@@ -14,6 +14,7 @@ import config from '@/payload.config'
 import { UserCog } from 'lucide-react'
 import { Params } from 'next/dist/server/request/params'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
+import type { UserWithTasks } from '@/lib/types'
 export default async function HomePage({
   searchParams,
 }: {
@@ -47,11 +48,56 @@ export default async function HomePage({
 
   const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '')
   // Get dashboard data based on filters
-  const taskProgress = await taskProgressRepository.findByUsersAndSubject(
-    users.map((user) => user.id), selectedSubjectId ?? '',
+  const taskProgressEntries = await taskProgressRepository.findByUsersAndSubject(
+    users.map((user) => user.id),
+    selectedSubjectId ?? '',
+    { depth: 2 }, // Relationships auflösen (user und task als Objekte)
   )
 
-  console.log(taskProgress)
+  // Extrahiere eindeutige Tasks aus den TaskProgress-Einträgen
+  const uniqueTaskIds = new Set(
+    taskProgressEntries.map((tp) => {
+      return typeof tp.task === 'object' ? tp.task?.id || '' : tp.task
+    }),
+  )
+
+  // Hole die vollständigen Task-Objekte (ohne Duplikate)
+  const tasks = Array.from(uniqueTaskIds)
+    .map((taskId) => {
+      // Finde das Task-Objekt aus den TaskProgress-Einträgen
+      const taskProgress = taskProgressEntries.find((tp) => {
+        const tpTaskId = typeof tp.task === 'object' ? tp.task?.id || '' : tp.task
+        return tpTaskId === taskId
+      })
+      return typeof taskProgress?.task === 'object' ? taskProgress.task : null
+    })
+    .filter((task): task is NonNullable<typeof task> => task !== null)
+
+  const tasksByUser: UserWithTasks[] = users.map((user) => {
+    // Finde alle TaskProgress-Einträge für diesen User
+    const userTaskProgress = taskProgressEntries.filter((tp) => {
+      const userId = typeof tp.user === 'object' ? tp.user?.id : tp.user
+      return userId === user.id
+    })
+
+    // Transformiere zu der gewünschten Struktur
+    const tasks = userTaskProgress.map((tp) => {
+      return {
+        taskId: typeof tp.task === 'object' ? tp.task?.id || '' : tp.task,
+        status: tp.status,
+        helpNeeded: tp.helpNeeded || false,
+      }
+    })
+
+    return {
+      userId: user.id,
+      lastname: user.lastname,
+      firstname: user.firstname,
+      tasks,
+    }
+  })
+
+  console.log(tasksByUser)
   return (
     <div className="space-y-8">
       <div className="flex flex-row items-center flex-wrap px-4 pt-4 gap-2">
@@ -94,7 +140,7 @@ export default async function HomePage({
         />
       </div>
       <div className="px-4">
-       {/* <DataTable columns={tasks} data={usersWithTasks} /> */}
+        <DataTable columns={tasks} data={tasksByUser} />
       </div>
     </div>
   )
