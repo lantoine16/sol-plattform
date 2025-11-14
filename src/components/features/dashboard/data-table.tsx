@@ -1,9 +1,10 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Task } from '@/payload-types'
 import type { UserWithTasks } from '@/lib/types'
 import { getStatusLabel } from '@/domain/constants/task-status.constants'
+import { StudentDetailsModal } from './student-details-modal'
 
 export function DataTable({
   columns,
@@ -14,6 +15,30 @@ export function DataTable({
   // This receives the pupils array
   data: UserWithTasks[]
 }) {
+  const [selectedUser, setSelectedUser] = useState<UserWithTasks | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Update selectedUser when data changes (e.g. after router.refresh)
+  useEffect(() => {
+    if (selectedUser) {
+      const updatedUser = data.find((u) => u.userId === selectedUser.userId)
+      if (updatedUser) {
+        setSelectedUser(updatedUser)
+      }
+    }
+    //console.log('data-table', data)
+    //console.log('selectedUser', selectedUser)
+  }, [data, selectedUser])
+
+  const handleRowClick = (user: UserWithTasks) => {
+    setSelectedUser(user)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedUser(null)
+  }
   // Transformiere die Daten: Jede Task-ID wird zu einer Eigenschaft mit dem Status als Wert
   const tableData = useMemo(
     () =>
@@ -47,46 +72,62 @@ export function DataTable({
   )
 
   return (
-    <div className="table">
-      <table cellPadding="0" cellSpacing="0">
-        <thead>
-          <tr>
-            <th id="heading-lastname">Nachname</th>
-            <th id="heading-firstname">Vorname</th>
-            {columns.map((task) => (
-              <th key={task.id} id={`heading-${String(task.id).replace(/\./g, '__')}`}>
-                {task.description}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {tableData.length > 0 ? (
-            tableData.map((row) => (
-              <tr key={row.id} className={`row-${row.rowIndex + 1}`}>
-                <td className="cell-lastname">{row.lastname}</td>
-                <td className="cell-firstname">{row.firstname}</td>
-                {columns.map((task) => {
-                  const taskId = String(task.id)
-                  const rowData = row as Record<string, string | null | number>
-                  const cellValue = rowData[taskId]
-                  return (
-                    <td key={task.id} className={`cell-${taskId.replace(/\./g, '__')}`}>
-                      {typeof cellValue === 'string' ? cellValue : '-'}
-                    </td>
-                  )
-                })}
-              </tr>
-            ))
-          ) : (
+    <>
+      <div className="table">
+        <table cellPadding="0" cellSpacing="0">
+          <thead>
             <tr>
-              <td colSpan={columns.length + 2} style={{ textAlign: 'center', padding: '2rem' }}>
-                Keine Daten vorhanden.
-              </td>
+              <th id="heading-lastname">Nachname</th>
+              <th id="heading-firstname">Vorname</th>
+              {columns.map((task) => (
+                <th key={task.id} id={`heading-${String(task.id).replace(/\./g, '__')}`}>
+                  {task.description}
+                </th>
+              ))}
             </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {tableData.length > 0 ? (
+              tableData.map((row) => {
+                const user = data.find((u) => u.userId === row.id)
+                return (
+                  <tr
+                    key={row.id}
+                    className={`row-${row.rowIndex + 1}`}
+                    onClick={() => user && handleRowClick(user)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <td className="cell-lastname">{row.lastname}</td>
+                    <td className="cell-firstname">{row.firstname}</td>
+                    {columns.map((task) => {
+                      const taskId = String(task.id)
+                      const rowData = row as Record<string, string | null | number>
+                      const cellValue = rowData[taskId]
+                      return (
+                        <td key={task.id} className={`cell-${taskId.replace(/\./g, '__')}`}>
+                          {typeof cellValue === 'string' ? cellValue : '-'}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })
+            ) : (
+              <tr>
+                <td colSpan={columns.length + 2} style={{ textAlign: 'center', padding: '2rem' }}>
+                  Keine Daten vorhanden.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <StudentDetailsModal
+        tasks={columns}
+        user={selectedUser}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+    </>
   )
 }

@@ -36,7 +36,7 @@ export class UserTaskStatusService {
         inProgressTasks.push(task)
       } else if (status === 'finished') {
         finishedTasks.push(task)
-      } else {
+      } else if (status === 'not-started')  {
         // Includes "not-started", "need-help", and tasks without a status
         notStartedTasks.push(task)
       }

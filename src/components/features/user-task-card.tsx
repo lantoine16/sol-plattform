@@ -43,28 +43,28 @@ export function UserTaskCard({
   }
 
   return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="overflow-hidden text-ellipsis">{description}</CardTitle>
-          <CardDescription className="flex gap-2 mt-1">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => previousStatus && handleStatusChange(previousStatus)}
-              disabled={isLoading || !previousStatus}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => nextStatus && handleStatusChange(nextStatus)}
-              disabled={isLoading || !nextStatus}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </CardDescription>
-        </CardHeader>
-      </Card>
+    <Card>
+      <CardHeader>
+        <CardTitle className="overflow-hidden text-ellipsis">{description}</CardTitle>
+        <CardDescription className="flex gap-2 mt-1">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => previousStatus && handleStatusChange(previousStatus)}
+            disabled={isLoading || !previousStatus}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => nextStatus && handleStatusChange(nextStatus)}
+            disabled={isLoading || !nextStatus}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </CardDescription>
+      </CardHeader>
+    </Card>
   )
 }

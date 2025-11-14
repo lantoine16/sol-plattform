@@ -97,7 +97,6 @@ export default async function HomePage({
     }
   })
 
-  console.log(tasksByUser)
   return (
     <div className="space-y-8">
       <div className="flex flex-row items-center flex-wrap px-4 gap-2">
