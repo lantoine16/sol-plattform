@@ -52,6 +52,6 @@ export default buildConfig({
     // storage-adapter-placeholder
   ],
   i18n: {
-    supportedLanguages: { de },
+    supportedLanguages: {   de},
   },
 })
