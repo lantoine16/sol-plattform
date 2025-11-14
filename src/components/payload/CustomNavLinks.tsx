@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 
 export const AfterNavLinks = () => {
   const pathname = usePathname()
-  const href = '/admin/dashboard'
+  const href = '/dashboard'
   const active = pathname.includes(href)
 
   return (
