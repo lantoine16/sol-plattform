@@ -21,7 +21,7 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: {
-      baseDir: path.resolve(dirname),
+      baseDir: path.resolve(dirname, 'app/(payload)'),
     },
     // Custom Admin Layout Components
     components: {
@@ -36,6 +36,9 @@ export default buildConfig({
         },
       },
     },
+  },
+  routes: {
+    admin: '/',
   },
   collections: [Users, LearningGroups, Subjects, Tasks, TaskProgress],
   editor: lexicalEditor(),
