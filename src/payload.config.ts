@@ -26,13 +26,13 @@ export default buildConfig({
     // Custom Admin Layout Components
     components: {
       //actions: ['@/components/admin/FrontendLink'],
-      beforeNavLinks: ['@/components/admin/CustomNavLinks'],
+      beforeNavLinks: ['@/components/payload/CustomNavLinks'],
       // Nav: '@/components/CustomNav',
       views: {
         // Frontend View - zeigt die Frontend-Seite im Admin-Bereich
         frontendView: {
-          Component: '@/components/admin/MyCustomView',
-          path: '/analytics',
+          Component: '@/components/features/dashboard/DashboardView',
+          path: '/dashboard',
         },
       },
     },

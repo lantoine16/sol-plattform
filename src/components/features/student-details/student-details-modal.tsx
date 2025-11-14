@@ -3,7 +3,7 @@
 import type { UserWithTasks } from '@/lib/types'
 import type { Task } from '@/payload-types'
 import { Button } from '@payloadcms/ui'
-import { UserTasksOverview } from '@/components/features/user-tasks-overview'
+import { UserTasksOverview } from './user-tasks-overview'
 
 type StudentDetailsModalProps = {
   tasks: Task[]

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 
 export const AfterNavLinks = () => {
   const pathname = usePathname()
-  const href = '/admin/analytics'
+  const href = '/admin/dashboard'
   const active = pathname.includes(href)
 
   return (
@@ -17,7 +17,7 @@ export const AfterNavLinks = () => {
         style={{ cursor: active ? 'text' : 'pointer', pointerEvents: active ? 'none' : 'auto' }}
       >
         {active && <div className="nav__link-indicator" />}
-        <span className="nav__link-label">Analytics</span>
+        <span className="nav__link-label">Dashboard</span>
       </Link>
     </NavGroup>
   )

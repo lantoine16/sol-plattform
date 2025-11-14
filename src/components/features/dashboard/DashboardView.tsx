@@ -1,24 +1,29 @@
+import type { AdminViewServerProps } from 'payload'
 
+import { DefaultTemplate } from '@payloadcms/next/templates'
+import { Gutter, SetStepNav, StepNavItem } from '@payloadcms/ui'
 import React from 'react'
-
-import { SelectElement, DataTable } from '@/components/features/dashboard'
+import { resolveIdFromSearchParams } from '@/lib/utils'
 import { dashboardService } from '@/lib/services/dashboard.service'
 import { userRepository } from '@/lib/data/repositories/user.repository'
-import { resolveIdFromSearchParams } from '@/lib/utils'
-import { Params } from 'next/dist/server/request/params'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
+import { SelectElement, DataTable } from '@/components/features/dashboard'
 import type { UserWithTasks } from '@/lib/types'
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Params | undefined | Promise<Params>
-}) {
-  if (searchParams instanceof Promise) {
-    searchParams = await searchParams
+export async function DashboardView({ initPageResult, params, searchParams }: AdminViewServerProps) {
+  if (!initPageResult.req.user) {
+    return <p>You must be logged in to view this page.</p>
   }
+
   if (!searchParams) {
     return <div>No search params</div>
   }
+
+  const steps: StepNavItem[] = [
+    {
+      url: '/dashboard',
+      label: 'Dashboard',
+    },
+  ]
 
   const learningGroupSearchParamName = 'learningGroup'
   const subjectSearchParamName = 'subject'
@@ -88,26 +93,42 @@ export default async function HomePage({
   })
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-row items-center flex-wrap px-4 gap-2">
-        <SelectElement
-          items={learningGroups}
-          selectedId={selectedLearningGroupId}
-          placeholder="Wähle eine Lerngruppe"
-          searchParamName={learningGroupSearchParamName}
-          itemName="Lerngruppe"
-        />
-        <SelectElement
-          items={subjects}
-          selectedId={selectedSubjectId}
-          placeholder="Wähle ein Fach"
-          searchParamName={subjectSearchParamName}
-          itemName="Fach"
-        />
-      </div>
-      <div className="px-4">
-        <DataTable columns={tasks} data={tasksByUser} />
-      </div>
-    </div>
+    <DefaultTemplate
+      visibleEntities={initPageResult.visibleEntities}
+      i18n={initPageResult.req.i18n}
+      payload={initPageResult.req.payload}
+      locale={initPageResult.locale}
+      params={params}
+      permissions={initPageResult.permissions}
+      user={initPageResult.req.user || undefined}
+      searchParams={searchParams}
+    >
+      <SetStepNav nav={steps} />
+      <Gutter>
+        <div className="space-y-8">
+          <div className="flex flex-row items-center flex-wrap px-4 gap-2">
+            <SelectElement
+              items={learningGroups}
+              selectedId={selectedLearningGroupId}
+              placeholder="Wähle eine Lerngruppe"
+              searchParamName={learningGroupSearchParamName}
+              itemName="Lerngruppe"
+            />
+            <SelectElement
+              items={subjects}
+              selectedId={selectedSubjectId}
+              placeholder="Wähle ein Fach"
+              searchParamName={subjectSearchParamName}
+              itemName="Fach"
+            />
+          </div>
+          <div className="px-4">
+            <DataTable columns={tasks} data={tasksByUser} />
+          </div>
+        </div>
+      </Gutter>
+    </DefaultTemplate>
   )
 }
+
+export default DashboardView

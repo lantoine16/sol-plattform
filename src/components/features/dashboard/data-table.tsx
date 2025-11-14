@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Task } from '@/payload-types'
 import type { UserWithTasks } from '@/lib/types'
 import { getStatusLabel } from '@/domain/constants/task-status.constants'
-import { StudentDetailsModal } from './student-details-modal'
+import { StudentDetailsModal } from '../student-details/student-details-modal'
 
 export function DataTable({
   columns,

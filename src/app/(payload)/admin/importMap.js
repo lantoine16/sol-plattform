@@ -1,7 +1,7 @@
-import { default as default_2933d2a8f89709880c8e9b62dfcc7d84 } from '@/components/admin/CustomNavLinks'
-import { default as default_235d4f9d1ef1e6d059c3712fe8c6029f } from '@/components/admin/MyCustomView'
+import { default as default_eabe176a4bb30ac84e080835885bf7b7 } from '@/components/payload/CustomNavLinks'
+import { default as default_2e5a6edca98c58ee3600c85dc8cbddc9 } from '@/components/features/dashboard/DashboardView'
 
 export const importMap = {
-  "@/components/admin/CustomNavLinks#default": default_2933d2a8f89709880c8e9b62dfcc7d84,
-  "@/components/admin/MyCustomView#default": default_235d4f9d1ef1e6d059c3712fe8c6029f
+  "@/components/payload/CustomNavLinks#default": default_eabe176a4bb30ac84e080835885bf7b7,
+  "@/components/features/dashboard/DashboardView#default": default_2e5a6edca98c58ee3600c85dc8cbddc9
 }
