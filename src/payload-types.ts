@@ -165,8 +165,7 @@ export interface User {
  */
 export interface LearningGroup {
   id: string;
-  description: string;
-  isClass?: boolean | null;
+  description?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -207,7 +206,7 @@ export interface Task {
  */
 export interface Subject {
   id: string;
-  description: string;
+  description?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -313,7 +312,6 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface LearningGroupsSelect<T extends boolean = true> {
   description?: T;
-  isClass?: T;
   updatedAt?: T;
   createdAt?: T;
 }
