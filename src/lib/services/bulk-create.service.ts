@@ -3,7 +3,7 @@ import { getPayloadClient } from '@/lib/data/payload-client'
 import { userRepository } from '../data/repositories/user.repository'
 import { taskRepository } from '../data/repositories/task.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
-import { TaskProgress } from '@/payload-types'
+import { Task, TaskProgress } from '@/payload-types'
 
 type BulkCreateOptions = {
   collection: string
@@ -82,7 +82,6 @@ export async function processBulkTaskCreate({
   learningGroup,
   user,
 }: BulkTaskCreateOptions): Promise<TaskProgress[]> {
-
   // Teile die Eingabe in Zeilen auf und filtere leere Zeilen
   const taskDescriptions = bulkData
     .split('\n')
@@ -97,10 +96,59 @@ export async function processBulkTaskCreate({
     description: taskDescriptions,
     subject,
     learningGroups: learningGroup,
-    users: user
+    users: user,
   })
 
+  const userIds = await getUsersFromLearningGroupsAndUsers(learningGroup, user)
 
+  const createdTaskProgresses = await taskProgressRepository.createTaskProgresses({
+    user: userIds,
+    task: createdTasks.map((task) => task.id),
+  })
+
+  // Gib die IDs der erstellten Tasks zurück
+  return createdTaskProgresses
+}
+
+export async function UpdateTaskProgresses(task: Task): Promise<void> {
+  // Normalisiere learningGroup: extrahiere IDs aus LearningGroup-Objekten
+  // task.learningGroup ist immer ein Array oder null/undefined
+  const learningGroupIds: string[] | null | undefined = task.learningGroup
+    ? task.learningGroup.map((lg) => (typeof lg === 'string' ? lg : lg.id))
+    : null
+
+  // Normalisiere user: extrahiere IDs aus User-Objekten
+  // task.user ist immer ein Array oder null/undefined
+  const userIds: string[] | null | undefined = task.user
+    ? task.user.map((u) => (typeof u === 'string' ? u : u.id))
+    : null
+
+    //userIds von den ausgewählten Schülern und den Schülern aus den Lerngruppen
+  const allUserIdsArrayToAssignToTask = await getUsersFromLearningGroupsAndUsers(learningGroupIds, userIds)
+
+  //für diese Schüler existiert ein Aufgabenfortschritt
+  const existingTaskProgresses = await taskProgressRepository.findByUserAndTask(task.id)
+  const userIdsWithExistingTaskProgresses = existingTaskProgresses?.map((taskProgress) => (typeof taskProgress.user === 'string' ? taskProgress.user : taskProgress.user.id))
+  
+  //für diese Schüler muss ein Aufgabenfortschritt erstellt werden
+  const userIdsWithoutExistingTaskProgresses = allUserIdsArrayToAssignToTask?.filter((userId) => !userIdsWithExistingTaskProgresses?.includes(userId))
+  //für diese Schüler muss der Aufgabenfortschritt gelöscht werden
+  const userIdsWithTaskProgressToDelete = userIdsWithExistingTaskProgresses?.filter((userId) => !allUserIdsArrayToAssignToTask?.includes(userId))
+  if (userIdsWithoutExistingTaskProgresses?.length > 0) {
+    await taskProgressRepository.createTaskProgresses({
+      user: userIdsWithoutExistingTaskProgresses,
+      task: [task.id],
+    })
+  }
+  if (userIdsWithTaskProgressToDelete && userIdsWithTaskProgressToDelete?.length > 0) {
+    await taskProgressRepository.deleteTaskProgresses(userIdsWithTaskProgressToDelete, task.id)
+  }
+}
+
+export async function getUsersFromLearningGroupsAndUsers(
+  learningGroup: string[] | string | null | undefined,
+  user: string[] | string | null | undefined,
+): Promise<string[]> {
   // Sammle alle UserIDs sodass diese dann zur Erstellen der Aufgabenfortschritte verwendet werden können
   const userIdsSet = new Set<string>()
 
@@ -124,13 +172,5 @@ export async function processBulkTaskCreate({
   }
 
   const userIds = Array.from(userIdsSet)
-
-
-  const createdTaskProgresses = await taskProgressRepository.createTaskProgresses({
-    user: userIds,
-    task: createdTasks.map((task) => task.id),
-  })
-
-  // Gib die IDs der erstellten Tasks zurück
-  return createdTaskProgresses
+  return userIds
 }

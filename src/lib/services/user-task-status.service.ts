@@ -7,7 +7,7 @@ export class UserTaskStatusService {
    * @param tasks - Array of all tasks
    * @param userTaskStatuses - Array of task statuses for a specific user
    * @returns Object with three arrays:
-   *   - otherTasks: Tasks with status "not-started" or "need-help"
+   *   - notStartedTasks: Tasks with status "not-started"
    *   - inProgressTasks: Tasks with status "in-progress"
    *   - finishedTasks: Tasks with status "finished"
    */

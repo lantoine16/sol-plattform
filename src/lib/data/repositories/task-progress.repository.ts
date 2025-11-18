@@ -109,30 +109,40 @@ export class TaskProgressRepository {
     return result.docs
   }
 
+
   /**
    * Find a task progress entry by user and task
    */
   async findByUserAndTask(
-    userId: string,
     taskId: string,
+    userId?: string | null | string[],
     options?: { depth?: number },
-  ): Promise<TaskProgress | null> {
+  ): Promise<TaskProgress[] | null> {
+    if (userId === null || userId === undefined) {
+      const result = await this.find({
+        where: {
+          task: { equals: taskId  },
+        },
+        depth: options?.depth || 0,
+      })
+      return result.docs || null
+    }
+    const userIdArray = Array.isArray(userId) ? userId : [userId]
     const result = await this.find({
       where: {
         and: [
           {
-            user: { equals: userId },
+            user: { in: userIdArray },
           },
           {
             task: { equals: taskId },
           },
         ],
       },
-      limit: 1,
       depth: options?.depth || 0,
     })
 
-    return result.docs[0] || null
+    return result.docs || null
   }
 
   /**
@@ -151,7 +161,7 @@ export class TaskProgressRepository {
     if (existing) {
       return payload.update({
         collection: 'task-progress',
-        id: existing.id,
+        id: existing[0].id,
         data: {
           status: data.status,
         },
@@ -191,6 +201,19 @@ export class TaskProgressRepository {
 
     const createdTaskProgresses = await Promise.all(createPromises)
     return createdTaskProgresses
+  }
+
+  async deleteTaskProgresses(users: string[], task: string): Promise<void> {
+    const payload = await getPayloadClient()
+    await payload.delete({
+      collection: 'task-progress',
+      where: {
+        and: [
+          { user: { in: users } },
+          { task: { equals: task } },
+        ],
+      },
+    })
   }
 }
 

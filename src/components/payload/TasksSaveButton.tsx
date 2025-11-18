@@ -81,7 +81,7 @@ export function TasksSaveButton() {
       </div>
     )
   }
-  return <SaveButton  label="Bearbeiten" />
+  return <SaveButton />
 }
 
 export default TasksSaveButton
