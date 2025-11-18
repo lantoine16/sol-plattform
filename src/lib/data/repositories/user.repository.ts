@@ -22,29 +22,15 @@ export class UserRepository {
   }
 
   /**
-   * Find a user by ID
-   */
-  async findById(id: string, options?: { depth?: number }): Promise<User | null> {
-    const payload = await getPayloadClient()
-    try {
-      return await payload.findByID({
-        collection: 'users',
-        id,
-        ...options,
-      })
-    } catch {
-      return null
-    }
-  }
-
-  /**
    * Find users by multiple learning group IDs
    */
   async findByLearningGroups(
     learningGroupIds: string[] | string,
     options?: { sort?: string },
   ): Promise<User[]> {
-    const learningGroupIdsArray = Array.isArray(learningGroupIds) ? learningGroupIds : [learningGroupIds]
+    const learningGroupIdsArray = Array.isArray(learningGroupIds)
+      ? learningGroupIds
+      : [learningGroupIds]
     if (!learningGroupIdsArray || learningGroupIdsArray.length === 0) {
       return []
     }

@@ -5,7 +5,6 @@ import { TASK_PROGRESS_DEFAULT_STATUS_VALUE } from '@/domain/constants/task-stat
 export interface TasksProgressesCreateOptions {
   user: string[]
   task: string[]
-  note?: string[] | null
 }
 
 export class TaskProgressRepository {
@@ -30,22 +29,6 @@ export class TaskProgressRepository {
       collection: 'task-progress',
       ...options,
     })
-  }
-
-  /**
-   * Find a task progress by ID
-   */
-  async findById(id: string, options?: { depth?: number }): Promise<TaskProgress | null> {
-    const payload = await getPayloadClient()
-    try {
-      return await payload.findByID({
-        collection: 'task-progress',
-        id,
-        ...options,
-      })
-    } catch {
-      return null
-    }
   }
 
   /**
@@ -127,51 +110,6 @@ export class TaskProgressRepository {
   }
 
   /**
-   * Create a new task progress entry
-   */
-  async create(data: {
-    user: string
-    task: string
-    status: TaskStatusValue
-    note?: string | null
-  }): Promise<TaskProgress> {
-    const payload = await getPayloadClient()
-    return payload.create({
-      collection: 'task-progress',
-      data,
-    })
-  }
-
-  /**
-   * Update a task progress entry
-   */
-  async update(
-    id: string,
-    data: {
-      status?: TaskStatusValue
-      note?: string | null
-    },
-  ): Promise<TaskProgress> {
-    const payload = await getPayloadClient()
-    return payload.update({
-      collection: 'task-progress',
-      id,
-      data,
-    })
-  }
-
-  /**
-   * Delete a task progress entry
-   */
-  async delete(id: string): Promise<TaskProgress> {
-    const payload = await getPayloadClient()
-    return payload.delete({
-      collection: 'task-progress',
-      id,
-    })
-  }
-
-  /**
    * Find a task progress entry by user and task
    */
   async findByUserAndTask(
@@ -206,18 +144,29 @@ export class TaskProgressRepository {
     user: string
     task: string
     status: TaskStatusValue
-    note?: string | null
   }): Promise<TaskProgress> {
     const existing = await this.findByUserAndTask(data.user, data.task)
+    const payload = await getPayloadClient()
 
     if (existing) {
-      return this.update(existing.id, {
-        status: data.status,
-        note: data.note,
+      return payload.update({
+        collection: 'task-progress',
+        id: existing.id,
+        data: {
+          status: data.status,
+        },
       })
     }
 
-    return this.create(data)
+    return payload.create({
+      collection: 'task-progress',
+      data: {
+        user: data.user,
+        task: data.task,
+        status: data.status,
+        helpNeeded: false,
+      },
+    })
   }
 
   async createTaskProgresses(data: TasksProgressesCreateOptions): Promise<TaskProgress[]> {

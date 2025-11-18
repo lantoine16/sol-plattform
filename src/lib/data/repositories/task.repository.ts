@@ -28,22 +28,6 @@ export class TaskRepository {
   }
 
   /**
-   * Find a task by ID
-   */
-  async findById(id: string, options?: { depth?: number }): Promise<Task | null> {
-    const payload = await getPayloadClient()
-    try {
-      return await payload.findByID({
-        collection: 'tasks',
-        id,
-        ...options,
-      })
-    } catch {
-      return null
-    }
-  }
-
-  /**
    * Find tasks by learning group and subject
    */
   async findByLearningGroupAndSubject(

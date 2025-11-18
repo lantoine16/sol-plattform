@@ -10,7 +10,7 @@ export const Tasks: CollectionConfig = {
     useAsTitle: 'description',
     components: {
       edit: {
-        SaveButton: '@/components/payload/EmptySaveButton',
+        SaveButton: '@/components/payload/TasksSaveButton',
       },
     },
   },

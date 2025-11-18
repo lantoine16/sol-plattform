@@ -17,21 +17,6 @@ export class SubjectRepository {
   }
 
   /**
-   * Find a subject by ID
-   */
-  async findById(id: string): Promise<Subject | null> {
-    const payload = await getPayloadClient()
-    try {
-      return await payload.findByID({
-        collection: 'subjects',
-        id,
-      })
-    } catch {
-      return null
-    }
-  }
-
-  /**
    * Find all subjects sorted by description
    */
   async findAllSorted(): Promise<Subject[]> {

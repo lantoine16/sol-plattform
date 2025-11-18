@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useField, useDocumentInfo } from '@payloadcms/ui'
 import { useRouter } from 'next/navigation'
-import { bulkCreateTasksAction } from '@/app/(payload)/actions/bulk-create-tasks'
+import { bulkCreateTasksAction } from '@/lib/actions/bulk-create-tasks'
 import { SaveButton } from '@payloadcms/ui'
 export function TasksSaveButton() {
   const router = useRouter()

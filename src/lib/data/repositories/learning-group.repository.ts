@@ -17,21 +17,6 @@ export class LearningGroupRepository {
   }
 
   /**
-   * Find a learning group by ID
-   */
-  async findById(id: string): Promise<LearningGroup | null> {
-    const payload = await getPayloadClient()
-    try {
-      return await payload.findByID({
-        collection: 'learning-groups',
-        id,
-      })
-    } catch {
-      return null
-    }
-  }
-
-  /**
    * Find all learning groups sorted by description
    */
   async findAllSorted(): Promise<LearningGroup[]> {
@@ -44,4 +29,3 @@ export class LearningGroupRepository {
 }
 
 export const learningGroupRepository = new LearningGroupRepository()
-
