@@ -37,6 +37,7 @@ export class LearningGroupRepository {
   async findAllSorted(): Promise<LearningGroup[]> {
     const result = await this.find({
       sort: 'description',
+      limit: 1000,
     })
     return result.docs
   }

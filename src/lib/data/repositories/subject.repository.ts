@@ -37,6 +37,7 @@ export class SubjectRepository {
   async findAllSorted(): Promise<Subject[]> {
     const result = await this.find({
       sort: 'description',
+      limit: 1000,
     })
     return result.docs
   }

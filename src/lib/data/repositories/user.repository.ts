@@ -7,7 +7,7 @@ export class UserRepository {
    */
   async find(options?: {
     where?: {
-      learningGroup?: { equals: string }
+      learningGroup?: { equals: string } | { in: string[] }
       role?: { equals: 'pupil' | 'admin' | 'teacher' }
     }
     sort?: string
@@ -38,22 +38,34 @@ export class UserRepository {
   }
 
   /**
-   * Find users by learning group ID
+   * Find users by multiple learning group IDs
    */
-  async findByLearningGroup(learningGroupId: string, options?: { sort?: string }): Promise<User[]> {
+  async findByLearningGroups(
+    learningGroupIds: string[] | string,
+    options?: { sort?: string },
+  ): Promise<User[]> {
+    const learningGroupIdsArray = Array.isArray(learningGroupIds) ? learningGroupIds : [learningGroupIds]
+    if (!learningGroupIdsArray || learningGroupIdsArray.length === 0) {
+      return []
+    }
+
     const result = await this.find({
       where: {
-        learningGroup: { equals: learningGroupId },
+        learningGroup: { in: learningGroupIdsArray },
       },
       sort: options?.sort || 'lastname',
     })
+
     return result.docs
   }
 
   /**
    * Find pupils by learning group ID
    */
-  async findPupilsByLearningGroup(learningGroupId: string, options?: { sort?: string }): Promise<User[]> {
+  async findPupilsByLearningGroup(
+    learningGroupId: string,
+    options?: { sort?: string },
+  ): Promise<User[]> {
     const result = await this.find({
       where: {
         learningGroup: { equals: learningGroupId },

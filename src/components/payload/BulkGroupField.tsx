@@ -13,6 +13,11 @@ export const BulkSubjectField: React.FC = () => {
   return <BulkGroupField labelSingular={'Fach'} labelPlural={'Fächer'} />
 }
 
+// Wrapper-Komponente für Tasks mit Labels aus der Collection-Konfiguration
+export const BulkTaskField: React.FC = () => {
+  return <BulkGroupField labelSingular={'Aufgabe'} labelPlural={'Aufgaben'} />
+}
+
 // Generische Komponente für Bulk-Erstellung
 export const BulkGroupField: React.FC<{ labelSingular: string; labelPlural: string }> = ({
   labelSingular,
@@ -30,7 +35,8 @@ export const BulkGroupField: React.FC<{ labelSingular: string; labelPlural: stri
     <div className="field-type">
       <div className="field-type__wrap">
         <label htmlFor="bulk-groups-input" className="field-label">
-          {`Mehrere ${labelPlural} erstellen`}
+          {labelPlural} 
+          <span className="required">*</span>
         </label>
         <p className="field-description">
           Geben Sie die Namen der {labelPlural} ein, eine pro Zeile. Leere Zeilen werden ignoriert.

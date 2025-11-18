@@ -188,7 +188,7 @@ export interface TaskProgress {
  */
 export interface Task {
   id: string;
-  description: string;
+  description?: string | null;
   subject: string | Subject;
   learningGroup?: (string | LearningGroup)[] | null;
   user?: (string | User)[] | null;

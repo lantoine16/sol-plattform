@@ -1,6 +1,12 @@
 import { getPayloadClient } from '../payload-client'
 import type { Task } from '@/payload-types'
 
+export interface TasksCreateOptions {
+  description: string[]
+  subject: string
+  learningGroups?: string[] | null
+  users?: string[] | null
+}
 export class TaskRepository {
   /**
    * Find all tasks with optional filters
@@ -43,7 +49,7 @@ export class TaskRepository {
   async findByLearningGroupAndSubject(
     learningGroupId: string,
     subjectId: string,
-    options?: { sort?: string }
+    options?: { sort?: string },
   ): Promise<Task[]> {
     const result = await this.find({
       where: {
@@ -54,7 +60,24 @@ export class TaskRepository {
     })
     return result.docs
   }
+
+  async createTasks(tasks: TasksCreateOptions): Promise<Task[]> {
+    const payload = await getPayloadClient()
+    const createdTasks = await Promise.all(
+      tasks.description.map((description) => {
+        return payload.create({
+          collection: 'tasks',
+          data: {
+            description,
+            subject: tasks.subject,
+            learningGroup: tasks.learningGroups,
+            user: tasks.users,
+          },
+        })
+      }),
+    )
+    return createdTasks
+  }
 }
 
 export const taskRepository = new TaskRepository()
-

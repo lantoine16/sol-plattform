@@ -1,6 +1,12 @@
 import { getPayloadClient } from '../payload-client'
 import type { TaskProgress } from '@/payload-types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
+import { TASK_PROGRESS_DEFAULT_STATUS_VALUE } from '@/domain/constants/task-status.constants'
+export interface TasksProgressesCreateOptions {
+  user: string[]
+  task: string[]
+  note?: string[] | null
+}
 
 export class TaskProgressRepository {
   /**
@@ -212,6 +218,30 @@ export class TaskProgressRepository {
     }
 
     return this.create(data)
+  }
+
+  async createTaskProgresses(data: TasksProgressesCreateOptions): Promise<TaskProgress[]> {
+    const payload = await getPayloadClient()
+    const createPromises: Promise<TaskProgress>[] = []
+
+    data.user.forEach((userId) => {
+      data.task.forEach((taskId) => {
+        createPromises.push(
+          payload.create({
+            collection: 'task-progress',
+            data: {
+              user: userId,
+              task: taskId,
+              status: TASK_PROGRESS_DEFAULT_STATUS_VALUE,
+              helpNeeded: false,
+            },
+          }),
+        )
+      })
+    })
+
+    const createdTaskProgresses = await Promise.all(createPromises)
+    return createdTaskProgresses
   }
 }
 
