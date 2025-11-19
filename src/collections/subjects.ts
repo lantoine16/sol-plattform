@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { processBulkCreate } from '@/lib/services/create-tasks.service'
 
 export const Subjects: CollectionConfig = {
   slug: 'subjects',
@@ -9,6 +8,11 @@ export const Subjects: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'description',
+    components: {
+      edit: {
+        SaveButton: '@/components/payload/SubjectsSaveButton',
+      },
+    },
   },
   fields: [
     {
@@ -21,7 +25,9 @@ export const Subjects: CollectionConfig = {
         disableListColumn: true,
         condition: (data) => {
           // Nur auf der Create-Seite anzeigen (wenn keine ID vorhanden)
-          return !data?.id
+          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return !hasId
         },
       },
     },
@@ -34,32 +40,11 @@ export const Subjects: CollectionConfig = {
       admin: {
         condition: (data) => {
           // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
-          return data?.id
+          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
         },
       },
     },
   ],
-  hooks: {
-    beforeChange: [
-      async ({ data, operation, req }) => {
-        // Nur bei Create-Operation und wenn bulkCreateData vorhanden ist
-        if (operation === 'create' && data.bulkCreateData && !data.description) {
-          const bulkData = data.bulkCreateData as string
-
-          const firstItemName = await processBulkCreate({
-            collection: 'subjects',
-            bulkData,
-            descriptionField: 'description',
-            req,
-          })
-
-          // Setze das erste Element als description für das Hauptdokument
-          if (firstItemName) {
-            data.description = firstItemName
-          }
-        }
-        return data
-      },
-    ],
-  },
 }

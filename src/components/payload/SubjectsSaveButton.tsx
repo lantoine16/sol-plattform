@@ -4,29 +4,26 @@ import React, { useState } from 'react'
 import { useField, useDocumentInfo, toast } from '@payloadcms/ui'
 import { useRouter } from 'next/navigation'
 import { BulkSaveButton } from './BulkSaveButton'
-import { bulkCreateTasksAction } from '@/lib/actions/bulk-create-tasks'
+import { bulkCreateSubjectsAction } from '@/lib/actions/bulk-create-subjects'
 
-export function TasksSaveButton() {
+export function SubjectsSaveButton() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const { value: bulkCreateData } = useField<string>({ path: 'bulkCreateData' })
-  const { value: subject } = useField<string | string[]>({ path: 'subject' })
-  const { value: learningGroup } = useField<string[]>({ path: 'learningGroup' })
-  const { value: user } = useField<string[]>({ path: 'user' })
   const { id } = useDocumentInfo()
 
   // Nur auf Create-Seite anzeigen (wenn keine ID vorhanden)
   const isCreatePage = !id
-  const isDisabled = !isCreatePage || isLoading || !bulkCreateData || !subject
+  const isDisabled = !isCreatePage || isLoading || !bulkCreateData
 
   const handleBulkCreate = async () => {
     setIsLoading(true)
     setError(null)
 
-    if (!bulkCreateData || !subject) {
-      const errorMessage = 'Bitte füllen Sie alle erforderlichen Felder aus (Aufgaben und Fach)'
+    if (!bulkCreateData) {
+      const errorMessage = 'Bitte geben Sie Fächer ein'
       setError(errorMessage)
       toast.error(errorMessage)
       setIsLoading(false)
@@ -34,20 +31,17 @@ export function TasksSaveButton() {
     }
 
     try {
-      const createdTasks = await bulkCreateTasksAction({
+      const createdSubjects = await bulkCreateSubjectsAction({
         bulkData: bulkCreateData,
-        subject: Array.isArray(subject) ? subject[0] : subject,
-        learningGroup: learningGroup ?? null,
-        user: user ?? null,
       })
 
-      const amountOfCreatedTasks = createdTasks.length
+      const amountOfCreatedSubjects = createdSubjects.length
       toast.success(
-        amountOfCreatedTasks +
-          (amountOfCreatedTasks === 1 ? ' Aufgabe wurde ' : ' Aufgaben wurden ') +
+        amountOfCreatedSubjects +
+          (amountOfCreatedSubjects === 1 ? ' Fach wurde ' : ' Fächer wurden ') +
           'erfolgreich erstellt.',
       )
-      router.push('/collections/tasks')
+      router.push('/collections/subjects')
       router.refresh()
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unbekannter Fehler'
@@ -68,4 +62,4 @@ export function TasksSaveButton() {
   )
 }
 
-export default TasksSaveButton
+export default SubjectsSaveButton
