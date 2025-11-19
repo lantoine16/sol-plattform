@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import type { Task } from '@/payload-types'
-import { UpdateTaskProgresses } from '@/lib/services/bulk-create.service'
+import { UpdateTaskProgresses } from '@/lib/services/create-tasks.service'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import { redirect } from 'next/navigation'
 import { RedirectType } from 'next/dist/client/components/redirect-error'

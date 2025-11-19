@@ -3,7 +3,7 @@
 import {
   processBulkTaskCreate,
   type BulkTaskCreateOptions,
-} from '@/lib/services/bulk-create.service'
+} from '@/lib/services/create-tasks.service'
 import { Task } from '@/payload-types'
 
 export async function bulkCreateTasksAction(input: BulkTaskCreateOptions): Promise<Task[]> {

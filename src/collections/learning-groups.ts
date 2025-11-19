@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { processBulkCreate } from '@/lib/services/bulk-create.service'
+import { processBulkCreate } from '@/lib/services/create-tasks.service'
 
 export const LearningGroups: CollectionConfig = {
   slug: 'learning-groups',
