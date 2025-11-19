@@ -3,7 +3,7 @@ import { getPayloadClient } from '@/lib/data/payload-client'
 import { userRepository } from '../data/repositories/user.repository'
 import { taskRepository } from '../data/repositories/task.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
-import { Task, TaskProgress } from '@/payload-types'
+import { Task } from '@/payload-types'
 
 type BulkCreateOptions = {
   collection: string
@@ -81,7 +81,7 @@ export async function processBulkTaskCreate({
   subject,
   learningGroup,
   user,
-}: BulkTaskCreateOptions): Promise<TaskProgress[]> {
+}: BulkTaskCreateOptions): Promise<Task[]> {
   // Teile die Eingabe in Zeilen auf und filtere leere Zeilen
   const taskDescriptions = bulkData
     .split('\n')
@@ -107,7 +107,7 @@ export async function processBulkTaskCreate({
   })
 
   // Gib die IDs der erstellten Tasks zurück
-  return createdTaskProgresses
+  return createdTasks
 }
 
 export async function UpdateTaskProgresses(task: Task): Promise<void> {

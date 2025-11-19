@@ -2,6 +2,9 @@ import type { CollectionConfig } from 'payload'
 import type { Task } from '@/payload-types'
 import { UpdateTaskProgresses } from '@/lib/services/bulk-create.service'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
+import { redirect } from 'next/navigation'
+import { RedirectType } from 'next/dist/client/components/redirect-error'
+import { revalidatePath } from 'next/cache'
 
 export const Tasks: CollectionConfig = {
   slug: 'tasks',
@@ -19,27 +22,29 @@ export const Tasks: CollectionConfig = {
   },
   hooks: {
     afterOperation: [
-      async ({ operation, result}) => {
+      async ({ operation, result }) => {
         if (operation === 'updateByID') {
           // Im afterChange Hook sollte data.id verfügbar sein
           const task = result as Task
           await UpdateTaskProgresses(task)
-        }
-        else if (operation === 'update') {
-          Promise.all(result.docs.map((task) => {
-            return UpdateTaskProgresses(task as Task)
-          }))
-        }
-        else if (operation === 'delete') { 
-          Promise.all(result.docs.map((task) => {
-            return taskProgressRepository.deleteTaskProgressesByTask(task.id)
-          }))
-        }
-        else if (operation === 'deleteByID') {
+          //redirect(`/collections/tasks/${task.id}`)
+        } else if (operation === 'update') {
+          Promise.all(
+            result.docs.map((task) => {
+              return UpdateTaskProgresses(task as Task)
+            }),
+          )
+        } else if (operation === 'delete') {
+          Promise.all(
+            result.docs.map((task) => {
+              return taskProgressRepository.deleteTaskProgressesByTask(task.id)
+            }),
+          )
+        } else if (operation === 'deleteByID') {
           const task = result as Task
           await taskProgressRepository.deleteTaskProgressesByTask(task.id)
         }
-      } 
+      },
     ],
   },
   fields: [

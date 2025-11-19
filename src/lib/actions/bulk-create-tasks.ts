@@ -4,8 +4,9 @@ import {
   processBulkTaskCreate,
   type BulkTaskCreateOptions,
 } from '@/lib/services/bulk-create.service'
+import { Task } from '@/payload-types'
 
-export async function bulkCreateTasksAction(input: BulkTaskCreateOptions) {
+export async function bulkCreateTasksAction(input: BulkTaskCreateOptions): Promise<Task[]> {
   if (!input.bulkData?.trim()) {
     throw new Error('Keine Aufgaben angegeben')
   }

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useField, useDocumentInfo } from '@payloadcms/ui'
+import { useField, useDocumentInfo, toast } from '@payloadcms/ui'
 import { useRouter } from 'next/navigation'
 import { bulkCreateTasksAction } from '@/lib/actions/bulk-create-tasks'
 import { SaveButton } from '@payloadcms/ui'
@@ -25,23 +25,33 @@ export function TasksSaveButton() {
     setError(null)
 
     if (!bulkCreateData || !subject) {
-      setError('Bitte füllen Sie alle erforderlichen Felder aus (Aufgaben und Fach)')
+      const errorMessage = 'Bitte füllen Sie alle erforderlichen Felder aus (Aufgaben und Fach)'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setIsLoading(false)
       return
     }
 
     try {
-      await bulkCreateTasksAction({
+      const createdTasks = await bulkCreateTasksAction({
         bulkData: bulkCreateData,
         subject: Array.isArray(subject) ? subject[0] : subject,
         learningGroup: learningGroup ?? null,
         user: user ?? null,
       })
 
+      const amountOfCreatedTasks = createdTasks.length
+      toast.success(
+        amountOfCreatedTasks +
+          (amountOfCreatedTasks === 1 ? ' Aufgabe wurde ' : ' Aufgaben wurden ') +
+          'erfolgreich erstellt.',
+      )
       router.push('/collections/tasks')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unbekannter Fehler')
+      const errorMessage = err instanceof Error ? err.message : 'Unbekannter Fehler'
+      setError(errorMessage)
+      toast.error(errorMessage)
       setIsLoading(false)
     }
   }
