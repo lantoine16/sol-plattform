@@ -215,6 +215,14 @@ export class TaskProgressRepository {
       },
     })
   }
+
+  async deleteTaskProgressesByTask(taskId: string): Promise<void> {
+    const payload = await getPayloadClient()
+    await payload.delete({
+      collection: 'task-progress',
+      where: { task: { equals: taskId } },
+    })
+  }
 }
 
 export const taskProgressRepository = new TaskProgressRepository()

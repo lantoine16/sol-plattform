@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import type { Task } from '@/payload-types'
 import { UpdateTaskProgresses } from '@/lib/services/bulk-create.service'
-import router from 'next/router'
+import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 
 export const Tasks: CollectionConfig = {
   slug: 'tasks',
@@ -19,20 +19,27 @@ export const Tasks: CollectionConfig = {
   },
   hooks: {
     afterOperation: [
-      async ({ operation, result ,req, collection, args }) => {
-        console.log('operation', operation)
+      async ({ operation, result}) => {
         if (operation === 'updateByID') {
-          console.log('result', result)
           // Im afterChange Hook sollte data.id verfügbar sein
           const task = result as Task
           await UpdateTaskProgresses(task)
         }
-        if (operation === 'update') {
+        else if (operation === 'update') {
           Promise.all(result.docs.map((task) => {
             return UpdateTaskProgresses(task as Task)
           }))
         }
-      },
+        else if (operation === 'delete') { 
+          Promise.all(result.docs.map((task) => {
+            return taskProgressRepository.deleteTaskProgressesByTask(task.id)
+          }))
+        }
+        else if (operation === 'deleteByID') {
+          const task = result as Task
+          await taskProgressRepository.deleteTaskProgressesByTask(task.id)
+        }
+      } 
     ],
   },
   fields: [
