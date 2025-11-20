@@ -13,6 +13,8 @@ export class SubjectRepository {
     return payload.find({
       collection: 'subjects',
       ...options,
+      // Standardmäßig alle Datensätze laden, wenn kein Limit angegeben ist
+      limit: options?.limit ?? 0,
     })
   }
 

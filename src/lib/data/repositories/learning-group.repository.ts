@@ -13,6 +13,8 @@ export class LearningGroupRepository {
     return payload.find({
       collection: 'learning-groups',
       ...options,
+      // Standardmäßig alle Datensätze laden, wenn kein Limit angegeben ist
+      limit: options?.limit ?? 0,
     })
   }
 

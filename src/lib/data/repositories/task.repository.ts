@@ -29,6 +29,8 @@ export class TaskRepository {
     return payload.find({
       collection: 'tasks',
       ...options,
+      // Standardmäßig alle Datensätze laden, wenn kein Limit angegeben ist
+      limit: options?.limit ?? 0,
     })
   }
 
@@ -89,7 +91,6 @@ export class TaskRepository {
         or: conditions,
       },
       sort: options?.sort || 'description',
-      limit: 0, // Alle Tasks abrufen
     })
     return result.docs
   }

@@ -28,6 +28,8 @@ export class TaskProgressRepository {
     return payload.find({
       collection: 'task-progress',
       ...options,
+      // Standardmäßig alle Datensätze laden, wenn kein Limit angegeben ist
+      limit: options?.limit ?? 0,
     })
   }
 

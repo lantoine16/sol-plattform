@@ -20,6 +20,8 @@ export class UserRepository {
     return payload.find({
       collection: 'users',
       ...options,
+      // Standardmäßig alle Datensätze laden, wenn kein Limit angegeben ist
+      limit: options?.limit ?? 0,
     })
   }
 
@@ -60,7 +62,6 @@ export class UserRepository {
         role: { equals: USER_ROLE_DEFAULT_VALUE },
       },
       sort: options?.sort || 'lastname',
-      limit: 0,
     })
     return result.docs
   }
@@ -112,7 +113,7 @@ export class UserRepository {
         emails.push(user.email)
       }
       if (user.username) {
-      usernames.push(user.username)
+        usernames.push(user.username)
       }
     })
     return { emails, usernames }
