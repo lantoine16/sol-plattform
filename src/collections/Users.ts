@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { USER_ROLE_OPTIONS, USER_ROLE_DEFAULT_VALUE } from '@/domain/constants/user-role.constants'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -8,27 +9,77 @@ export const Users: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'firstname',
+    components: {
+      edit: {
+        SaveButton: '@/components/payload/UsersSaveButton',
+      },
+    },
   },
-  auth: true,
+  auth: {
+    loginWithUsername: {
+      allowEmailLogin: true,
+      requireEmail: false,
+    },
+  },
   fields: [
+    {
+      name: 'hideAuthFields',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '@/components/payload/HideAuthFieldsOnCreate',
+        },
+        disableListColumn: true,
+        condition: (data) => {
+          // Nur auf der Create-Seite anzeigen (wenn keine ID vorhanden)
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return !hasId
+        },
+      },
+    },
+    {
+      name: 'bulkCreate',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '@/components/payload/BulkGroupField#BulkUserField',
+        },
+        disableListColumn: true,
+        condition: (data) => {
+          // Nur auf der Create-Seite anzeigen (wenn keine ID vorhanden)
+          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return !hasId
+        },
+      },
+    },
     {
       name: 'firstname',
       label: 'Vorname',
       type: 'text',
       required: true,
+      admin: {
+        condition: (data) => {
+          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
+          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
+        },
+      },
     },
     {
       name: 'lastname',
       label: 'Nachname',
       type: 'text',
       required: true,
-    },
-    {
-      name: 'email',
-      label: 'E-Mail',
-      type: 'email',
-      required: false,
-      unique: true,
+      admin: {
+        condition: (data) => {
+          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
+          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
+        },
+      },
     },
     {
       name: 'learningGroup',
@@ -45,21 +96,8 @@ export const Users: CollectionConfig = {
       label: 'Rolle',
       type: 'select',
       required: true,
-      defaultValue: 'pupil',
-      options: [
-        {
-          label: 'Admin',
-          value: 'admin',
-        },
-        {
-          label: 'Schüler',
-          value: 'pupil',
-        },
-        {
-          label: 'Lehrer',
-          value: 'teacher',
-        },
-      ],
+      defaultValue: USER_ROLE_DEFAULT_VALUE,
+      options: [...USER_ROLE_OPTIONS],
     },
 
     {

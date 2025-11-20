@@ -3,39 +3,45 @@
 import React, { useState } from 'react'
 import { useField, useDocumentInfo, toast } from '@payloadcms/ui'
 import { useRouter } from 'next/navigation'
+import { bulkCreateUsersAction } from '@/lib/actions/bulk-create-users.actions'
 import { BulkSaveButton } from './BulkSaveButton'
-import { bulkCreateLearningGroupsAction } from '@/lib/actions/bulk-create-learning-groups.actions'
+import type { UserRoleValue } from '@/domain/constants/user-role.constants'
 
-export function LearningGroupsSaveButton() {
+export function UsersSaveButton() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const { value: bulkCreateData } = useField<string>({ path: 'bulkCreateData' })
+  const { value: learningGroup } = useField<string[] | null>({ path: 'learningGroup' })
+  const { value: role } = useField<UserRoleValue>({ path: 'role' })
   const { id } = useDocumentInfo()
 
-  // Nur auf Create-Seite anzeigen (wenn keine ID vorhanden)
   const isCreatePage = !id
-  const isDisabled = !isCreatePage || isLoading || !bulkCreateData
+  const isDisabled = !isCreatePage || isLoading || !bulkCreateData || !role
 
   const handleBulkCreate = async () => {
     setIsLoading(true)
     setError(null)
     try {
       if (!bulkCreateData || bulkCreateData.trim() === '') {
-        throw new Error('Bitte geben Sie mindestens eine Lerngruppe ein')
+        throw new Error('Bitte geben Sie Benutzerdaten ein.')
       }
-      const createdLearningGroups = await bulkCreateLearningGroupsAction({
+      if (!role) {
+        throw new Error('Bitte wählen Sie eine Rolle aus.')
+      }
+      const createdUsers = await bulkCreateUsersAction({
         bulkData: bulkCreateData,
+        learningGroup: learningGroup,
+        role: role,
       })
-
-      const amountOfCreatedLearningGroups = createdLearningGroups.length
+      const amountOfCreatedUsers = createdUsers.length
       toast.success(
-        amountOfCreatedLearningGroups +
-          (amountOfCreatedLearningGroups === 1 ? ' Lerngruppe wurde ' : ' Lerngruppen wurden ') +
+        amountOfCreatedUsers +
+          (amountOfCreatedUsers === 1 ? ' Benutzer wurde ' : ' Benutzer wurden ') +
           'erfolgreich erstellt.',
       )
-      router.push('/collections/learning-groups')
+      router.push('/collections/users')
       router.refresh()
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unbekannter Fehler'
@@ -56,4 +62,4 @@ export function LearningGroupsSaveButton() {
   )
 }
 
-export default LearningGroupsSaveButton
+export default UsersSaveButton

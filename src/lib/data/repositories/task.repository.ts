@@ -14,7 +14,7 @@ export class TaskRepository {
   async find(options?: {
     where?: {
       subject?: { equals: string }
-      learningGroup?: { equals: string }
+      learningGroup?: { equals: string } | { in: string[] }
     }
     sort?: string
     limit?: number
@@ -41,6 +41,27 @@ export class TaskRepository {
         learningGroup: { equals: learningGroupId },
       },
       sort: options?.sort || 'description',
+    })
+    return result.docs
+  }
+
+  /**
+   * Get all tasks from the given learning groups
+   */
+  async getTasksFromLearningGroups(
+    learningGroupIds: string[],
+    options?: { sort?: string },
+  ): Promise<Task[]> {
+    if (!learningGroupIds || learningGroupIds.length === 0) {
+      return []
+    }
+
+    const result = await this.find({
+      where: {
+        learningGroup: { in: learningGroupIds },
+      },
+      sort: options?.sort || 'description',
+      limit: 0, // Alle Tasks abrufen
     })
     return result.docs
   }

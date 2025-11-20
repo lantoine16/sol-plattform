@@ -26,8 +26,6 @@ export function DataTable({
         setSelectedUser(updatedUser)
       }
     }
-    //console.log('data-table', data)
-    //console.log('selectedUser', selectedUser)
   }, [data, selectedUser])
 
   const handleRowClick = (user: UserWithTasks) => {

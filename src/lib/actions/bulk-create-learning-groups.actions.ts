@@ -16,3 +16,4 @@ export async function bulkCreateLearningGroupsAction(input: {
     descriptionField: 'description',
   })
 }
+

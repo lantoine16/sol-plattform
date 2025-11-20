@@ -86,8 +86,8 @@ export async function DashboardView({ initPageResult, params, searchParams }: Ad
 
     return {
       userId: user.id,
-      lastname: user.lastname,
-      firstname: user.firstname,
+      lastname: user.lastname || '',
+      firstname: user.firstname || '',
       tasks,
     }
   })

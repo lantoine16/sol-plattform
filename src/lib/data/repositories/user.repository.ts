@@ -1,5 +1,7 @@
 import { getPayloadClient } from '../payload-client'
 import type { User } from '@/payload-types'
+import type { UserRoleValue } from '@/domain/constants/user-role.constants'
+import { USER_ROLE_DEFAULT_VALUE } from '@/domain/constants/user-role.constants'
 
 export class UserRepository {
   /**
@@ -8,7 +10,7 @@ export class UserRepository {
   async find(options?: {
     where?: {
       learningGroup?: { equals: string } | { in: string[] }
-      role?: { equals: 'pupil' | 'admin' | 'teacher' }
+      role?: { equals: UserRoleValue }
     }
     sort?: string
     limit?: number
@@ -55,11 +57,63 @@ export class UserRepository {
     const result = await this.find({
       where: {
         learningGroup: { equals: learningGroupId },
-        role: { equals: 'pupil' },
+        role: { equals: USER_ROLE_DEFAULT_VALUE },
       },
       sort: options?.sort || 'lastname',
+      limit: 0,
     })
     return result.docs
+  }
+
+  /**
+   * Create a new user with all necessary data
+   */
+  async create(data: {
+    firstname: string
+    lastname: string
+    password: string
+    username: string
+    role: UserRoleValue
+    email?: string | null
+    learningGroup?: string[] | null
+  }): Promise<User> {
+    const payload = await getPayloadClient()
+    const userData: any = {
+      firstname: data.firstname,
+      lastname: data.lastname,
+      username: data.username,
+      role: data.role,
+      password: data.password,
+    }
+
+    if (data.email) {
+      userData.email = data.email
+    }
+
+    if (data.learningGroup && data.learningGroup.length > 0) {
+      userData.learningGroup = data.learningGroup
+    }
+
+    return payload.create({
+      collection: 'users',
+      data: userData,
+    })
+  }
+
+  /**
+   * Get all usernames of all users
+   */
+  async getAllUsernamesAndEmails(): Promise<{ emails: string[]; usernames: string[] }> {
+    const result = await this.find()
+    const emails: string[] = []
+    const usernames: string[] = []
+    result.docs.forEach((user) => {
+      if (user.email) {
+        emails.push(user.email)
+      }
+      usernames.push(user.username)
+    })
+    return { emails, usernames }
   }
 }
 

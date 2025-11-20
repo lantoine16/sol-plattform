@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useField, useDocumentInfo, toast } from '@payloadcms/ui'
 import { useRouter } from 'next/navigation'
 import { BulkSaveButton } from './BulkSaveButton'
-import { bulkCreateTasksAction } from '@/lib/actions/bulk-create-tasks'
+import { bulkCreateTasksAction } from '@/lib/actions/bulk-create-tasks.actions'
 
 export function TasksSaveButton() {
   const router = useRouter()
@@ -25,15 +25,13 @@ export function TasksSaveButton() {
     setIsLoading(true)
     setError(null)
 
-    if (!bulkCreateData || !subject) {
-      const errorMessage = 'Bitte füllen Sie alle erforderlichen Felder aus (Aufgaben und Fach)'
-      setError(errorMessage)
-      toast.error(errorMessage)
-      setIsLoading(false)
-      return
-    }
-
     try {
+      if (!bulkCreateData || bulkCreateData.trim() === '') {
+        throw new Error('Bitte geben Sie mindestens eine Aufgabe ein')
+      }
+      if (!subject) {
+        throw new Error('Bitte wählen Sie ein Fach aus')
+      }
       const createdTasks = await bulkCreateTasksAction({
         bulkData: bulkCreateData,
         subject: Array.isArray(subject) ? subject[0] : subject,

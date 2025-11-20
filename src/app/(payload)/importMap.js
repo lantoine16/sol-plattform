@@ -1,3 +1,6 @@
+import { default as default_e296ff360e36f227fadad2fa6f13dbaa } from '@/components/payload/HideAuthFieldsOnCreate'
+import { BulkUserField as BulkUserField_e463fece887a24674e4aba025e6814e6 } from '@/components/payload/BulkGroupField'
+import { default as default_2d0af7d95b52ebb2b191bb7e91c5e5fa } from '@/components/payload/UsersSaveButton'
 import { BulkLearningGroupField as BulkLearningGroupField_e463fece887a24674e4aba025e6814e6 } from '@/components/payload/BulkGroupField'
 import { default as default_1d7b04e6126e6c3956b17b8aea5a9fec } from '@/components/payload/LearningGroupsSaveButton'
 import { BulkSubjectField as BulkSubjectField_e463fece887a24674e4aba025e6814e6 } from '@/components/payload/BulkGroupField'
@@ -8,6 +11,9 @@ import { default as default_eabe176a4bb30ac84e080835885bf7b7 } from '@/component
 import { default as default_2e5a6edca98c58ee3600c85dc8cbddc9 } from '@/components/features/dashboard/DashboardView'
 
 export const importMap = {
+  "@/components/payload/HideAuthFieldsOnCreate#default": default_e296ff360e36f227fadad2fa6f13dbaa,
+  "@/components/payload/BulkGroupField#BulkUserField": BulkUserField_e463fece887a24674e4aba025e6814e6,
+  "@/components/payload/UsersSaveButton#default": default_2d0af7d95b52ebb2b191bb7e91c5e5fa,
   "@/components/payload/BulkGroupField#BulkLearningGroupField": BulkLearningGroupField_e463fece887a24674e4aba025e6814e6,
   "@/components/payload/LearningGroupsSaveButton#default": default_1d7b04e6126e6c3956b17b8aea5a9fec,
   "@/components/payload/BulkGroupField#BulkSubjectField": BulkSubjectField_e463fece887a24674e4aba025e6814e6,

@@ -8,6 +8,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { RootPage, generatePageMetadata } from '@payloadcms/next/views'
 import { importMap } from '../importMap'
+import { USER_ROLE_ADMIN_VALUE } from '@/domain/constants/user-role.constants'
 
 type Args = {
   params: Promise<{
@@ -29,7 +30,7 @@ const Page = async ({ params, searchParams }: Args) => {
   const { user } = await payload.auth({ headers })
 
   // If user is logged in but not an admin, redirect to login
-  if (user && user.role !== 'admin') {
+  if (user && user.role !== USER_ROLE_ADMIN_VALUE) {
     redirect('/login')
   }
 

@@ -78,8 +78,8 @@ export class DashboardService {
 
       return {
         userId: user.id,
-        firstname: user.firstname,
-        lastname: user.lastname,
+        firstname: user.firstname || '',
+        lastname: user.lastname || '',
         tasks: userTasks,
       }
     })

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useField, useDocumentInfo, toast } from '@payloadcms/ui'
 import { useRouter } from 'next/navigation'
 import { BulkSaveButton } from './BulkSaveButton'
-import { bulkCreateSubjectsAction } from '@/lib/actions/bulk-create-subjects'
+import { bulkCreateSubjectsAction } from '@/lib/actions/bulk-create-subjects.actions'
 
 export function SubjectsSaveButton() {
   const router = useRouter()
@@ -22,15 +22,10 @@ export function SubjectsSaveButton() {
     setIsLoading(true)
     setError(null)
 
-    if (!bulkCreateData) {
-      const errorMessage = 'Bitte geben Sie Fächer ein'
-      setError(errorMessage)
-      toast.error(errorMessage)
-      setIsLoading(false)
-      return
-    }
-
     try {
+      if (!bulkCreateData || bulkCreateData.trim() === '') {
+        throw new Error('Bitte geben Sie mindestens ein Fach ein')
+      }
       const createdSubjects = await bulkCreateSubjectsAction({
         bulkData: bulkCreateData,
       })
