@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import type { Task } from '@/payload-types'
-import { UpdateTaskProgresses } from '@/lib/services/create-tasks.service'
+import { updateTaskProgressesForTask } from '@/lib/services/create-tasks.service'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import { redirect } from 'next/navigation'
 import { RedirectType } from 'next/dist/client/components/redirect-error'
@@ -26,12 +26,12 @@ export const Tasks: CollectionConfig = {
         if (operation === 'updateByID') {
           // Im afterChange Hook sollte data.id verfügbar sein
           const task = result as Task
-          await UpdateTaskProgresses(task)
+          await updateTaskProgressesForTask(task)
           //redirect(`/collections/tasks/${task.id}`)
         } else if (operation === 'update') {
           Promise.all(
             result.docs.map((task) => {
-              return UpdateTaskProgresses(task as Task)
+              return updateTaskProgressesForTask(task as Task)
             }),
           )
         } else if (operation === 'delete') {

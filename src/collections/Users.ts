@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
 import { USER_ROLE_OPTIONS, USER_ROLE_DEFAULT_VALUE } from '@/domain/constants/user-role.constants'
-
+import { updateTaskProgressesForUser } from '@/lib/services/create-users.service'
+import { User } from '@/payload-types'
+import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 export const Users: CollectionConfig = {
   slug: 'users',
   labels: {
@@ -89,6 +91,21 @@ export const Users: CollectionConfig = {
       relationTo: 'learning-groups',
       required: false,
     },
+    // Überschreibe username Feld um unique und required zu setzen
+    //TODO: Klappt noch nicht wirklich, unique nimmt er nicht
+    {
+      name: 'username',
+      type: 'text',
+      required: true,
+      unique: true,
+      admin: {
+        condition: (data) => {
+          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
+        },
+      },
+    },
     // Email added by default
     // Add more fields as needed
     {
@@ -109,6 +126,69 @@ export const Users: CollectionConfig = {
       hasMany: true,
     },
   ],
+  hooks: {
+    //TODO: Eigentlich sollte das mit unique:true im users klappen, das hier nur workaround, checken warum das anderen nicht funktioniert
+    //Prüft ob username unique ist
+    beforeChange: [
+      async ({ data, req, operation, originalDoc }) => {
+        // Prüfe nur wenn data und username gesetzt sind
+        if (!data || !data.username) {
+          return data
+        }
+
+        // Suche nach anderen Benutzern mit dem gleichen Benutzernamen
+        const existingUser = await req.payload.find({
+          collection: 'users',
+          where: {
+            username: {
+              equals: data.username,
+            },
+          },
+          limit: 1,
+        })
+
+        // Wenn ein Benutzer gefunden wurde
+        if (existingUser.docs.length > 0) {
+          const foundUser = existingUser.docs[0]
+
+          // Beim Update: Erlaube es, wenn es derselbe Benutzer ist
+          if (operation === 'update' && originalDoc && foundUser.id === originalDoc.id) {
+            return data
+          }
+
+          // Beim Create oder Update zu einem anderen Benutzer: Fehler werfen
+          throw new Error(`Der Benutzername "${data.username}" ist bereits vergeben.`)
+        }
+
+        return data
+      },
+    ],
+    afterOperation: [
+      async ({ operation, result }) => {
+        if (operation === 'updateByID') {
+          // Im afterChange Hook sollte data.id verfügbar sein
+          const user = result as User
+          await updateTaskProgressesForUser(user)
+          //redirect(`/collections/tasks/${task.id}`)
+        } else if (operation === 'update') {
+          Promise.all(
+            result.docs.map((user) => {
+              return updateTaskProgressesForUser(user as User)
+            }),
+          )
+        } else if (operation === 'delete') {
+          Promise.all(
+            result.docs.map((user) => {
+              return taskProgressRepository.deleteTaskProgressesByUser(user.id)
+            }),
+          )
+        } else if (operation === 'deleteByID') {
+          const user = result as User
+          await taskProgressRepository.deleteTaskProgressesByUser(user.id)
+        }
+      },
+    ],
+  },
   access: {
     read: () => true,
     create: () => true,

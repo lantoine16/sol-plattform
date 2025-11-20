@@ -27,9 +27,7 @@ export async function processBulkUserCreate(input: {
 
   const { emails: existingEmails, usernames: existingUsernames } =
     await userRepository.getAllUsernamesAndEmails()
-  console.log(existingEmails, existingUsernames)
   const validatedUsers = lines.map((line) => {
-    console.log(line.split(',').map((s) => s.trim()))
     const values = line.split(',').map((s) => s.trim())
     if (values.length < 3) {
       throw new Error('Zu wenige Werte im Datensatz: ' + line)
@@ -88,15 +86,51 @@ export async function processBulkUserCreate(input: {
   )
 
   if (input.learningGroup && input.learningGroup.length > 0) {
-    const tasksFromLearningGroups = await taskRepository.getTasksFromLearningGroups(
-      input.learningGroup,
-    )
-    const tasksFromLearningGroupsIds = tasksFromLearningGroups.map((task) => task.id)
     const userIds = createdUsers.map((user) => user.id)
+    const tasksFromLearningGroupsAndUsers = await taskRepository.getTasksFromLearningGroupsAndUsers(
+      input.learningGroup,
+      userIds,
+    )
+    const tasksFromLearningGroupsAndUsersIds = tasksFromLearningGroupsAndUsers.map(
+      (task) => task.id,
+    )
     await taskProgressRepository.createTaskProgresses({
       user: userIds,
-      task: tasksFromLearningGroupsIds,
+      task: tasksFromLearningGroupsAndUsersIds,
     })
   }
   return createdUsers
+}
+
+export async function updateTaskProgressesForUser(user: User): Promise<void> {
+  const learningGroupIds: string[] | null | undefined = user.learningGroup
+    ? user.learningGroup.map((lg) => (typeof lg === 'string' ? lg : lg.id))
+    : null
+
+  // Die Tasks, die der Benutzer am Ende haben muss (aus Lerngruppen ODER direkt zugewiesen)
+  const tasksAssignedToUser = (
+    await taskRepository.getTasksFromLearningGroupsAndUsers(learningGroupIds ?? [], [user.id])
+  ).map((task) => task.id)
+
+  const taskIdsWithExistingTaskProgressesForUser =
+    (await taskProgressRepository.findByUserAndTask(null, [user.id]))?.map((taskProgress) =>
+      typeof taskProgress.task === 'string' ? taskProgress.task : taskProgress.task.id,
+    ) ?? []
+
+  const tasksIdsToCreatetaskProgress = tasksAssignedToUser?.filter(
+    (taskId) => !taskIdsWithExistingTaskProgressesForUser?.includes(taskId),
+  )
+  const taskIdsWithTaskProgressToDelete = taskIdsWithExistingTaskProgressesForUser?.filter(
+    (taskId) => !tasksAssignedToUser?.includes(taskId),
+  )
+
+  if (tasksIdsToCreatetaskProgress?.length > 0) {
+    await taskProgressRepository.createTaskProgresses({
+      user: [user.id],
+      task: tasksIdsToCreatetaskProgress,
+    })
+  }
+  if (taskIdsWithTaskProgressToDelete?.length > 0) {
+    await taskProgressRepository.deleteTaskProgresses([user.id], taskIdsWithTaskProgressToDelete)
+  }
 }

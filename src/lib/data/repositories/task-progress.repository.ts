@@ -109,36 +109,50 @@ export class TaskProgressRepository {
     return result.docs
   }
 
-
   /**
    * Find a task progress entry by user and task
    */
   async findByUserAndTask(
-    taskId: string,
-    userId?: string | null | string[],
+    taskId?: null | string[],
+    userId?: null | string[],
     options?: { depth?: number },
   ): Promise<TaskProgress[] | null> {
-    if (userId === null || userId === undefined) {
-      const result = await this.find({
-        where: {
-          task: { equals: taskId  },
-        },
-        depth: options?.depth || 0,
+    // Baue die where-Bedingungen auf
+    const whereConditions: Array<{
+      user?: { in: string[] } | { equals: string }
+      task?: { in: string[] } | { equals: string }
+    }> = []
+
+    // Füge userId-Bedingung hinzu, wenn vorhanden
+    if (userId !== null && userId !== undefined && userId.length > 0) {
+      whereConditions.push({
+        user: userId.length === 1 ? { equals: userId[0] } : { in: userId },
       })
-      return result.docs || null
     }
-    const userIdArray = Array.isArray(userId) ? userId : [userId]
+
+    // Füge taskId-Bedingung hinzu, wenn vorhanden
+    if (taskId !== null && taskId !== undefined && taskId.length > 0) {
+      whereConditions.push({
+        task: taskId.length === 1 ? { equals: taskId[0] } : { in: taskId },
+      })
+    }
+
+    // Wenn keine Bedingungen vorhanden sind, gib null zurück
+    if (whereConditions.length === 0) {
+      return null
+    }
+
+    // Baue die where-Klausel
+    const where =
+      whereConditions.length === 1
+        ? whereConditions[0]
+        : {
+            and: whereConditions,
+          }
+
+    // Rufe find einmal auf
     const result = await this.find({
-      where: {
-        and: [
-          {
-            user: { in: userIdArray },
-          },
-          {
-            task: { equals: taskId },
-          },
-        ],
-      },
+      where,
       depth: options?.depth || 0,
     })
 
@@ -155,7 +169,7 @@ export class TaskProgressRepository {
     task: string
     status: TaskStatusValue
   }): Promise<TaskProgress> {
-    const existing = await this.findByUserAndTask(data.user, data.task)
+    const existing = await this.findByUserAndTask([data.task], [data.user])
     const payload = await getPayloadClient()
 
     if (existing) {
@@ -203,15 +217,12 @@ export class TaskProgressRepository {
     return createdTaskProgresses
   }
 
-  async deleteTaskProgresses(users: string[], task: string): Promise<void> {
+  async deleteTaskProgresses(users: string[], tasks: string[]): Promise<void> {
     const payload = await getPayloadClient()
     await payload.delete({
       collection: 'task-progress',
       where: {
-        and: [
-          { user: { in: users } },
-          { task: { equals: task } },
-        ],
+        and: [{ user: { in: users } }, { task: { in: tasks } }],
       },
     })
   }
@@ -221,6 +232,14 @@ export class TaskProgressRepository {
     await payload.delete({
       collection: 'task-progress',
       where: { task: { equals: taskId } },
+    })
+  }
+
+  async deleteTaskProgressesByUser(userId: string): Promise<void> {
+    const payload = await getPayloadClient()
+    await payload.delete({
+      collection: 'task-progress',
+      where: { user: { equals: userId } },
     })
   }
 }

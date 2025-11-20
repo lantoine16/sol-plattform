@@ -51,7 +51,7 @@ export async function processBulkTaskCreate({
   return createdTasks
 }
 
-export async function UpdateTaskProgresses(task: Task): Promise<void> {
+export async function updateTaskProgressesForTask(task: Task): Promise<void> {
   // Normalisiere learningGroup: extrahiere IDs aus LearningGroup-Objekten
   // task.learningGroup ist immer ein Array oder null/undefined
   const learningGroupIds: string[] | null | undefined = task.learningGroup
@@ -71,7 +71,7 @@ export async function UpdateTaskProgresses(task: Task): Promise<void> {
   )
 
   //für diese Schüler existiert ein Aufgabenfortschritt
-  const existingTaskProgresses = await taskProgressRepository.findByUserAndTask(task.id)
+  const existingTaskProgresses = await taskProgressRepository.findByUserAndTask([task.id])
   const userIdsWithExistingTaskProgresses = existingTaskProgresses?.map((taskProgress) =>
     typeof taskProgress.user === 'string' ? taskProgress.user : taskProgress.user.id,
   )
@@ -91,7 +91,7 @@ export async function UpdateTaskProgresses(task: Task): Promise<void> {
     })
   }
   if (userIdsWithTaskProgressToDelete && userIdsWithTaskProgressToDelete?.length > 0) {
-    await taskProgressRepository.deleteTaskProgresses(userIdsWithTaskProgressToDelete, task.id)
+    await taskProgressRepository.deleteTaskProgresses(userIdsWithTaskProgressToDelete, [task.id])
   }
 }
 

@@ -111,7 +111,9 @@ export class UserRepository {
       if (user.email) {
         emails.push(user.email)
       }
+      if (user.username) {
       usernames.push(user.username)
+      }
     })
     return { emails, usernames }
   }
