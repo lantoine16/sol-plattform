@@ -5,7 +5,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 
 import { ReactSelect, type ReactSelectOption } from '@payloadcms/ui'
 
-type Item = {
+export type Item = {
   id: string
   description: string
 }

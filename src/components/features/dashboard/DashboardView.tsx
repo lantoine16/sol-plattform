@@ -9,6 +9,7 @@ import { userRepository } from '@/lib/data/repositories/user.repository'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import { SelectElement, DataTable } from '@/components/features/dashboard'
 import type { UserWithTasks } from '@/lib/types'
+import type { Item } from '@/components/features/dashboard/select-element'
 export async function DashboardView({ initPageResult, params, searchParams }: AdminViewServerProps) {
   if (!initPageResult.req.user) {
     return <p>You must be logged in to view this page.</p>
@@ -108,14 +109,20 @@ export async function DashboardView({ initPageResult, params, searchParams }: Ad
         <div className="space-y-8">
           <div className="flex flex-row items-center flex-wrap px-4 gap-2">
             <SelectElement
-              items={learningGroups}
+              items={learningGroups.map((learningGroup) => ({
+                id: learningGroup.id,
+                description: learningGroup.description || '',
+              }as Item))}
               selectedId={selectedLearningGroupId}
               placeholder="Wähle eine Lerngruppe"
               searchParamName={learningGroupSearchParamName}
               itemName="Lerngruppe"
             />
             <SelectElement
-              items={subjects}
+              items={subjects.map((subject) => ({
+                id: subject.id,
+                description: subject.description || '',
+              }as Item))}
               selectedId={selectedSubjectId}
               placeholder="Wähle ein Fach"
               searchParamName={subjectSearchParamName}
