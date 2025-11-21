@@ -14,6 +14,7 @@ export function UsersSaveButton() {
 
   const { value: bulkCreateData } = useField<string>({ path: 'bulkCreateData' })
   const { value: learningGroup } = useField<string[] | null>({ path: 'learningGroup' })
+  const { value: learningLocation } = useField<string | null>({ path: 'learningLocation' })
   const { value: role } = useField<UserRoleValue>({ path: 'role' })
   const { id } = useDocumentInfo()
 
@@ -33,6 +34,7 @@ export function UsersSaveButton() {
       const createdUsers = await bulkCreateUsersAction({
         bulkData: bulkCreateData,
         learningGroup: learningGroup,
+        learningLocation: learningLocation,
         role: role,
       })
       const amountOfCreatedUsers = createdUsers.length

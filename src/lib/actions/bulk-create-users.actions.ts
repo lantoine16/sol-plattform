@@ -7,6 +7,7 @@ import type { UserRoleValue } from '@/domain/constants/user-role.constants'
 export async function bulkCreateUsersAction(input: {
   bulkData: string
   learningGroup: string[] | null
+  learningLocation: string | null
   role: UserRoleValue
 }): Promise<User[]> {
   if (!input.bulkData?.trim()) {
@@ -16,6 +17,7 @@ export async function bulkCreateUsersAction(input: {
   return processBulkUserCreate({
     bulkData: input.bulkData,
     learningGroup: input.learningGroup,
+    learningLocation: input.learningLocation,
     role: input.role,
   })
 }

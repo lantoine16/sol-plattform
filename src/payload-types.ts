@@ -84,6 +84,9 @@ export interface Config {
     'learning-groups': {
       users: 'users';
     };
+    'learning-location': {
+      users: 'users';
+    };
     subjects: {
       tasks: 'tasks';
     };
@@ -155,6 +158,7 @@ export interface User {
   firstname?: string | null;
   lastname?: string | null;
   learningGroup?: (string | LearningGroup)[] | null;
+  learningLocation?: (string | null) | LearningLocation;
   role: 'pupil' | 'teacher' | 'admin';
   taskProgress?: {
     docs?: (string | TaskProgress)[];
@@ -185,6 +189,21 @@ export interface User {
  * via the `definition` "learning-groups".
  */
 export interface LearningGroup {
+  id: string;
+  description?: string | null;
+  users?: {
+    docs?: (string | User)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-location".
+ */
+export interface LearningLocation {
   id: string;
   description?: string | null;
   users?: {
@@ -238,16 +257,6 @@ export interface Subject {
     hasNextPage?: boolean;
     totalDocs?: number;
   };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "learning-location".
- */
-export interface LearningLocation {
-  id: string;
-  description?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -332,6 +341,7 @@ export interface UsersSelect<T extends boolean = true> {
   firstname?: T;
   lastname?: T;
   learningGroup?: T;
+  learningLocation?: T;
   role?: T;
   taskProgress?: T;
   updatedAt?: T;
@@ -368,6 +378,7 @@ export interface LearningGroupsSelect<T extends boolean = true> {
  */
 export interface LearningLocationSelect<T extends boolean = true> {
   description?: T;
+  users?: T;
   updatedAt?: T;
   createdAt?: T;
 }

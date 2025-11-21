@@ -91,6 +91,13 @@ export const Users: CollectionConfig = {
       relationTo: 'learning-groups',
       required: false,
     },
+    {
+      name: 'learningLocation',
+      label: 'Lernort',
+      type: 'relationship',
+      relationTo: 'learning-location',
+      required: false,
+    },
     // Überschreibe username Feld um unique und required zu setzen
     //TODO: Klappt noch nicht wirklich, unique nimmt er nicht
     {
@@ -188,5 +195,5 @@ export const Users: CollectionConfig = {
         }
       },
     ],
-  }
+  },
 }

@@ -77,6 +77,7 @@ export class UserRepository {
     role: UserRoleValue
     email?: string | null
     learningGroup?: string[] | null
+    learningLocation?: string | null
   }): Promise<User> {
     const payload = await getPayloadClient()
     const userData: any = {
@@ -93,6 +94,10 @@ export class UserRepository {
 
     if (data.learningGroup && data.learningGroup.length > 0) {
       userData.learningGroup = data.learningGroup
+    }
+
+    if (data.learningLocation) {
+      userData.learningLocation = data.learningLocation
     }
 
     return payload.create({
