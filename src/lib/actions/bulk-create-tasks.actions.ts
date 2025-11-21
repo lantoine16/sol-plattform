@@ -22,4 +22,3 @@ export async function bulkCreateTasksAction(input: BulkTaskCreateOptions): Promi
     user: input.user ?? null,
   })
 }
-

@@ -38,6 +38,12 @@ export const TaskProgress: CollectionConfig = {
       type: 'checkbox',
       required: false,
     },
+    {
+      name: 'searchPartner',
+      label: 'Schüler sucht Partner',
+      type: 'checkbox',
+      required: false,
+    },
   ],
   access: {
     read: () => true,

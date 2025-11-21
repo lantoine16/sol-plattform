@@ -191,6 +191,7 @@ export class TaskProgressRepository {
         task: data.task,
         status: data.status,
         helpNeeded: false,
+        searchPartner: false,
       },
     })
   }
@@ -209,6 +210,7 @@ export class TaskProgressRepository {
               task: taskId,
               status: TASK_PROGRESS_DEFAULT_STATUS_VALUE,
               helpNeeded: false,
+              searchPartner: false,
             },
           }),
         )

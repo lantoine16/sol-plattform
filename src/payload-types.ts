@@ -224,6 +224,7 @@ export interface TaskProgress {
   task: string | Task;
   status: 'not-started' | 'in-progress' | 'finished';
   helpNeeded?: boolean | null;
+  searchPartner?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -414,6 +415,7 @@ export interface TaskProgressSelect<T extends boolean = true> {
   task?: T;
   status?: T;
   helpNeeded?: T;
+  searchPartner?: T;
   updatedAt?: T;
   createdAt?: T;
 }
