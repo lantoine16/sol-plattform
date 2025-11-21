@@ -50,6 +50,17 @@ export const BulkTaskField: React.FC = () => {
   )
 }
 
+// Wrapper-Komponente für LearningLocations mit Labels aus der Collection-Konfiguration
+export const BulkLearningLocationField: React.FC = () => {
+  return (
+    <BulkGroupField
+      title={'Lernorte'}
+      description={description('Lernorte')}
+      placeholder={placeholder('Lernort')}
+    />
+  )
+}
+
 // Generische Komponente für Bulk-Erstellung
 export const BulkGroupField: React.FC<{
   title: string

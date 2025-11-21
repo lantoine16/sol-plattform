@@ -1,16 +1,16 @@
 import type { CollectionConfig } from 'payload'
 
-export const LearningGroups: CollectionConfig = {
-  slug: 'learning-groups',
+export const LearningLocations: CollectionConfig = {
+  slug: 'learning-location',
   labels: {
-    singular: 'Lerngruppe',
-    plural: 'Lerngruppen',
+    singular: 'Lernort',
+    plural: 'Lernorte',
   },
   admin: {
     useAsTitle: 'description',
     components: {
       edit: {
-        SaveButton: '@/components/payload/LearningGroupsSaveButton',
+        SaveButton: '@/components/payload/LearningLocationsSaveButton',
       },
     },
   },
@@ -20,7 +20,7 @@ export const LearningGroups: CollectionConfig = {
       type: 'ui',
       admin: {
         components: {
-          Field: '@/components/payload/BulkGroupField#BulkLearningGroupField',
+          Field: '@/components/payload/BulkGroupField#BulkLearningLocationField',
         },
         disableListColumn: true,
         condition: (data) => {
@@ -45,15 +45,6 @@ export const LearningGroups: CollectionConfig = {
           return hasId
         },
       },
-    },
-
-    {
-      name: 'users',
-      label: 'Schüler',
-      type: 'join',
-      collection: 'users',
-      on: 'learningGroup',
-      hasMany: true,
     },
   ],
 }

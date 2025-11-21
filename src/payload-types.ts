@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     'learning-groups': LearningGroup;
+    'learning-location': LearningLocation;
     subjects: Subject;
     tasks: Task;
     'task-progress': TaskProgress;
@@ -80,6 +81,9 @@ export interface Config {
     users: {
       taskProgress: 'task-progress';
     };
+    'learning-groups': {
+      users: 'users';
+    };
     tasks: {
       taskProgress: 'task-progress';
     };
@@ -87,6 +91,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     'learning-groups': LearningGroupsSelect<false> | LearningGroupsSelect<true>;
+    'learning-location': LearningLocationSelect<false> | LearningLocationSelect<true>;
     subjects: SubjectsSelect<false> | SubjectsSelect<true>;
     tasks: TasksSelect<false> | TasksSelect<true>;
     'task-progress': TaskProgressSelect<false> | TaskProgressSelect<true>;
@@ -179,6 +184,11 @@ export interface User {
 export interface LearningGroup {
   id: string;
   description?: string | null;
+  users?: {
+    docs?: (string | User)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -225,6 +235,16 @@ export interface Subject {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-location".
+ */
+export interface LearningLocation {
+  id: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -237,6 +257,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'learning-groups';
         value: string | LearningGroup;
+      } | null)
+    | ({
+        relationTo: 'learning-location';
+        value: string | LearningLocation;
       } | null)
     | ({
         relationTo: 'subjects';
@@ -325,6 +349,16 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "learning-groups_select".
  */
 export interface LearningGroupsSelect<T extends boolean = true> {
+  description?: T;
+  users?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-location_select".
+ */
+export interface LearningLocationSelect<T extends boolean = true> {
   description?: T;
   updatedAt?: T;
   createdAt?: T;

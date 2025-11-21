@@ -10,6 +10,7 @@ import sharp from 'sharp'
 import { de } from '@payloadcms/translations/languages/de'
 import { Users } from './collections/Users'
 import { LearningGroups } from './collections/learning-groups'
+import { LearningLocations } from './collections/learning-location'
 import { Subjects } from './collections/subjects'
 import { Tasks } from './collections/tasks'
 import { TaskProgress } from './collections/task-progress'
@@ -40,7 +41,7 @@ export default buildConfig({
   routes: {
     admin: '/',
   },
-  collections: [Users, LearningGroups, Subjects, Tasks, TaskProgress],
+  collections: [Users, LearningGroups, LearningLocations, Subjects, Tasks, TaskProgress],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
