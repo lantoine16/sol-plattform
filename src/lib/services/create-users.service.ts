@@ -46,8 +46,8 @@ export async function processBulkUserCreate(input: {
     if (firstname === '') {
       throw new Error('Vorname darf nicht leer sein im Datensatz: ' + line)
     }
-    if (password === '') {
-      throw new Error('Passwort darf nicht leer sein im Datensatz: ' + line)
+    if (password.length < 3) {
+      throw new Error('Passwort muss mindestens 3 Zeichen lang sein im Datensatz: ' + line)
     }
     if (username && existingUsernames.includes(username)) {
       throw new Error(`Benutzername ${username} bereits vorhanden`)
