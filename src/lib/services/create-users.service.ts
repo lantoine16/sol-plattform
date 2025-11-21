@@ -2,6 +2,7 @@ import { getPayloadClient } from '@/lib/data/payload-client'
 import { User } from '@/payload-types'
 import { parseBulkData } from '@/domain/utils/parse-bulk-data.util'
 import type { UserRoleValue } from '@/domain/constants/user-role.constants'
+import type { UserGraduationValue } from '@/domain/constants/user-graduation.constants'
 import { userRepository } from '@/lib/data/repositories/user.repository'
 import { isValidEmail } from '@/domain/utils/validate-email.util'
 import { taskRepository } from '../data/repositories/task.repository'
@@ -19,6 +20,7 @@ export async function processBulkUserCreate(input: {
   learningGroup: string[] | null
   learningLocation: string | null
   role: UserRoleValue
+  graduation: UserGraduationValue
 }): Promise<User[]> {
   const lines = parseBulkData(input.bulkData)
 
@@ -83,6 +85,7 @@ export async function processBulkUserCreate(input: {
         learningGroup: input.learningGroup,
         learningLocation: input.learningLocation,
         role: input.role,
+        graduation: input.graduation,
       })
     }),
   )
