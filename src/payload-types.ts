@@ -84,6 +84,9 @@ export interface Config {
     'learning-groups': {
       users: 'users';
     };
+    subjects: {
+      tasks: 'tasks';
+    };
     tasks: {
       taskProgress: 'task-progress';
     };
@@ -230,6 +233,11 @@ export interface Task {
 export interface Subject {
   id: string;
   description?: string | null;
+  tasks?: {
+    docs?: (string | Task)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -369,6 +377,7 @@ export interface LearningLocationSelect<T extends boolean = true> {
  */
 export interface SubjectsSelect<T extends boolean = true> {
   description?: T;
+  tasks?: T;
   updatedAt?: T;
   createdAt?: T;
 }

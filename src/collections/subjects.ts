@@ -46,5 +46,14 @@ export const Subjects: CollectionConfig = {
         },
       },
     },
+
+    {
+      name: 'tasks',
+      label: 'Aufgaben',
+      type: 'join',
+      collection: 'tasks',
+      on: 'subject',
+      hasMany: true,
+    },
   ],
 }
