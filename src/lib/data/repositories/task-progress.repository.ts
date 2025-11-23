@@ -67,10 +67,10 @@ export class TaskProgressRepository {
    */
   async findByUsersAndSubject(
     userIds: string[],
-    subjectId: string,
+    subjectIds: string[],
     options?: { depth?: number },
   ): Promise<TaskProgress[]> {
-    if (userIds.length === 0 || !subjectId) {
+    if (userIds.length === 0 || subjectIds.length === 0) {
       return []
     }
 
@@ -81,7 +81,7 @@ export class TaskProgressRepository {
       collection: 'tasks',
       where: {
         subject: {
-          equals: subjectId,
+          in: subjectIds,
         },
       },
       limit: 10000, // Ausreichend groß für alle Tasks

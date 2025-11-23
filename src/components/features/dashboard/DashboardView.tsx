@@ -10,7 +10,11 @@ import { taskProgressRepository } from '@/lib/data/repositories/task-progress.re
 import { SelectElement, DataTable } from '@/components/features/dashboard'
 import type { UserWithTasks } from '@/lib/types'
 import type { Item } from '@/components/features/dashboard/select-element'
-export async function DashboardView({ initPageResult, params, searchParams }: AdminViewServerProps) {
+export async function DashboardView({
+  initPageResult,
+  params,
+  searchParams,
+}: AdminViewServerProps) {
   if (!initPageResult.req.user) {
     return <p>You must be logged in to view this page.</p>
   }
@@ -31,22 +35,26 @@ export async function DashboardView({ initPageResult, params, searchParams }: Ad
 
   // Get learning groups and subjects
   const { learningGroups, subjects } = await dashboardService.getLearningGroupsAndSubjects()
+
   const selectedLearningGroupId = resolveIdFromSearchParams(
     searchParams,
     learningGroupSearchParamName,
     learningGroups,
   )
-  const selectedSubjectId = resolveIdFromSearchParams(
-    searchParams,
-    subjectSearchParamName,
-    subjects,
-  )
+  let selectedSubjectIds = searchParams[subjectSearchParamName]
+  selectedSubjectIds = Array.isArray(selectedSubjectIds)
+    ? selectedSubjectIds
+    : selectedSubjectIds
+      ? [selectedSubjectIds]
+      : selectedSubjectIds === ''
+        ? []
+        : subjects.map((subject) => subject.id)
 
   const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '')
   // Get dashboard data based on filters
   const taskProgressEntries = await taskProgressRepository.findByUsersAndSubject(
     users.map((user) => user.id),
-    selectedSubjectId ?? '',
+    selectedSubjectIds,
     { depth: 2 }, // Relationships auflösen (user und task als Objekte)
   )
 
@@ -109,24 +117,32 @@ export async function DashboardView({ initPageResult, params, searchParams }: Ad
         <div className="space-y-8">
           <div className="flex flex-row items-center flex-wrap px-4 gap-2">
             <SelectElement
-              items={learningGroups.map((learningGroup) => ({
-                id: learningGroup.id,
-                description: learningGroup.description || '',
-              }as Item))}
-              selectedId={selectedLearningGroupId}
+              items={learningGroups.map(
+                (learningGroup) =>
+                  ({
+                    id: learningGroup.id,
+                    description: learningGroup.description || '',
+                  }) as Item,
+              )}
+              selectedIds={selectedLearningGroupId}
               placeholder="Wähle eine Lerngruppe"
               searchParamName={learningGroupSearchParamName}
               itemName="Lerngruppe"
+              isMulti={false}
             />
             <SelectElement
-              items={subjects.map((subject) => ({
-                id: subject.id,
-                description: subject.description || '',
-              }as Item))}
-              selectedId={selectedSubjectId}
+              items={subjects.map(
+                (subject) =>
+                  ({
+                    id: subject.id,
+                    description: subject.description || '',
+                  }) as Item,
+              )}
+              selectedIds={selectedSubjectIds}
               placeholder="Wähle ein Fach"
               searchParamName={subjectSearchParamName}
               itemName="Fach"
+              isMulti={true}
             />
           </div>
           <div className="px-4">

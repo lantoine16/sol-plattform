@@ -12,54 +12,58 @@ export type Item = {
 
 type SelectItemProps = {
   items: Item[]
-  selectedId?: string
+  selectedIds?: string | string[]
   searchParamName: string
   placeholder: string
   itemName: string
+  isMulti?: boolean
 }
 
 export function SelectElement({
   items,
-  selectedId,
+  selectedIds,
   searchParamName,
   placeholder,
   itemName,
+  isMulti,
 }: SelectItemProps) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const { replace } = useRouter()
 
-  const options = useMemo<ReactSelectOption[]>(() => {
+  const options: ReactSelectOption[] = useMemo(() => {
     return items.map((item) => ({
       label: item.description,
       value: item.id,
     }))
   }, [items])
 
-  const selectedOption = useMemo(() => {
-    if (!selectedId) {
-      return undefined
-    }
-    return options.find((option) => option.value === selectedId)
-  }, [options, selectedId])
-
   const handleSelectChange = useCallback(
     (option: ReactSelectOption | ReactSelectOption[] | null) => {
       const params = new URLSearchParams(searchParams)
 
-      let value: string | undefined
-
-      if (Array.isArray(option)) {
-        value = option[0]?.value as string | undefined
-      } else if (option) {
-        value = option.value as string | undefined
+      // Entferne alle bestehenden Werte für diesen Parameter
+      params.delete(searchParamName)
+      //hänge bei multi select leeren string wenn option null oder empty array ist, sodass nicht alle ausgewählt werden in DashboardView
+      if( isMulti && (option === null ||  option.length === 0 )) {
+        params.append(searchParamName, '')
       }
-
-      if (!value || value === '0' || value === '') {
-        params.delete(searchParamName)
-      } else {
-        params.set(searchParamName, value)
+      // Wenn option ein Array ist (Multi-Select)
+      if (Array.isArray(option) && option.length > 0) {
+        option.forEach((opt) => {
+          const value = opt.value as string
+          if (value && value !== '0' && value !== '') {
+            params.append(searchParamName, value)
+          }
+        })
+      } else if (option && !Array.isArray(option)) {
+        // Einzelner Wert (für Rückwärtskompatibilität)
+        const value = option.value as string
+        if (value && value !== '0' && value !== '') {
+          params.set(searchParamName, value)
+        }
       }
+      // Wenn option null ist, bleibt der Parameter gelöscht (leer)
 
       const query = params.toString()
       replace(query ? `${pathname}?${query}` : pathname)
@@ -67,15 +71,28 @@ export function SelectElement({
     [pathname, replace, searchParamName, searchParams],
   )
 
+  const selectedOptions = useMemo(() => {
+    if(isMulti) {
+      return options.filter((option) => selectedIds?.includes(option.value as string))
+    }
+    // Wenn selectedId ein String ist (für Rückwärtskompatibilität)
+    const option = options.find((option) => option.value === selectedIds)
+    return option ? [option] : []
+  }, [options])
+
+
+
   return (
-    <div className="min-w-[180px]">
+    <div>
       <ReactSelect
-        className="react-select-dashboard"
+        className="react-select-container"
         options={options}
-        value={selectedOption}
         placeholder={placeholder}
-        isClearable={false}
+        isMulti={isMulti}
+        isClearable={isMulti}
+        isSearchable={true}
         onChange={handleSelectChange}
+        value={selectedOptions}
         customProps={{
           valueContainerLabel: itemName,
         }}
