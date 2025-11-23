@@ -87,11 +87,38 @@ Payload CMS / Database
 - **Domain Constants**: Type-safe Status-Werte in `domain/constants/task-status.constants.ts`
 - **View Types**: Application-spezifische View/DTO Types in `lib/types.ts`
 
-## Getting started
+## 🚀 Getting Started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+**Neu im Projekt?** Folge der detaillierten [Setup-Anleitung (SETUP.md)](SETUP.md) für eine Schritt-für-Schritt Installation auf Windows oder Linux.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Die Anleitung umfasst:
+
+- Installation von Node.js, pnpm und Docker
+- Konfiguration der Umgebungsvariablen
+- Start des Projekts mit Docker Compose
+
+**Schnellstart (für erfahrene Entwickler):**
+
+```bash
+# Repository klonen
+git clone <REPOSITORY_URL>
+cd sol
+
+# MongoDB starten (nur MongoDB, nicht das ganze Projekt)
+docker compose up mongo -d
+
+# .env Datei erstellen
+echo "PAYLOAD_SECRET=dein-super-geheimer-schluessel-hier-min-32-zeichen" > .env
+echo "DATABASE_URI=mongodb://lukas:lukaspassword@localhost:27017/sol?authSource=admin" >> .env
+
+# Dependencies installieren
+pnpm install
+
+# Projekt starten
+pnpm run dev
+```
+
+Dann öffne http://localhost:3000 im Browser.
 
 ## Add your files
 
