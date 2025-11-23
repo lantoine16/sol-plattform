@@ -76,6 +76,26 @@ export async function DashboardView({
       return typeof taskProgress?.task === 'object' ? taskProgress.task : null
     })
     .filter((task): task is NonNullable<typeof task> => task !== null)
+    .sort((a, b) => {
+      // 1. Sortiere nach Fach (alphabetisch)
+      const subjectA = typeof a.subject === 'object' ? a.subject?.description || '' : ''
+      const subjectB = typeof b.subject === 'object' ? b.subject?.description || '' : ''
+
+      const subjectComparison = subjectA.localeCompare(subjectB, 'de', {
+        sensitivity: 'base',
+      })
+
+      //wenn beide Aufgaben nicht das gleiche Fach haben, sortiere nach Fach alphabetisch
+      if (subjectComparison !== 0) {
+        return subjectComparison
+      }
+
+      // 2. Innerhalb eines Fachs: Sortiere nach updatedAt (aufsteigend, älteste zuerst)
+      const dateA = new Date(a.updatedAt).getTime()
+      const dateB = new Date(b.updatedAt).getTime()
+
+      return dateA - dateB
+    })
 
   const tasksByUser: UserWithTasks[] = users.map((user) => {
     // Finde alle TaskProgress-Einträge für diesen User
