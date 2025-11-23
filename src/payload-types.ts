@@ -253,7 +253,23 @@ export interface Task {
  */
 export interface Subject {
   id: string;
-  description?: string | null;
+  description: string;
+  color?:
+    | (
+        | 'blue'
+        | 'green'
+        | 'yellow'
+        | 'orange'
+        | 'red'
+        | 'violet'
+        | 'pink'
+        | 'cyan'
+        | 'lime'
+        | 'indigo'
+        | 'teal'
+        | 'purple'
+      )
+    | null;
   tasks?: {
     docs?: (string | Task)[];
     hasNextPage?: boolean;
@@ -391,6 +407,7 @@ export interface LearningLocationSelect<T extends boolean = true> {
  */
 export interface SubjectsSelect<T extends boolean = true> {
   description?: T;
+  color?: T;
   tasks?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -1,12 +1,14 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useTheme } from 'next-themes'
 import type { Task } from '@/payload-types'
 import type { UserWithTasks } from '@/lib/types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { StudentDetailsModal } from '../student-details/student-details-modal'
 import { StatusIcon } from './status-icon'
 import { cn } from '@/lib/utils'
+import { getSubjectColor } from '@/domain/constants/subject-color.constants'
 
 export function DataTable({
   columns,
@@ -19,6 +21,15 @@ export function DataTable({
 }) {
   const [selectedUser, setSelectedUser] = useState<UserWithTasks | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { theme, resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Warte auf Mount, um Hydration-Mismatch zu vermeiden
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const isDarkMode = mounted && (resolvedTheme === 'dark' || theme === 'dark')
 
   // Update selectedUser when data changes (e.g. after router.refresh)
   useEffect(() => {
@@ -84,6 +95,19 @@ export function DataTable({
     return userMap.get(String(taskId)) || null
   }
 
+  // Extrahiere Subject-Color aus einem Task
+  const getSubjectColorFromTask = (task: Task): string | null => {
+    if (!task.subject) return null
+
+    // Subject kann ein String (ID) oder ein Subject-Objekt sein
+    const subject = typeof task.subject === 'string' ? null : task.subject
+
+    if (!subject || !subject.color) return null
+
+    // Color ist als String-Wert gespeichert (z.B. 'blue', 'green')
+    return getSubjectColor(subject.color, isDarkMode)
+  }
+
   return (
     <>
       <div className="w-full overflow-auto max-h-[calc(100vh-200px)]">
@@ -145,14 +169,23 @@ export function DataTable({
                 columns.map((task) => {
                   const taskId = String(task.id)
                   const shortDescription = getShortTaskDescription(task.description)
+                  const backgroundColor = getSubjectColorFromTask(task)
+
                   return (
-                    <tr key={task.id} style={{ height: '28px' }}>
+                    <tr
+                      key={task.id}
+                      style={{
+                        height: '28px',
+                        backgroundColor: backgroundColor || undefined,
+                      }}
+                    >
                       <td
-                        className="sticky left-0 z-10 bg-background border-r border-b p-1 text-[10px] leading-none"
+                        className="sticky left-0 z-10 border-r border-b p-1 text-[10px] leading-none"
                         style={{
                           width: '70px',
                           minWidth: '70px',
                           maxWidth: '70px',
+                          backgroundColor: backgroundColor || undefined,
                         }}
                         title={task.description || ''}
                       >
@@ -169,6 +202,7 @@ export function DataTable({
                               width: 'auto',
                               height: '28px',
                               padding: '2px',
+                              backgroundColor: backgroundColor || undefined,
                             }}
                           >
                             {taskStatus ? (

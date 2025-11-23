@@ -5,8 +5,6 @@ import { BulkLearningGroupField as BulkLearningGroupField_e463fece887a24674e4aba
 import { default as default_1d7b04e6126e6c3956b17b8aea5a9fec } from '@/components/payload/LearningGroupsSaveButton'
 import { BulkLearningLocationField as BulkLearningLocationField_e463fece887a24674e4aba025e6814e6 } from '@/components/payload/BulkGroupField'
 import { default as default_43f6091841a0d1354cc5feee9a7e02cc } from '@/components/payload/LearningLocationsSaveButton'
-import { BulkSubjectField as BulkSubjectField_e463fece887a24674e4aba025e6814e6 } from '@/components/payload/BulkGroupField'
-import { default as default_d8c6adebdad336dd01d08bacf19fb812 } from '@/components/payload/SubjectsSaveButton'
 import { BulkTaskField as BulkTaskField_e463fece887a24674e4aba025e6814e6 } from '@/components/payload/BulkGroupField'
 import { default as default_a5e57bc04a6d26fb36996766a67d6c17 } from '@/components/payload/TasksSaveButton'
 import { default as default_eabe176a4bb30ac84e080835885bf7b7 } from '@/components/payload/CustomNavLinks'
@@ -20,8 +18,6 @@ export const importMap = {
   "@/components/payload/LearningGroupsSaveButton#default": default_1d7b04e6126e6c3956b17b8aea5a9fec,
   "@/components/payload/BulkGroupField#BulkLearningLocationField": BulkLearningLocationField_e463fece887a24674e4aba025e6814e6,
   "@/components/payload/LearningLocationsSaveButton#default": default_43f6091841a0d1354cc5feee9a7e02cc,
-  "@/components/payload/BulkGroupField#BulkSubjectField": BulkSubjectField_e463fece887a24674e4aba025e6814e6,
-  "@/components/payload/SubjectsSaveButton#default": default_d8c6adebdad336dd01d08bacf19fb812,
   "@/components/payload/BulkGroupField#BulkTaskField": BulkTaskField_e463fece887a24674e4aba025e6814e6,
   "@/components/payload/TasksSaveButton#default": default_a5e57bc04a6d26fb36996766a67d6c17,
   "@/components/payload/CustomNavLinks#default": default_eabe176a4bb30ac84e080835885bf7b7,

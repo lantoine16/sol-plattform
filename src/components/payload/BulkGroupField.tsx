@@ -28,17 +28,6 @@ export const BulkLearningGroupField: React.FC = () => {
   )
 }
 
-// Wrapper-Komponente für Subjects mit Labels aus der Collection-Konfiguration
-export const BulkSubjectField: React.FC = () => {
-  return (
-    <BulkGroupField
-      title={'Fächer'}
-      description={description('Fächer')}
-      placeholder={placeholder('Fach')}
-    />
-  )
-}
-
 // Wrapper-Komponente für Tasks mit Labels aus der Collection-Konfiguration
 export const BulkTaskField: React.FC = () => {
   return (
