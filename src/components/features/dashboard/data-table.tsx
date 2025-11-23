@@ -3,8 +3,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Task } from '@/payload-types'
 import type { UserWithTasks } from '@/lib/types'
-import { getStatusLabel } from '@/domain/constants/task-status.constants'
+import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { StudentDetailsModal } from '../student-details/student-details-modal'
+import { StatusIcon } from './status-icon'
+import { cn } from '@/lib/utils'
 
 export function DataTable({
   columns,
@@ -28,7 +30,7 @@ export function DataTable({
     }
   }, [data, selectedUser])
 
-  const handleRowClick = (user: UserWithTasks) => {
+  const handleColumnClick = (user: UserWithTasks) => {
     setSelectedUser(user)
     setIsModalOpen(true)
   }
@@ -37,88 +39,166 @@ export function DataTable({
     setIsModalOpen(false)
     setSelectedUser(null)
   }
-  // Transformiere die Daten: Jede Task-ID wird zu einer Eigenschaft mit dem Status als Wert
-  const tableData = useMemo(
-    () =>
-      data.map((user, rowIndex) => {
-        // Erstelle ein Objekt mit Task-IDs als Keys und Status als Values
-        const taskStatusMap = user.tasks.reduce(
-          (acc, task) => {
-            acc[String(task.taskId)] = task.status
-            return acc
-          },
-          {} as Record<string, string>,
-        )
 
-        return {
-          id: user.userId,
-          rowIndex,
-          lastname: user.lastname,
-          firstname: user.firstname,
-          // Füge für jede Task-ID eine Eigenschaft hinzu (null, wenn kein Status vorhanden)
-          ...columns.reduce(
-            (acc, task) => {
-              const status = taskStatusMap[String(task.id)] || null
-              acc[String(task.id)] = status ? getStatusLabel(status) : null
-              return acc
-            },
-            {} as Record<string, string | null>,
-          ),
-        }
-      }),
-    [data, columns],
-  )
+  // Erstelle eine Map für schnellen Zugriff: userId -> taskId -> status
+  const userTaskStatusMap = useMemo(() => {
+    const map = new Map<string, Map<string, { status: TaskStatusValue; helpNeeded: boolean }>>()
+
+    data.forEach((user) => {
+      const taskMap = new Map<string, { status: TaskStatusValue; helpNeeded: boolean }>()
+      user.tasks.forEach((task) => {
+        taskMap.set(String(task.taskId), {
+          status: task.status,
+          helpNeeded: task.helpNeeded || false,
+        })
+      })
+      map.set(user.userId, taskMap)
+    })
+
+    return map
+  }, [data])
+
+  // Kompakte Namensdarstellung für Schüler: "Vorname + erster Buchstabe des Nachnamens"
+  const getCompactName = (user: UserWithTasks) => {
+    const lastNameInitial = user.lastname?.charAt(0).toUpperCase() || ''
+    const fullName = `${user.firstname || ''} ${lastNameInitial}.`.trim()
+    // Maximal 14 Zeichen, sonst mit ... abkürzen
+    if (fullName.length > 14) {
+      return fullName.substring(0, 11) + '...'
+    }
+    return fullName
+  }
+
+  // Kürze Task-Beschreibungen für kompakte Darstellung
+  const getShortTaskDescription = (description: string | null | undefined, maxLength = 15) => {
+    if (!description) return ''
+    return description.length > maxLength
+      ? description.substring(0, maxLength) + '...'
+      : description
+  }
+
+  // Hole Status für eine bestimmte Aufgabe × Schüler Kombination
+  const getTaskStatusForUser = (taskId: string, userId: string) => {
+    const userMap = userTaskStatusMap.get(userId)
+    if (!userMap) return null
+    return userMap.get(String(taskId)) || null
+  }
 
   return (
     <>
-      <div className="table">
-        <table cellPadding="0" cellSpacing="0">
-          <thead>
-            <tr>
-              <th id="heading-lastname">Nachname</th>
-              <th id="heading-firstname">Vorname</th>
-              {columns.map((task) => (
-                <th key={task.id} id={`heading-${String(task.id).replace(/\./g, '__')}`}>
-                  {task.description}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.length > 0 ? (
-              tableData.map((row) => {
-                const user = data.find((u) => u.userId === row.id)
-                return (
-                  <tr
-                    key={row.id}
-                    className={`row-${row.rowIndex + 1}`}
-                    onClick={() => user && handleRowClick(user)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <td className="cell-lastname">{row.lastname}</td>
-                    <td className="cell-firstname">{row.firstname}</td>
-                    {columns.map((task) => {
-                      const taskId = String(task.id)
-                      const rowData = row as Record<string, string | null | number>
-                      const cellValue = rowData[taskId]
-                      return (
-                        <td key={task.id} className={`cell-${taskId.replace(/\./g, '__')}`}>
-                          {typeof cellValue === 'string' ? cellValue : '-'}
-                        </td>
-                      )
-                    })}
-                  </tr>
-                )
-              })
-            ) : (
+      <div className="w-full overflow-auto max-h-[calc(100vh-200px)]">
+        <div className="inline-block min-w-full">
+          <table
+            cellPadding="0"
+            cellSpacing="0"
+            className="border-collapse w-full"
+            style={{ tableLayout: 'auto' }}
+          >
+            <thead className="sticky top-0 z-10 bg-background">
               <tr>
-                <td colSpan={columns.length + 2} style={{ textAlign: 'center', padding: '2rem' }}>
-                  Keine Daten vorhanden.
-                </td>
+                <th
+                  className="sticky left-0 z-20 bg-background border-r border-b p-1 text-left font-semibold text-[10px] leading-tight"
+                  style={{
+                    width: '70px',
+                    minWidth: '70px',
+                    maxWidth: '70px',
+                  }}
+                >
+                  Aufgabe
+                </th>
+                {data.map((user) => {
+                  const compactName = getCompactName(user)
+                  return (
+                    <th
+                      key={user.userId}
+                      className="border-b border-r p-1 font-semibold text-[10px] leading-tight hover:bg-accent/50 transition-colors cursor-pointer"
+                      style={{
+                        minWidth: '28px',
+                        width: 'auto',
+                        height: '60px',
+                        writingMode: 'vertical-rl',
+                        textOrientation: 'mixed',
+                        verticalAlign: 'bottom',
+                        position: 'relative',
+                      }}
+                      title={`${user.lastname}, ${user.firstname}`}
+                      onClick={() => handleColumnClick(user)}
+                    >
+                      <div
+                        className="whitespace-nowrap"
+                        style={{
+                          position: 'absolute',
+                          bottom: '4px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                        }}
+                      >
+                        {compactName}
+                      </div>
+                    </th>
+                  )
+                })}
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {columns.length > 0 ? (
+                columns.map((task) => {
+                  const taskId = String(task.id)
+                  const shortDescription = getShortTaskDescription(task.description)
+                  return (
+                    <tr key={task.id} style={{ height: '28px' }}>
+                      <td
+                        className="sticky left-0 z-10 bg-background border-r border-b p-1 text-[10px] leading-none"
+                        style={{
+                          width: '70px',
+                          minWidth: '70px',
+                          maxWidth: '70px',
+                        }}
+                        title={task.description || ''}
+                      >
+                        {shortDescription}
+                      </td>
+                      {data.map((user) => {
+                        const taskStatus = getTaskStatusForUser(taskId, user.userId)
+                        return (
+                          <td
+                            key={user.userId}
+                            className="border-r border-b p-0 text-center align-middle"
+                            style={{
+                              minWidth: '28px',
+                              width: 'auto',
+                              height: '28px',
+                              padding: '2px',
+                            }}
+                          >
+                            {taskStatus ? (
+                              <StatusIcon
+                                status={taskStatus.status}
+                                helpNeeded={taskStatus.helpNeeded}
+                                className="mx-auto"
+                              />
+                            ) : (
+                              <StatusIcon status={null} className="mx-auto" />
+                            )}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  )
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan={data.length + 1}
+                    className="text-center p-4 text-sm text-muted-foreground"
+                  >
+                    Keine Daten vorhanden.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
       <StudentDetailsModal
         tasks={columns}
