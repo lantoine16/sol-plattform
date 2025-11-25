@@ -73,6 +73,8 @@ export class DashboardService {
         return {
           taskId: typeof tp.task === 'object' ? tp.task?.id : tp.task,
           status: tp.status as UserWithTasks['tasks'][0]['status'],
+          helpNeeded: tp.helpNeeded ?? false,
+          searchPartner: tp.searchPartner ?? false,
         }
       })
 

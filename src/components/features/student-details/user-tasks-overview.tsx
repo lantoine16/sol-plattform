@@ -40,44 +40,59 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
       <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 items-stretch">
         {/* Not Started Tasks */}
         <div className="flex flex-col gap-4">
-          {notStartedTasks.map((task) => (
-            <UserTaskCard
-              key={task.id}
-              taskId={task.id}
-              userId={userId}
-              description={task.description || ''}
-              previousStatus={undefined}
-              nextStatus="in-progress"
-            />
-          ))}
+          {notStartedTasks.map((task) => {
+            const taskStatus = userTaskStatuses.find((ts) => ts.taskId === task.id)
+            return (
+              <UserTaskCard
+                key={task.id}
+                taskId={task.id}
+                userId={userId}
+                description={task.description || ''}
+                previousStatus={undefined}
+                nextStatus="in-progress"
+                helpNeeded={taskStatus?.helpNeeded}
+                searchPartner={taskStatus?.searchPartner}
+              />
+            )
+          })}
         </div>
         <Separator orientation="vertical" className="h-auto" />
         {/* In Progress Tasks */}
         <div className="flex flex-col gap-4">
-          {inProgressTasks.map((task) => (
-            <UserTaskCard
-              key={task.id}
-              taskId={task.id}
-              userId={userId}
-              description={task.description || ''}
-              previousStatus="not-started"
-              nextStatus="finished"
-            />
-          ))}
+          {inProgressTasks.map((task) => {
+            const taskStatus = userTaskStatuses.find((ts) => ts.taskId === task.id)
+            return (
+              <UserTaskCard
+                key={task.id}
+                taskId={task.id}
+                userId={userId}
+                description={task.description || ''}
+                previousStatus="not-started"
+                nextStatus="finished"
+                helpNeeded={taskStatus?.helpNeeded}
+                searchPartner={taskStatus?.searchPartner}
+              />
+            )
+          })}
         </div>
         <Separator orientation="vertical" className="h-auto" />
         {/* Finished Tasks */}
         <div className="flex flex-col gap-4">
-          {finishedTasks.map((task) => (
-            <UserTaskCard
-              userId={userId}
-              key={task.id}
-              taskId={task.id}
-              description={task.description || ''}
-              previousStatus="in-progress"
-              nextStatus={undefined}
-            />
-          ))}
+          {finishedTasks.map((task) => {
+            const taskStatus = userTaskStatuses.find((ts) => ts.taskId === task.id)
+            return (
+              <UserTaskCard
+                userId={userId}
+                key={task.id}
+                taskId={task.id}
+                description={task.description || ''}
+                previousStatus="in-progress"
+                nextStatus={undefined}
+                helpNeeded={taskStatus?.helpNeeded}
+                searchPartner={taskStatus?.searchPartner}
+              />
+            )
+          })}
         </div>
       </div>
     </div>

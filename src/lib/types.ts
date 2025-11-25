@@ -15,4 +15,5 @@ export interface UserTaskStatus {
   taskId: string
   status: TaskStatusValue
   helpNeeded?: boolean
+  searchPartner?: boolean
 }
