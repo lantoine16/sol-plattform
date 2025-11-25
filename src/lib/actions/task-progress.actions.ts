@@ -103,8 +103,6 @@ export async function updateTaskSearchPartner(
   try {
     const payload = await getPayloadClient()
     const existing = await taskProgressRepository.findByUserAndTask([taskId], [userId])
-
-    console.log('existing', existing)
     if (existing && existing.length > 0) {
       await payload.update({
         collection: 'task-progress',
