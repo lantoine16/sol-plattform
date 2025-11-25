@@ -30,6 +30,11 @@ export default buildConfig({
       beforeNavLinks: ['@/components/payload/CustomNavLinks'],
       // Nav: '@/components/CustomNav',
       views: {
+        // Dashboard - zeigt alle Schüler der ausgewählten Lerngruppe
+        dashboard: {
+          Component: '@/components/pages/dashboard',
+          path: '/dashboard',
+        },
         // Detailansicht - zeigt die Detailansicht für Lerngruppen im Admin-Bereich
         detailView: {
           Component: '@/components/pages/learning-group-details',
