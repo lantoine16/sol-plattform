@@ -1,25 +1,25 @@
-import { Baby, Rocket, GraduationCap, Trophy } from 'lucide-react'
+import {  Tally1, Tally2, Tally3, Tally4 } from 'lucide-react'
 
 export const USER_GRADUATION_OPTIONS = [
   {
     label: 'Neustarter',
     value: 'newcomer',
-    icon: Baby,
+    icon: Tally1,
   },
   {
     label: 'Starter',
     value: 'starter',
-    icon: Rocket,
+    icon: Tally2,
   },
   {
     label: 'Lernprofi',
     value: 'learning-pro',
-    icon: GraduationCap,
+    icon: Tally3,
   },
   {
     label: 'Durchstarter',
     value: 'high-achiever',
-    icon: Trophy,
+    icon: Tally4,
   },
 ] as const
 

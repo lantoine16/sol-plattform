@@ -3,14 +3,17 @@ import type { AdminViewServerProps } from 'payload'
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { Gutter, SetStepNav, StepNavItem } from '@payloadcms/ui'
 import React from 'react'
-import { UserWithTaskProgress, dashboardService } from '@/lib/services/dashboard.service'
+import {
+  UserWithTaskProgress,
+  learningGroupDashboardService,
+} from '@/lib/services/dashboard.service'
 import { userRepository } from '@/lib/data/repositories/user.repository'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
-import { DashboardTable } from '@/components/features/dashboard/dashboard-table'
+import { LearningGroupDashboardTable } from '@/components/features/dashboard/learning-group-dashboard-table'
 import { UserGraduationValue } from '@/domain/constants/user-graduation.constants'
 
-export async function DashboardView({
+export async function LearningGroupDashboardView({
   initPageResult,
   params,
   searchParams,
@@ -26,7 +29,7 @@ export async function DashboardView({
   const steps: StepNavItem[] = [
     {
       url: '/dashboard',
-      label: 'Dashboard',
+      label: 'Lerngruppenübersicht',
     },
   ]
 
@@ -34,11 +37,12 @@ export async function DashboardView({
   const subjectSearchParamName = 'subject'
 
   // Get learning groups and subjects
-  const { learningGroups, subjects } = await dashboardService.getLearningGroupsAndSubjects()
+  const { learningGroups, subjects } =
+    await learningGroupDashboardService.getLearningGroupsAndSubjects()
 
-  // Get selected values using the dashboard service
+  // Get selected values using the learning group dashboard service
   const { selectedLearningGroupId, selectedSubjectIds } =
-    dashboardService.getSubjectAndLearngingGroupsFilterValues(
+    learningGroupDashboardService.getSubjectAndLearngingGroupsFilterValues(
       searchParams,
       learningGroupSearchParamName,
       subjectSearchParamName,
@@ -85,7 +89,7 @@ export async function DashboardView({
             selectedSubjectIds={selectedSubjectIds}
           />
           <div className="px-4">
-            <DashboardTable users={usersWithTaskProgress} />
+            <LearningGroupDashboardTable users={usersWithTaskProgress} />
           </div>
         </div>
       </Gutter>
@@ -93,4 +97,4 @@ export async function DashboardView({
   )
 }
 
-export default DashboardView
+export default LearningGroupDashboardView

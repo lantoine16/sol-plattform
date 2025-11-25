@@ -11,12 +11,15 @@ export const AfterNavLinks = () => {
   const isDetailViewActive = pathname.includes(detailViewHref)
 
   return (
-    <NavGroup label={'Views'}>
+    <NavGroup label={'Ansichten'}>
       <Link
         href={dashboardHref}
         className="nav__link"
         id="nav-dashboard"
-        style={{ cursor: isDashboardActive ? 'text' : 'pointer', pointerEvents: isDashboardActive ? 'none' : 'auto' }}
+        style={{
+          cursor: isDashboardActive ? 'text' : 'pointer',
+          pointerEvents: isDashboardActive ? 'none' : 'auto',
+        }}
       >
         {isDashboardActive && <div className="nav__link-indicator" />}
         <span className="nav__link-label">Dashboard</span>
@@ -25,7 +28,10 @@ export const AfterNavLinks = () => {
         href={detailViewHref}
         className="nav__link"
         id="nav-detail-view"
-        style={{ cursor: isDetailViewActive ? 'text' : 'pointer', pointerEvents: isDetailViewActive ? 'none' : 'auto' }}
+        style={{
+          cursor: isDetailViewActive ? 'text' : 'pointer',
+          pointerEvents: isDetailViewActive ? 'none' : 'auto',
+        }}
       >
         {isDetailViewActive && <div className="nav__link-indicator" />}
         <span className="nav__link-label">Detailansicht</span>

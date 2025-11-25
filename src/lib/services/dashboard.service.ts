@@ -26,9 +26,9 @@ export interface UserWithTaskProgress {
   taskProgressEntries: TaskProgress[]
 }
 
-export class DashboardService {
+export class LearningGroupDashboardService {
   /**
-   * Get all learning groups and subjects for the dashboard
+   * Get all learning groups and subjects for the learning group dashboard
    */
   async getLearningGroupsAndSubjects(): Promise<{
     learningGroups: LearningGroup[]
@@ -92,7 +92,7 @@ export class DashboardService {
   }
 
   /**
-   * Get dashboard data based on filters
+   * Get learning group dashboard data based on filters
    */
   async getUsersWithTasks(filters: UsersWithTasksFilter): Promise<UsersWithTasks> {
     if (!filters.learningGroupId || !filters.subjectId) {
@@ -152,4 +152,4 @@ export class DashboardService {
   }
 }
 
-export const dashboardService = new DashboardService()
+export const learningGroupDashboardService = new LearningGroupDashboardService()

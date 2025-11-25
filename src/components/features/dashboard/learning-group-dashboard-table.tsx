@@ -9,7 +9,7 @@ import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 type SortField = 'firstname' | 'lastname'
 type SortDirection = 'asc' | 'desc'
 
-export function DashboardTable({ users }: { users: UserWithTaskProgress[] }) {
+export function LearningGroupDashboardTable({ users }: { users: UserWithTaskProgress[] }) {
   const [sortField, setSortField] = useState<SortField>('lastname')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 

@@ -3,7 +3,7 @@ import type { AdminViewServerProps } from 'payload'
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { Gutter, SetStepNav, StepNavItem } from '@payloadcms/ui'
 import React from 'react'
-import { dashboardService } from '@/lib/services/dashboard.service'
+import { learningGroupDashboardService } from '@/lib/services/dashboard.service'
 import { userRepository } from '@/lib/data/repositories/user.repository'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
@@ -34,11 +34,11 @@ export async function LearningGroupDetailsView({
   const subjectSearchParamName = 'subject'
 
   // Get learning groups and subjects
-  const { learningGroups, subjects } = await dashboardService.getLearningGroupsAndSubjects()
+  const { learningGroups, subjects } = await learningGroupDashboardService.getLearningGroupsAndSubjects()
 
-  // Get selected values using the dashboard service
+  // Get selected values using the learning group dashboard service
   const { selectedLearningGroupId, selectedSubjectIds } =
-    dashboardService.getSubjectAndLearngingGroupsFilterValues(
+    learningGroupDashboardService.getSubjectAndLearngingGroupsFilterValues(
       searchParams,
       learningGroupSearchParamName,
       subjectSearchParamName,
@@ -47,7 +47,7 @@ export async function LearningGroupDetailsView({
     )
 
   const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '')
-  // Get dashboard data based on filters
+  // Get learning group dashboard data based on filters
   const taskProgressEntries = await taskProgressRepository.findByUsersAndSubject(
     users.map((user) => user.id),
     selectedSubjectIds,
