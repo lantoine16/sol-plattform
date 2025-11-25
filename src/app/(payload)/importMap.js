@@ -8,7 +8,7 @@ import { default as default_43f6091841a0d1354cc5feee9a7e02cc } from '@/component
 import { BulkTaskField as BulkTaskField_e463fece887a24674e4aba025e6814e6 } from '@/components/payload/BulkGroupField'
 import { default as default_a5e57bc04a6d26fb36996766a67d6c17 } from '@/components/payload/TasksSaveButton'
 import { default as default_eabe176a4bb30ac84e080835885bf7b7 } from '@/components/payload/CustomNavLinks'
-import { default as default_2e5a6edca98c58ee3600c85dc8cbddc9 } from '@/components/features/dashboard/DashboardView'
+import { default as default_a22c3a6f8a49b6e0731bef381a517330 } from '@/components/pages/learning-group-details'
 
 export const importMap = {
   "@/components/payload/HideAuthFieldsOnCreate#default": default_e296ff360e36f227fadad2fa6f13dbaa,
@@ -21,5 +21,5 @@ export const importMap = {
   "@/components/payload/BulkGroupField#BulkTaskField": BulkTaskField_e463fece887a24674e4aba025e6814e6,
   "@/components/payload/TasksSaveButton#default": default_a5e57bc04a6d26fb36996766a67d6c17,
   "@/components/payload/CustomNavLinks#default": default_eabe176a4bb30ac84e080835885bf7b7,
-  "@/components/features/dashboard/DashboardView#default": default_2e5a6edca98c58ee3600c85dc8cbddc9
+  "@/components/pages/learning-group-details#default": default_a22c3a6f8a49b6e0731bef381a517330
 }

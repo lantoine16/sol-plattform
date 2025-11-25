@@ -44,8 +44,8 @@ export function SelectElement({
 
       // Entferne alle bestehenden Werte für diesen Parameter
       params.delete(searchParamName)
-      //hänge bei multi select leeren string wenn option null oder empty array ist, sodass nicht alle ausgewählt werden in DashboardView
-      if( isMulti && (option === null ||  option.length === 0 )) {
+      //hänge bei multi select leeren string wenn option null oder empty array ist, sodass nicht alle ausgewählt werden bei den Fächern
+      if (isMulti && (option === null || option.length === 0)) {
         params.append(searchParamName, '')
       }
       // Wenn option ein Array ist (Multi-Select)
@@ -72,15 +72,13 @@ export function SelectElement({
   )
 
   const selectedOptions = useMemo(() => {
-    if(isMulti) {
+    if (isMulti) {
       return options.filter((option) => selectedIds?.includes(option.value as string))
     }
     // Wenn selectedId ein String ist (für Rückwärtskompatibilität)
     const option = options.find((option) => option.value === selectedIds)
     return option ? [option] : []
   }, [options])
-
-
 
   return (
     <div>
@@ -100,3 +98,4 @@ export function SelectElement({
     </div>
   )
 }
+

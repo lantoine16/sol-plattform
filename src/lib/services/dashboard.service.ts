@@ -33,6 +33,55 @@ export class DashboardService {
   }
 
   /**
+   * Get selected values from search params for learning groups and subjects
+   */
+  getSubjectAndLearngingGroupsFilterValues(
+    searchParams: Record<string, string | string[] | undefined>,
+    learningGroupSearchParamName: string,
+    subjectSearchParamName: string,
+    learningGroups: LearningGroup[],
+    subjects: Subject[],
+  ): {
+    selectedLearningGroupId: string | undefined
+    selectedSubjectIds: string[]
+  } {
+    // Get selected learning group ID
+    const learningGroupParam = searchParams[learningGroupSearchParamName]
+    const selectedLearningGroupId =
+      typeof learningGroupParam === 'string' && learningGroupParam !== ''
+        ? learningGroupParam
+        : Array.isArray(learningGroupParam) && learningGroupParam.length > 0
+          ? learningGroupParam[0]
+          : learningGroups[0]?.id
+
+    // Get selected subject IDs
+    const subjectParam = searchParams[subjectSearchParamName]
+    let selectedSubjectIds: string[]
+    if (Array.isArray(subjectParam)) {
+      // Wenn ein leerer String vorhanden ist, bedeutet das, dass alle abgewählt wurden
+      if (subjectParam.includes('')) {
+        selectedSubjectIds = []
+      } else {
+        selectedSubjectIds = subjectParam.filter((id) => id !== '' && id !== '0')
+      }
+    } else if (typeof subjectParam === 'string') {
+      if (subjectParam === '') {
+        selectedSubjectIds = []
+      } else {
+        selectedSubjectIds = [subjectParam]
+      }
+    } else {
+      // Wenn keine Werte vorhanden sind, sind alle ausgewählt (Standard)
+      selectedSubjectIds = subjects.map((subject) => subject.id)
+    }
+
+    return {
+      selectedLearningGroupId,
+      selectedSubjectIds,
+    }
+  }
+
+  /**
    * Get dashboard data based on filters
    */
   async getUsersWithTasks(filters: UsersWithTasksFilter): Promise<UsersWithTasks> {

@@ -30,10 +30,10 @@ export default buildConfig({
       beforeNavLinks: ['@/components/payload/CustomNavLinks'],
       // Nav: '@/components/CustomNav',
       views: {
-        // Frontend View - zeigt die Frontend-Seite im Admin-Bereich
-        frontendView: {
-          Component: '@/components/features/dashboard/DashboardView',
-          path: '/dashboard',
+        // Detailansicht - zeigt die Detailansicht für Lerngruppen im Admin-Bereich
+        detailView: {
+          Component: '@/components/pages/learning-group-details',
+          path: '/detailView',
         },
       },
     },

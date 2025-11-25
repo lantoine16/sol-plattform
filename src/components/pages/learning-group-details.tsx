@@ -3,14 +3,14 @@ import type { AdminViewServerProps } from 'payload'
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { Gutter, SetStepNav, StepNavItem } from '@payloadcms/ui'
 import React from 'react'
-import { resolveIdFromSearchParams } from '@/lib/utils'
 import { dashboardService } from '@/lib/services/dashboard.service'
 import { userRepository } from '@/lib/data/repositories/user.repository'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
-import { SelectElement, DataTable } from '@/components/features/dashboard'
+import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
+import { DataTable } from '@/components/features/learning-group-details/data-table'
 import type { UserWithTasks } from '@/lib/types'
-import type { Item } from '@/components/features/dashboard/select-element'
-export async function DashboardView({
+
+export async function LearningGroupDetailsView({
   initPageResult,
   params,
   searchParams,
@@ -25,8 +25,8 @@ export async function DashboardView({
 
   const steps: StepNavItem[] = [
     {
-      url: '/dashboard',
-      label: 'Dashboard',
+      url: '/detailView',
+      label: 'Detailansicht',
     },
   ]
 
@@ -36,19 +36,15 @@ export async function DashboardView({
   // Get learning groups and subjects
   const { learningGroups, subjects } = await dashboardService.getLearningGroupsAndSubjects()
 
-  const selectedLearningGroupId = resolveIdFromSearchParams(
-    searchParams,
-    learningGroupSearchParamName,
-    learningGroups,
-  )
-  let selectedSubjectIds = searchParams[subjectSearchParamName]
-  selectedSubjectIds = Array.isArray(selectedSubjectIds)
-    ? selectedSubjectIds
-    : selectedSubjectIds
-      ? [selectedSubjectIds]
-      : selectedSubjectIds === ''
-        ? []
-        : subjects.map((subject) => subject.id)
+  // Get selected values using the dashboard service
+  const { selectedLearningGroupId, selectedSubjectIds } =
+    dashboardService.getSubjectAndLearngingGroupsFilterValues(
+      searchParams,
+      learningGroupSearchParamName,
+      subjectSearchParamName,
+      learningGroups,
+      subjects,
+    )
 
   const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '')
   // Get dashboard data based on filters
@@ -135,36 +131,14 @@ export async function DashboardView({
       <SetStepNav nav={steps} />
       <Gutter>
         <div className="space-y-8">
-          <div className="flex flex-row items-center flex-wrap px-4 gap-2">
-            <SelectElement
-              items={learningGroups.map(
-                (learningGroup) =>
-                  ({
-                    id: learningGroup.id,
-                    description: learningGroup.description || '',
-                  }) as Item,
-              )}
-              selectedIds={selectedLearningGroupId}
-              placeholder="Wähle eine Lerngruppe"
-              searchParamName={learningGroupSearchParamName}
-              itemName="Lerngruppe"
-              isMulti={false}
-            />
-            <SelectElement
-              items={subjects.map(
-                (subject) =>
-                  ({
-                    id: subject.id,
-                    description: subject.description || '',
-                  }) as Item,
-              )}
-              selectedIds={selectedSubjectIds}
-              placeholder="Wähle ein Fach"
-              searchParamName={subjectSearchParamName}
-              itemName="Fach"
-              isMulti={true}
-            />
-          </div>
+          <LearningGroupSubjectsSelectors
+            learningGroups={learningGroups}
+            subjects={subjects}
+            learningGroupSearchParamName={learningGroupSearchParamName}
+            subjectSearchParamName={subjectSearchParamName}
+            selectedLearningGroupId={selectedLearningGroupId}
+            selectedSubjectIds={selectedSubjectIds}
+          />
           <div className="px-4">
             <DataTable columns={tasks} data={tasksByUser} />
           </div>
@@ -174,4 +148,4 @@ export async function DashboardView({
   )
 }
 
-export default DashboardView
+export default LearningGroupDetailsView

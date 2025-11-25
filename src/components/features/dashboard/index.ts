@@ -1,3 +1,3 @@
-export { SelectElement } from './select-element'
-export { DataTable } from './data-table'
-
+export { SelectElement } from '@/components/ui/select-element'
+export { DataTable } from '../learning-group-details/data-table'
+export { LearningGroupSubjectsSelectors } from '../learning-group-subjects-selectors'
