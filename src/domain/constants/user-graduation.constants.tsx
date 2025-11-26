@@ -1,25 +1,26 @@
-import {  Tally1, Tally2, Tally3, Tally4 } from 'lucide-react'
+import { GraduationIcon } from '@/components/ui/graduation-icon'
+import type { LucideProps } from 'lucide-react'
 
 export const USER_GRADUATION_OPTIONS = [
   {
     label: 'Neustarter',
     value: 'newcomer',
-    icon: Tally1,
+    icon: (props: LucideProps) => <GraduationIcon number={1} {...props} />,
   },
   {
     label: 'Starter',
     value: 'starter',
-    icon: Tally2,
+    icon: (props: LucideProps) => <GraduationIcon number={2} {...props} />,
   },
   {
     label: 'Lernprofi',
     value: 'learning-pro',
-    icon: Tally3,
+    icon: (props: LucideProps) => <GraduationIcon number={3} {...props} />,
   },
   {
     label: 'Durchstarter',
     value: 'high-achiever',
-    icon: Tally4,
+    icon: (props: LucideProps) => <GraduationIcon number={4} {...props} />,
   },
 ] as const
 

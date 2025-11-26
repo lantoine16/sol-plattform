@@ -68,112 +68,114 @@ export function LearningGroupDashboardTable({
   }
 
   return (
-    <div className="table__wrap">
-      <table className="table">
-        <thead className="table__header">
-          <tr className="table__row">
-            <th
-              className="table__header-cell table__header-cell--sortable"
-              onClick={() => handleSort('firstname')}
-            >
-              <span>Vorname</span>
-              <span className="table__sort-icon">
-                <SortIcon field="firstname" />
-              </span>
-            </th>
-            <th
-              className="table__header-cell table__header-cell--sortable"
-              onClick={() => handleSort('lastname')}
-            >
-              <span>Nachname</span>
-              <span className="table__sort-icon">
-                <SortIcon field="lastname" />
-              </span>
-            </th>
-            <th className="table__header-cell">
-              <span>Level</span>
-            </th>
-            <th className="table__header-cell">
-              <span>Lernort</span>
-            </th>
-            <th className="table__header-cell">
-              <span>Aufgaben</span>
-            </th>
-            <th className="table__header-cell">
-              <span>Hilfe & Partner</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody className="table__body">
-          {sortedUsers.length > 0 ? (
-            sortedUsers.map((user) => {
-              const GraduationIcon = getGraduationIcon(user.graduation)
-
-              return (
-                <tr key={user.userId} className="table__row">
-                  <td className="table__cell">{user.firstname || ''}</td>
-                  <td className="table__cell">{user.lastname || ''}</td>
-                  <td className="table__cell">
-                    <GraduationIcon className="h-4 w-4" />
-                  </td>
-                  <td className="table__cell">{user.learningLocationDescription || '-'}</td>
-                  <td className="table__cell">
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1.5">
-                        <Circle className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">
-                          {user.amountOfNotStartedTasks}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Loader2 className="h-4 w-4 text-orange-500" />
-                        <span className="text-sm text-orange-600">
-                          {user.progressTasksNames.length > 0 && (
-                            <>{user.progressTasksNames.join(', ')}</>
-                          )}
-                          {user.progressTasksNames.length === 0 && (
-                            <span className="text-sm text-orange-600">0</span>
-                          )}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
-                        <span className="text-sm text-green-600">{user.amountOfFinishedTasks}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="table__cell">
-                    <div className="flex items-center gap-4">
-                      {user.needHelpTasksNames.length > 0 && (
-                        <div className="flex items-center gap-1.5">
-                          <HelpCircle className="h-4 w-4 text-red-500" />
-                          <span className="text-sm text-red-600">
-                            {user.needHelpTasksNames.join(', ')}
-                          </span>
-                        </div>
-                      )}
-                      {user.searchPartnerTasksNames.length > 0 && (
-                        <div className="flex items-center gap-1.5">
-                          <Users className="h-4 w-4 text-blue-500" />
-                          <span className="text-sm text-blue-600">
-                            {user.searchPartnerTasksNames.join(', ')}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              )
-            })
-          ) : (
+      <div id="learning-group-dashboard-table" className="table__wrap">
+        <table className="table">
+          <thead className="table__header">
             <tr className="table__row">
-              <td colSpan={6} className="table__cell table__cell--empty">
-                Keine Schüler vorhanden.
-              </td>
+              <th
+                className="table__header-cell table__header-cell--sortable min-w-fit p-2"
+                onClick={() => handleSort('firstname')}
+              >
+                <span>Vorname</span>
+                <span className="table__sort-icon">
+                  <SortIcon field="firstname" />
+                </span>
+              </th>
+              <th
+                className="table__header-cell table__header-cell--sortable min-w-fit p-2"
+                onClick={() => handleSort('lastname')}
+              >
+                <span>Nachname</span>
+                <span className="table__sort-icon">
+                  <SortIcon field="lastname" />
+                </span>
+              </th>
+              <th className="table__header-cell min-w-fit min-w-fit p-2">
+                <span>Level</span>
+              </th>
+              <th className="table__header-cell min-w-fit p-2">
+                <span>Lernort</span>
+              </th>
+              <th className="table__header-cell min-w-fit p-2">
+                <span>Aufgaben</span>
+              </th>
+              <th className="table__header-cell min-w-fit p-2">
+                <span>Hilfe & Partner</span>
+              </th>
             </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="table__body">
+            {sortedUsers.length > 0 ? (
+              sortedUsers.map((user) => {
+                const GraduationIcon = getGraduationIcon(user.graduation)
+
+                return (
+                  <tr key={user.userId} className="table__row">
+                    <td className="table__cell p-2 min-w-fit">{user.firstname || ''}</td>
+                    <td className="table__cell p-2 min-w-fit">{user.lastname || ''}</td>
+                    <td className="table__cell min-w-fit p-2">
+                      <GraduationIcon className="h-4 w-4" />
+                    </td>
+                    <td className="table__cell p-2 min-w-fit">{user.learningLocationDescription || '-'}</td>
+                    <td className="table__cell p-2 min-w-fit">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
+                          <Circle className="h-4 w-4 text-gray-400" />
+                          <span className="text-sm text-gray-600">
+                            {user.amountOfNotStartedTasks}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Loader2 className="h-4 w-4 text-orange-500" />
+                          <span className="text-sm text-orange-600">
+                            {user.progressTasksNames.length > 0 && (
+                              <>{user.progressTasksNames.join(', ')}</>
+                            )}
+                            {user.progressTasksNames.length === 0 && (
+                              <span className="text-sm text-orange-600">0</span>
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          <span className="text-sm text-green-600">
+                            {user.amountOfFinishedTasks}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="table__cell p-2 min-w-fit">
+                      <div className="flex items-center gap-2">
+                        {user.needHelpTasksNames.length > 0 && (
+                          <div className="flex items-center gap-1.5">
+                            <HelpCircle className="h-4 w-4 text-red-500" />
+                            <span className="text-sm text-red-600">
+                              {user.needHelpTasksNames.join(', ')}
+                            </span>
+                          </div>
+                        )}
+                        {user.searchPartnerTasksNames.length > 0 && (
+                          <div className="flex items-center gap-1.5">
+                            <Users className="h-4 w-4 text-blue-500" />
+                            <span className="text-sm text-blue-600">
+                              {user.searchPartnerTasksNames.join(', ')}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })
+            ) : (
+              <tr className="table__row">
+                <td colSpan={6} className="table__cell table__cell--empty">
+                  Keine Schüler vorhanden.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
   )
 }
