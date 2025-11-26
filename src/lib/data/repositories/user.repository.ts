@@ -79,7 +79,8 @@ export class UserRepository {
     graduation?: string
     email?: string | null
     learningGroup?: string[] | null
-    learningLocation?: string | null
+    currentLearningLocation?: string | null
+    standardLearningLocation?: string | null
   }): Promise<User> {
     const payload = await getPayloadClient()
     const userData: any = {
@@ -99,8 +100,12 @@ export class UserRepository {
       userData.learningGroup = data.learningGroup
     }
 
-    if (data.learningLocation) {
-      userData.learningLocation = data.learningLocation
+    if (data.currentLearningLocation) {
+      userData.currentLearningLocation = data.currentLearningLocation
+    }
+
+    if (data.standardLearningLocation) {
+      userData.standardLearningLocation = data.standardLearningLocation
     }
 
     return payload.create({

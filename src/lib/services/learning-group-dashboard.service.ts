@@ -163,9 +163,12 @@ export class LearningGroupDashboardService {
 
       // Get learning location description
       let learningLocationDescription: string | null = null
-      if (user.learningLocation) {
-        if (typeof user.learningLocation === 'object' && user.learningLocation !== null) {
-          learningLocationDescription = user.learningLocation.description || null
+      if (user.currentLearningLocation) {
+        if (
+          typeof user.currentLearningLocation === 'object' &&
+          user.currentLearningLocation !== null
+        ) {
+          learningLocationDescription = user.currentLearningLocation.description || null
         }
       }
 

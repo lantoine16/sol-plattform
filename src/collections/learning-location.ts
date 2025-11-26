@@ -51,7 +51,7 @@ export const LearningLocations: CollectionConfig = {
       label: 'Benutzer',
       type: 'join',
       collection: 'users',
-      on: 'learningLocation',
+      on: 'currentLearningLocation',
       hasMany: true,
     },
   ],

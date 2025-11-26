@@ -14,9 +14,14 @@ export function UsersSaveButton() {
 
   const { value: bulkCreateData } = useField<string>({ path: 'bulkCreateData' })
   const { value: learningGroup } = useField<string[] | null>({ path: 'learningGroup' })
-  const { value: learningLocation } = useField<string | null>({ path: 'learningLocation' })
+  const { value: currentLearningLocation } = useField<string | null>({
+    path: 'currentLearningLocation',
+  })
+  const { value: standardLearningLocation } = useField<string | null>({
+    path: 'standardLearningLocation',
+  })
   const { value: role } = useField<UserRoleValue>({ path: 'role' })
-  const { value: graduation } = useField<string>({ path: 'graduation' })
+  const { value: graduation } = useField<string | null>({ path: 'graduation' })
   const { id } = useDocumentInfo()
 
   const isCreatePage = !id
@@ -35,7 +40,8 @@ export function UsersSaveButton() {
       const createdUsers = await bulkCreateUsersAction({
         bulkData: bulkCreateData,
         learningGroup: learningGroup,
-        learningLocation: learningLocation,
+        currentLearningLocation: currentLearningLocation,
+        standardLearningLocation: standardLearningLocation,
         role: role,
         graduation: graduation,
       })

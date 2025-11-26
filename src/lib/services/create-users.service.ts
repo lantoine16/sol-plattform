@@ -17,9 +17,10 @@ export interface BulkUserData {
 export async function processBulkUserCreate(input: {
   bulkData: string
   learningGroup: string[] | null
-  learningLocation: string | null
+  currentLearningLocation: string | null
+  standardLearningLocation: string | null
   role: UserRoleValue
-  graduation: string
+  graduation: string | null
 }): Promise<User[]> {
   const lines = parseBulkData(input.bulkData)
 
@@ -82,9 +83,10 @@ export async function processBulkUserCreate(input: {
         username,
         email,
         learningGroup: input.learningGroup,
-        learningLocation: input.learningLocation,
+        currentLearningLocation: input.currentLearningLocation,
+        standardLearningLocation: input.standardLearningLocation,
         role: input.role,
-        graduation: input.graduation,
+        graduation: input.graduation || undefined,
       })
     }),
   )

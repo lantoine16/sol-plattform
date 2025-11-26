@@ -7,9 +7,10 @@ import type { UserRoleValue } from '@/domain/constants/user-role.constants'
 export async function bulkCreateUsersAction(input: {
   bulkData: string
   learningGroup: string[] | null
-  learningLocation: string | null
+  currentLearningLocation: string | null
+  standardLearningLocation: string | null
   role: UserRoleValue
-  graduation: string
+  graduation: string | null
 }): Promise<User[]> {
   if (!input.bulkData?.trim()) {
     throw new Error('Keine CSV-Daten angegeben')
@@ -18,7 +19,8 @@ export async function bulkCreateUsersAction(input: {
   return processBulkUserCreate({
     bulkData: input.bulkData,
     learningGroup: input.learningGroup,
-    learningLocation: input.learningLocation,
+    currentLearningLocation: input.currentLearningLocation,
+    standardLearningLocation: input.standardLearningLocation,
     role: input.role,
     graduation: input.graduation,
   })

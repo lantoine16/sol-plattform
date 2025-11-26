@@ -160,9 +160,10 @@ export interface User {
   firstname?: string | null;
   lastname?: string | null;
   learningGroup?: (string | LearningGroup)[] | null;
-  learningLocation?: (string | null) | LearningLocation;
+  currentLearningLocation?: (string | null) | LearningLocation;
   role: 'pupil' | 'teacher' | 'admin';
-  graduation: string | Graduation;
+  graduation?: (string | null) | Graduation;
+  standardLearningLocation?: (string | null) | LearningLocation;
   taskProgress?: {
     docs?: (string | TaskProgress)[];
     hasNextPage?: boolean;
@@ -377,9 +378,10 @@ export interface UsersSelect<T extends boolean = true> {
   firstname?: T;
   lastname?: T;
   learningGroup?: T;
-  learningLocation?: T;
+  currentLearningLocation?: T;
   role?: T;
   graduation?: T;
+  standardLearningLocation?: T;
   taskProgress?: T;
   updatedAt?: T;
   createdAt?: T;

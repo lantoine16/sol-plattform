@@ -92,8 +92,8 @@ export const Users: CollectionConfig = {
       required: false,
     },
     {
-      name: 'learningLocation',
-      label: 'Lernort',
+      name: 'currentLearningLocation',
+      label: 'Aktueller Lernort',
       type: 'relationship',
       relationTo: 'learning-location',
       required: false,
@@ -128,7 +128,14 @@ export const Users: CollectionConfig = {
       label: 'Graduierung',
       type: 'relationship',
       relationTo: 'graduations',
-      required: true,
+      required: false,
+    },
+    {
+      name: 'standardLearningLocation',
+      label: 'Standardlernort',
+      type: 'relationship',
+      relationTo: 'learning-location',
+      required: false,
     },
     {
       name: 'taskProgress',
