@@ -128,7 +128,12 @@ export function LearningGroupDashboardTable({
                       <div className="flex items-center gap-1.5">
                         <Loader2 className="h-4 w-4 text-orange-500" />
                         <span className="text-sm text-orange-600">
-                          {user.progressTasksNames.join(', ')}
+                          {user.progressTasksNames.length > 0 && (
+                            <>{user.progressTasksNames.join(', ')}</>
+                          )}
+                          {user.progressTasksNames.length === 0 && (
+                            <span className="text-sm text-orange-600">0</span>
+                          )}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -138,7 +143,7 @@ export function LearningGroupDashboardTable({
                     </div>
                   </td>
                   <td className="table__cell">
-                    <div>
+                    <div className="flex items-center gap-4">
                       {user.needHelpTasksNames.length > 0 && (
                         <div className="flex items-center gap-1.5">
                           <HelpCircle className="h-4 w-4 text-red-500" />
@@ -155,10 +160,6 @@ export function LearningGroupDashboardTable({
                           </span>
                         </div>
                       )}
-                      {user.needHelpTasksNames.length === 0 &&
-                        user.searchPartnerTasksNames.length === 0 && (
-                          <span className="text-sm text-gray-400">-</span>
-                        )}
                     </div>
                   </td>
                 </tr>
