@@ -45,7 +45,11 @@ export async function LearningGroupDashboardView({
       subjects,
     )
 
-  const {users: usersWithTaskProgress, taskProgressIds, userDefaultLearningLocationIds} = await learningGroupDashboardService.getUsersWithTaskProgress(
+  const {
+    users: usersWithTaskProgress,
+    taskProgressIds,
+    userDefaultLearningLocationIds,
+  } = await learningGroupDashboardService.getUsersWithTaskProgress(
     selectedLearningGroupId,
     selectedSubjectIds,
   )
@@ -64,15 +68,17 @@ export async function LearningGroupDashboardView({
       <SetStepNav nav={steps} />
       <Gutter>
         <div className="space-y-8">
-          <LearningGroupSubjectsSelectors
-            learningGroups={learningGroups}
-            subjects={subjects}
-            learningGroupSearchParamName={learningGroupSearchParamName}
-            subjectSearchParamName={subjectSearchParamName}
-            selectedLearningGroupId={selectedLearningGroupId}
-            selectedSubjectIds={selectedSubjectIds}
-          />
-          <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
+          <div className="flex justify-between items-center flex-wrap flex-row px-4">
+            <LearningGroupSubjectsSelectors
+              learningGroups={learningGroups}
+              subjects={subjects}
+              learningGroupSearchParamName={learningGroupSearchParamName}
+              subjectSearchParamName={subjectSearchParamName}
+              selectedLearningGroupId={selectedLearningGroupId}
+              selectedSubjectIds={selectedSubjectIds}
+            />
+            <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
+          </div>
           <div className="px-4">
             <LearningGroupDashboardTable users={usersWithTaskProgress} />
           </div>

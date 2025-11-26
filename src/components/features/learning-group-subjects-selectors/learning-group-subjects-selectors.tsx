@@ -38,7 +38,7 @@ export function LearningGroupSubjectsSelectors({
   )
 
   return (
-    <div className="flex flex-row items-center flex-wrap px-4 gap-2">
+    <div className="flex flex-row items-center flex-wrap gap-2">
       <SelectElement
         items={learningGroupItems}
         selectedIds={selectedLearningGroupId}

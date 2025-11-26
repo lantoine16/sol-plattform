@@ -27,7 +27,7 @@ export function ResetUserStatuses({ data }: { data: ResetUserStatusesProps }) {
     'btn--icon-style-without-border',
     'btn--size-medium',
     'btn--withoutPopup',
-    'btn--style-secondary',
+    'btn--style-primary',
     isLoading ? 'btn--disabled' : '',
   ]
     .filter(Boolean)
