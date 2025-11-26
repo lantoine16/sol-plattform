@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import { bulkCreateUsersAction } from '@/lib/actions/bulk-create-users.actions'
 import { BulkSaveButton } from './BulkSaveButton'
 import type { UserRoleValue } from '@/domain/constants/user-role.constants'
-import type { UserGraduationValue } from '@/domain/constants/user-graduation.constants'
 
 export function UsersSaveButton() {
   const router = useRouter()
@@ -17,7 +16,7 @@ export function UsersSaveButton() {
   const { value: learningGroup } = useField<string[] | null>({ path: 'learningGroup' })
   const { value: learningLocation } = useField<string | null>({ path: 'learningLocation' })
   const { value: role } = useField<UserRoleValue>({ path: 'role' })
-  const { value: graduation } = useField<UserGraduationValue>({ path: 'graduation' })
+  const { value: graduation } = useField<string>({ path: 'graduation' })
   const { id } = useDocumentInfo()
 
   const isCreatePage = !id

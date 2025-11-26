@@ -1,9 +1,5 @@
 import type { CollectionConfig } from 'payload'
 import { USER_ROLE_OPTIONS, USER_ROLE_DEFAULT_VALUE } from '@/domain/constants/user-role.constants'
-import {
-  USER_GRADUATION_OPTIONS,
-  USER_GRADUATION_DEFAULT_VALUE,
-} from '@/domain/constants/user-graduation.constants'
 import { updateTaskProgressesForUser } from '@/lib/services/create-users.service'
 import { User } from '@/payload-types'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
@@ -130,13 +126,9 @@ export const Users: CollectionConfig = {
     {
       name: 'graduation',
       label: 'Graduierung',
-      type: 'select',
+      type: 'relationship',
+      relationTo: 'graduations',
       required: true,
-      defaultValue: USER_GRADUATION_DEFAULT_VALUE,
-      options: USER_GRADUATION_OPTIONS.map((option) => ({
-        label: option.label,
-        value: option.value,
-      })),
     },
     {
       name: 'taskProgress',

@@ -11,7 +11,7 @@ import {
   Users,
 } from 'lucide-react'
 import type { UserWithTaskProgressInformation } from '@/lib/services/learning-group-dashboard.service'
-import { getGraduationIcon } from '@/domain/constants/user-graduation.constants'
+import { GraduationIcon } from '@/components/ui/graduation-icon'
 
 type SortField = 'firstname' | 'lastname'
 type SortDirection = 'asc' | 'desc'
@@ -107,14 +107,12 @@ export function LearningGroupDashboardTable({
         <tbody className="table__body">
           {sortedUsers.length > 0 ? (
             sortedUsers.map((user) => {
-              const GraduationIcon = getGraduationIcon(user.graduation)
-
               return (
                 <tr key={user.userId} className="table__row">
                   <td className="table__cell p-1 min-w-fit text-xs">{user.firstname || ''}</td>
                   <td className="table__cell p-1 min-w-fit text-xs">{user.lastname || ''}</td>
                   <td className="table__cell min-w-fit p-1 text-xs">
-                    <GraduationIcon className="h-4 w-4" />
+                    <GraduationIcon number={user.graduation.number} className="h-4 w-4" />
                   </td>
                   <td className="table__cell p-1 min-w-fit text-xs">
                     {user.learningLocationDescription || '-'}

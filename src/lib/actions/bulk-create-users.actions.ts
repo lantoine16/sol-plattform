@@ -3,14 +3,13 @@
 import { processBulkUserCreate } from '@/lib/services/create-users.service'
 import { User } from '@/payload-types'
 import type { UserRoleValue } from '@/domain/constants/user-role.constants'
-import type { UserGraduationValue } from '@/domain/constants/user-graduation.constants'
 
 export async function bulkCreateUsersAction(input: {
   bulkData: string
   learningGroup: string[] | null
   learningLocation: string | null
   role: UserRoleValue
-  graduation: UserGraduationValue
+  graduation: string
 }): Promise<User[]> {
   if (!input.bulkData?.trim()) {
     throw new Error('Keine CSV-Daten angegeben')

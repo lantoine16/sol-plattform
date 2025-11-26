@@ -2,8 +2,6 @@ import { getPayloadClient } from '../payload-client'
 import type { User } from '@/payload-types'
 import type { UserRoleValue } from '@/domain/constants/user-role.constants'
 import { USER_ROLE_DEFAULT_VALUE } from '@/domain/constants/user-role.constants'
-import type { UserGraduationValue } from '@/domain/constants/user-graduation.constants'
-import { USER_GRADUATION_DEFAULT_VALUE } from '@/domain/constants/user-graduation.constants'
 
 export class UserRepository {
   /**
@@ -78,7 +76,7 @@ export class UserRepository {
     password: string
     username: string
     role: UserRoleValue
-    graduation?: UserGraduationValue
+    graduation?: string
     email?: string | null
     learningGroup?: string[] | null
     learningLocation?: string | null
@@ -90,7 +88,7 @@ export class UserRepository {
       username: data.username,
       role: data.role,
       password: data.password,
-      graduation: data.graduation || USER_GRADUATION_DEFAULT_VALUE,
+      graduation: data.graduation,
     }
 
     if (data.email) {

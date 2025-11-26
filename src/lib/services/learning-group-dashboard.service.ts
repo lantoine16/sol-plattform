@@ -3,14 +3,16 @@ import { subjectRepository } from '../data/repositories/subject.repository'
 import { taskRepository } from '../data/repositories/task.repository'
 import { userRepository } from '../data/repositories/user.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
-import type { UserGraduationValue } from '@/domain/constants/user-graduation.constants'
-import type { LearningGroup, Subject, TaskProgress, Task } from '@/payload-types'
+import type { LearningGroup, Subject, TaskProgress, Task, Graduation } from '@/payload-types'
 
 export interface UserWithTaskProgressInformation {
   userId: string
   firstname: string
   lastname: string
-  graduation: UserGraduationValue
+  graduation: {
+    id: string
+    number: number
+  }
   learningLocationDescription?: string | null
   amountOfNotStartedTasks: number
   amountOfFinishedTasks: number
@@ -91,7 +93,7 @@ export class LearningGroupDashboardService {
 
   /**
    * Get users with processed task progress data for the learning group dashboard
-   * Users are fetched with depth 2 to resolve TaskProgress relationships
+   * Users are fetched with depth 2 to resolve TaskProgress and graduation relationships
    */
   async getUsersWithTaskProgress(
     learningGroupId: string | undefined,
@@ -101,8 +103,8 @@ export class LearningGroupDashboardService {
       return []
     }
 
-    // Fetch users with depth 2 to resolve TaskProgress relationships
-    const users = await userRepository.findPupilsByLearningGroup(learningGroupId, { depth: 1 })
+    // Fetch users with depth 2 to resolve TaskProgress and graduation relationships
+    const users = await userRepository.findPupilsByLearningGroup(learningGroupId, { depth: 2 })
 
     // Get task progress entries for users and subjects with depth 2
     // Bei depth: 2 ist task immer ein Task-Objekt, nicht nur eine ID
@@ -167,11 +169,27 @@ export class LearningGroupDashboardService {
         }
       }
 
+      // Get graduation number
+      let graduationNumber = 1
+      let graduationId = ''
+      if (user.graduation) {
+        if (typeof user.graduation === 'object' && user.graduation !== null) {
+          const graduation = user.graduation as Graduation
+          graduationId = graduation.id
+          graduationNumber = graduation.number || 1
+        } else if (typeof user.graduation === 'string') {
+          graduationId = user.graduation
+        }
+      }
+
       return {
         userId: user.id,
         firstname: user.firstname || '',
         lastname: user.lastname || '',
-        graduation: user.graduation as UserGraduationValue,
+        graduation: {
+          id: graduationId,
+          number: graduationNumber,
+        },
         learningLocationDescription,
         amountOfNotStartedTasks: taskStatuses.notStarted,
         amountOfFinishedTasks: taskStatuses.finished,

@@ -73,6 +73,7 @@ export interface Config {
     subjects: Subject;
     tasks: Task;
     'task-progress': TaskProgress;
+    graduations: Graduation;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -101,6 +102,7 @@ export interface Config {
     subjects: SubjectsSelect<false> | SubjectsSelect<true>;
     tasks: TasksSelect<false> | TasksSelect<true>;
     'task-progress': TaskProgressSelect<false> | TaskProgressSelect<true>;
+    graduations: GraduationsSelect<false> | GraduationsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -160,7 +162,7 @@ export interface User {
   learningGroup?: (string | LearningGroup)[] | null;
   learningLocation?: (string | null) | LearningLocation;
   role: 'pupil' | 'teacher' | 'admin';
-  graduation: 'newcomer' | 'starter' | 'learning-pro' | 'high-achiever';
+  graduation: string | Graduation;
   taskProgress?: {
     docs?: (string | TaskProgress)[];
     hasNextPage?: boolean;
@@ -212,6 +214,18 @@ export interface LearningLocation {
     hasNextPage?: boolean;
     totalDocs?: number;
   };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "graduations".
+ */
+export interface Graduation {
+  id: string;
+  description: string;
+  number: number;
+  canChangeLearningLocation?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -308,6 +322,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'task-progress';
         value: string | TaskProgress;
+      } | null)
+    | ({
+        relationTo: 'graduations';
+        value: string | Graduation;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -435,6 +453,17 @@ export interface TaskProgressSelect<T extends boolean = true> {
   status?: T;
   helpNeeded?: T;
   searchPartner?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "graduations_select".
+ */
+export interface GraduationsSelect<T extends boolean = true> {
+  description?: T;
+  number?: T;
+  canChangeLearningLocation?: T;
   updatedAt?: T;
   createdAt?: T;
 }

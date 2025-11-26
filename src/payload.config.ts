@@ -14,6 +14,7 @@ import { LearningLocations } from './collections/learning-location'
 import { Subjects } from './collections/subjects'
 import { Tasks } from './collections/tasks'
 import { TaskProgress } from './collections/task-progress'
+import { Graduations } from './collections/Graduations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -47,7 +48,15 @@ export default buildConfig({
   routes: {
     admin: '/',
   },
-  collections: [Users, LearningGroups, LearningLocations, Subjects, Tasks, TaskProgress],
+  collections: [
+    Users,
+    LearningGroups,
+    LearningLocations,
+    Subjects,
+    Tasks,
+    TaskProgress,
+    Graduations,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
