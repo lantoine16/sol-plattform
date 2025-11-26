@@ -13,7 +13,6 @@ import {
 import { useRouter } from 'next/navigation'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TASK_ICONS } from '@/domain/constants/task-icons.constants'
-import { cn } from '@/lib/utils'
 
 type UserTaskCardProps = {
   taskId: string

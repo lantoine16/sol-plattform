@@ -17,8 +17,8 @@ export function UsersSaveButton() {
   const { value: currentLearningLocation } = useField<string | null>({
     path: 'currentLearningLocation',
   })
-  const { value: standardLearningLocation } = useField<string | null>({
-    path: 'standardLearningLocation',
+  const { value: defaultLearningLocation } = useField<string | null>({
+    path: 'defaultLearningLocation',
   })
   const { value: role } = useField<UserRoleValue>({ path: 'role' })
   const { value: graduation } = useField<string | null>({ path: 'graduation' })
@@ -41,7 +41,7 @@ export function UsersSaveButton() {
         bulkData: bulkCreateData,
         learningGroup: learningGroup,
         currentLearningLocation: currentLearningLocation,
-        standardLearningLocation: standardLearningLocation,
+        defaultLearningLocation: defaultLearningLocation,
         role: role,
         graduation: graduation,
       })

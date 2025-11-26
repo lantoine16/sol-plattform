@@ -6,6 +6,7 @@ import React from 'react'
 import { learningGroupDashboardService } from '@/lib/services/learning-group-dashboard.service'
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
 import { LearningGroupDashboardTable } from '@/components/features/dashboard/learning-group-dashboard-table'
+import { ResetUserStatuses } from '../features/reset-user-statuses'
 
 export async function LearningGroupDashboardView({
   initPageResult,
@@ -44,7 +45,7 @@ export async function LearningGroupDashboardView({
       subjects,
     )
 
-  const usersWithTaskProgress = await learningGroupDashboardService.getUsersWithTaskProgress(
+  const {users: usersWithTaskProgress, taskProgressIds, userDefaultLearningLocationIds} = await learningGroupDashboardService.getUsersWithTaskProgress(
     selectedLearningGroupId,
     selectedSubjectIds,
   )
@@ -71,6 +72,7 @@ export async function LearningGroupDashboardView({
             selectedLearningGroupId={selectedLearningGroupId}
             selectedSubjectIds={selectedSubjectIds}
           />
+          <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
           <div className="px-4">
             <LearningGroupDashboardTable users={usersWithTaskProgress} />
           </div>

@@ -3,6 +3,10 @@ import type { User } from '@/payload-types'
 import type { UserRoleValue } from '@/domain/constants/user-role.constants'
 import { USER_ROLE_DEFAULT_VALUE } from '@/domain/constants/user-role.constants'
 
+export interface SetLearningLocationsOptions {
+  userId: string
+  learningLocationId: string
+}
 export class UserRepository {
   /**
    * Find all users with optional filters
@@ -80,7 +84,7 @@ export class UserRepository {
     email?: string | null
     learningGroup?: string[] | null
     currentLearningLocation?: string | null
-    standardLearningLocation?: string | null
+    defaultLearningLocation?: string | null
   }): Promise<User> {
     const payload = await getPayloadClient()
     const userData: any = {
@@ -104,8 +108,8 @@ export class UserRepository {
       userData.currentLearningLocation = data.currentLearningLocation
     }
 
-    if (data.standardLearningLocation) {
-      userData.standardLearningLocation = data.standardLearningLocation
+    if (data.defaultLearningLocation) {
+      userData.defaultLearningLocation = data.defaultLearningLocation
     }
 
     return payload.create({
@@ -130,6 +134,21 @@ export class UserRepository {
       }
     })
     return { emails, usernames }
+  }
+
+  async setLearningLocations(data: SetLearningLocationsOptions[]): Promise<User[]> {
+    const payload = await getPayloadClient()
+    const updatePromises = data.map((item) =>
+      payload.update({
+        collection: 'users',
+        id: item.userId,
+        data: {
+          currentLearningLocation: item.learningLocationId,
+        },
+      }),
+    )
+    const result = await Promise.all(updatePromises)
+    return result
   }
 }
 

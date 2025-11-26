@@ -131,7 +131,7 @@ export const Users: CollectionConfig = {
       required: false,
     },
     {
-      name: 'standardLearningLocation',
+      name: 'defaultLearningLocation',
       label: 'Standardlernort',
       type: 'relationship',
       relationTo: 'learning-location',

@@ -18,7 +18,7 @@ export async function processBulkUserCreate(input: {
   bulkData: string
   learningGroup: string[] | null
   currentLearningLocation: string | null
-  standardLearningLocation: string | null
+  defaultLearningLocation: string | null
   role: UserRoleValue
   graduation: string | null
 }): Promise<User[]> {
@@ -84,7 +84,7 @@ export async function processBulkUserCreate(input: {
         email,
         learningGroup: input.learningGroup,
         currentLearningLocation: input.currentLearningLocation,
-        standardLearningLocation: input.standardLearningLocation,
+        defaultLearningLocation: input.defaultLearningLocation,
         role: input.role,
         graduation: input.graduation || undefined,
       })

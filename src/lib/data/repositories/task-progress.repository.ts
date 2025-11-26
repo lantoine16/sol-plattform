@@ -246,6 +246,34 @@ export class TaskProgressRepository {
       where: { user: { equals: userId } },
     })
   }
+
+  /**
+   * Reset helpNeeded and searchPartner flags to false for all task progress entries of given user IDs
+   * @param userIds - Array of user IDs
+   */
+  async resetStatuses(ids: string[]): Promise<TaskProgress[]> {
+    if (ids.length === 0) {
+      return []
+    }
+
+    const payload = await getPayloadClient()
+
+    // Update all entries to set helpNeeded and searchPartner to false
+    const updatePromises = ids.map((id) =>
+      payload.update({
+        collection: 'task-progress',
+        id: id,
+        data: {
+          helpNeeded: false,
+          searchPartner: false,
+        },
+      }),
+    )
+
+    const result = await Promise.all(updatePromises)
+    return result
+  }
 }
+
 
 export const taskProgressRepository = new TaskProgressRepository()

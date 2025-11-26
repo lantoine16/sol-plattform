@@ -163,7 +163,7 @@ export interface User {
   currentLearningLocation?: (string | null) | LearningLocation;
   role: 'pupil' | 'teacher' | 'admin';
   graduation?: (string | null) | Graduation;
-  standardLearningLocation?: (string | null) | LearningLocation;
+  defaultLearningLocation?: (string | null) | LearningLocation;
   taskProgress?: {
     docs?: (string | TaskProgress)[];
     hasNextPage?: boolean;
@@ -381,7 +381,7 @@ export interface UsersSelect<T extends boolean = true> {
   currentLearningLocation?: T;
   role?: T;
   graduation?: T;
-  standardLearningLocation?: T;
+  defaultLearningLocation?: T;
   taskProgress?: T;
   updatedAt?: T;
   createdAt?: T;

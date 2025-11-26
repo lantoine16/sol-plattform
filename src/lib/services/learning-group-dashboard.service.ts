@@ -1,7 +1,7 @@
 import { learningGroupRepository } from '../data/repositories/learning-group.repository'
 import { subjectRepository } from '../data/repositories/subject.repository'
 import { taskRepository } from '../data/repositories/task.repository'
-import { userRepository } from '../data/repositories/user.repository'
+import { SetLearningLocationsOptions, userRepository } from '../data/repositories/user.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
 import type { LearningGroup, Subject, TaskProgress, Task, Graduation } from '@/payload-types'
 
@@ -98,9 +98,13 @@ export class LearningGroupDashboardService {
   async getUsersWithTaskProgress(
     learningGroupId: string | undefined,
     subjectIds: string[],
-  ): Promise<UserWithTaskProgressInformation[]> {
+  ): Promise<{
+    users: UserWithTaskProgressInformation[]
+    taskProgressIds: string[]
+    userDefaultLearningLocationIds: SetLearningLocationsOptions[]
+  }> {
     if (!learningGroupId) {
-      return []
+      return { users: [], taskProgressIds: [], userDefaultLearningLocationIds: [] }
     }
 
     // Fetch users with depth 2 to resolve TaskProgress and graduation relationships
@@ -114,93 +118,113 @@ export class LearningGroupDashboardService {
       { depth: 2 },
     )
 
+    const taskProgress = new Set<string>()
+    let userDefaultLearningLocationIds: SetLearningLocationsOptions[] = []
+
     // Process each user
-    return users.map((user) => {
-      // Find all task progress entries for this user
-      const userTaskProgress = taskProgressEntries.filter((tp) => {
-        const taskUserId = typeof tp.user === 'object' ? tp.user?.id : tp.user
-        return taskUserId === user.id
-      })
+    const usersWithTaskProgressInformation: UserWithTaskProgressInformation[] = users.map(
+      (user) => {
+        // Find all task progress entries for this user
+        const userTaskProgress = taskProgressEntries.filter((tp) => {
+          const taskUserId = typeof tp.user === 'object' ? tp.user?.id : tp.user
+          return taskUserId === user.id
+        })
 
-      // Process task statuses
-      const taskStatuses = {
-        notStarted: 0,
-        inProgress: [] as string[],
-        finished: 0,
-        needHelp: [] as string[],
-        searchPartner: [] as string[],
-      }
-
-      userTaskProgress.forEach((tp) => {
-        const status = tp.status as 'not-started' | 'in-progress' | 'finished'
-
-        // Bei depth: 2 ist tp.task immer ein Task-Objekt
-        if (!isTaskObject(tp.task)) {
-          // Fallback falls doch nur eine ID zurückkommt (sollte nicht passieren)
-          return
+        // Process task statuses
+        const taskStatuses = {
+          notStarted: 0,
+          inProgress: [] as string[],
+          finished: 0,
+          needHelp: [] as string[],
+          searchPartner: [] as string[],
         }
 
-        const task = tp.task as Task
+        userTaskProgress.forEach((tp) => {
+          taskProgress.add(tp.id)
+          const status = tp.status as 'not-started' | 'in-progress' | 'finished'
 
-        if (status === 'not-started') {
-          taskStatuses.notStarted++
-        } else if (status === 'in-progress') {
-          if (task.description) {
-            taskStatuses.inProgress.push(task.description)
+          // Bei depth: 2 ist tp.task immer ein Task-Objekt
+          if (!isTaskObject(tp.task)) {
+            // Fallback falls doch nur eine ID zurückkommt (sollte nicht passieren)
+            return
           }
-        } else if (status === 'finished') {
-          taskStatuses.finished++
+
+          const task = tp.task as Task
+
+          if (status === 'not-started') {
+            taskStatuses.notStarted++
+          } else if (status === 'in-progress') {
+            if (task.description) {
+              taskStatuses.inProgress.push(task.description)
+            }
+          } else if (status === 'finished') {
+            taskStatuses.finished++
+          }
+
+          if (tp.helpNeeded && task.description) {
+            taskStatuses.needHelp.push(task.description)
+          }
+
+          if (tp.searchPartner && task.description) {
+            taskStatuses.searchPartner.push(task.description)
+          }
+        })
+
+        // Get learning location description
+        let learningLocationDescription: string | null = null
+        if (user.currentLearningLocation) {
+          if (
+            typeof user.currentLearningLocation === 'object' &&
+            user.currentLearningLocation !== null
+          ) {
+            learningLocationDescription = user.currentLearningLocation.description || null
+          }
         }
 
-        if (tp.helpNeeded && task.description) {
-          taskStatuses.needHelp.push(task.description)
+        // Get graduation number
+        let graduationNumber = 1
+        let graduationId = ''
+        if (user.graduation) {
+          if (typeof user.graduation === 'object' && user.graduation !== null) {
+            const graduation = user.graduation as Graduation
+            graduationId = graduation.id
+            graduationNumber = graduation.number || 1
+          } else if (typeof user.graduation === 'string') {
+            graduationId = user.graduation
+          }
         }
 
-        if (tp.searchPartner && task.description) {
-          taskStatuses.searchPartner.push(task.description)
-        }
-      })
+        userDefaultLearningLocationIds.push({
+          userId: user.id,
+          learningLocationId:
+            typeof user.defaultLearningLocation === 'object'
+              ? user.defaultLearningLocation?.id || ''
+              : '',
+        })
 
-      // Get learning location description
-      let learningLocationDescription: string | null = null
-      if (user.currentLearningLocation) {
-        if (
-          typeof user.currentLearningLocation === 'object' &&
-          user.currentLearningLocation !== null
-        ) {
-          learningLocationDescription = user.currentLearningLocation.description || null
+        return {
+          userId: user.id,
+          firstname: user.firstname || '',
+          lastname: user.lastname || '',
+          graduation: {
+            id: graduationId,
+            number: graduationNumber,
+          },
+          learningLocationDescription,
+          amountOfNotStartedTasks: taskStatuses.notStarted,
+          amountOfFinishedTasks: taskStatuses.finished,
+          progressTasksNames: taskStatuses.inProgress,
+          needHelpTasksNames: taskStatuses.needHelp,
+          searchPartnerTasksNames: taskStatuses.searchPartner,
         }
-      }
+      },
+    )
 
-      // Get graduation number
-      let graduationNumber = 1
-      let graduationId = ''
-      if (user.graduation) {
-        if (typeof user.graduation === 'object' && user.graduation !== null) {
-          const graduation = user.graduation as Graduation
-          graduationId = graduation.id
-          graduationNumber = graduation.number || 1
-        } else if (typeof user.graduation === 'string') {
-          graduationId = user.graduation
-        }
-      }
-
-      return {
-        userId: user.id,
-        firstname: user.firstname || '',
-        lastname: user.lastname || '',
-        graduation: {
-          id: graduationId,
-          number: graduationNumber,
-        },
-        learningLocationDescription,
-        amountOfNotStartedTasks: taskStatuses.notStarted,
-        amountOfFinishedTasks: taskStatuses.finished,
-        progressTasksNames: taskStatuses.inProgress,
-        needHelpTasksNames: taskStatuses.needHelp,
-        searchPartnerTasksNames: taskStatuses.searchPartner,
-      }
-    })
+    return {
+      users: usersWithTaskProgressInformation,
+      taskProgressIds: Array.from(taskProgress),
+      userDefaultLearningLocationIds: userDefaultLearningLocationIds,
+    }
   }
 }
 
