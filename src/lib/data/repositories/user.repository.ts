@@ -56,7 +56,7 @@ export class UserRepository {
    */
   async findPupilsByLearningGroup(
     learningGroupId: string,
-    options?: { sort?: string },
+    options?: { sort?: string; depth?: number },
   ): Promise<User[]> {
     const result = await this.find({
       where: {
@@ -64,6 +64,7 @@ export class UserRepository {
         role: { equals: USER_ROLE_DEFAULT_VALUE },
       },
       sort: options?.sort || 'lastname',
+      depth: options?.depth,
     })
     return result.docs
   }

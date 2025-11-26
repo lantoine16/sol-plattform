@@ -5,7 +5,6 @@ import { userRepository } from '../data/repositories/user.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
 import type { UserWithTasks } from '../types'
 import type { Task, LearningGroup, Subject, TaskProgress } from '@/payload-types'
-import type { UserGraduationValue } from '@/domain/constants/user-graduation.constants'
 
 export interface UsersWithTasks {
   tasks: Task[]
@@ -15,15 +14,6 @@ export interface UsersWithTasks {
 export interface UsersWithTasksFilter {
   learningGroupId?: string
   subjectId?: string
-}
-
-export interface UserWithTaskProgress {
-  userId: string
-  firstname: string
-  lastname: string
-  graduation: UserGraduationValue
-  learningLocation?: string | { id: string; description?: string | null } | null
-  taskProgressEntries: TaskProgress[]
 }
 
 export class LearningGroupDashboardService {
@@ -151,5 +141,3 @@ export class LearningGroupDashboardService {
     }
   }
 }
-
-export const learningGroupDashboardService = new LearningGroupDashboardService()

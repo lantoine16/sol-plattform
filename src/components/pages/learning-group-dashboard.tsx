@@ -3,15 +3,9 @@ import type { AdminViewServerProps } from 'payload'
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { Gutter, SetStepNav, StepNavItem } from '@payloadcms/ui'
 import React from 'react'
-import {
-  UserWithTaskProgress,
-  learningGroupDashboardService,
-} from '@/lib/services/dashboard.service'
-import { userRepository } from '@/lib/data/repositories/user.repository'
-import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
+import { learningGroupDashboardService } from '@/lib/services/learning-group-dashboard.service'
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
 import { LearningGroupDashboardTable } from '@/components/features/dashboard/learning-group-dashboard-table'
-import { UserGraduationValue } from '@/domain/constants/user-graduation.constants'
 
 export async function LearningGroupDashboardView({
   initPageResult,
@@ -50,20 +44,9 @@ export async function LearningGroupDashboardView({
       subjects,
     )
 
-  const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '')
-
-  const usersWithTaskProgress: UserWithTaskProgress[] = await Promise.all(
-    users.map(async (user) => ({
-      userId: user.id,
-      firstname: user.firstname || '',
-      lastname: user.lastname || '',
-      graduation: user.graduation as UserGraduationValue,
-      learningLocation: user.learningLocation as string | null,
-      taskProgressEntries: await taskProgressRepository.findByUsersAndSubject(
-        [user.id],
-        selectedSubjectIds,
-      ),
-    })),
+  const usersWithTaskProgress = await learningGroupDashboardService.getUsersWithTaskProgress(
+    selectedLearningGroupId,
+    selectedSubjectIds,
   )
 
   return (

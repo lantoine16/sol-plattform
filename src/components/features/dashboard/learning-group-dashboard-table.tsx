@@ -1,15 +1,26 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { ChevronUp, ChevronDown, Circle, Loader2, CheckCircle2 } from 'lucide-react'
-import type { UserWithTaskProgress } from '@/lib/services/dashboard.service'
-import { getGraduationIcon, getGraduationLabel } from '@/domain/constants/user-graduation.constants'
-import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
+import {
+  ChevronUp,
+  ChevronDown,
+  Circle,
+  Loader2,
+  CheckCircle2,
+  HelpCircle,
+  Users,
+} from 'lucide-react'
+import type { UserWithTaskProgressInformation } from '@/lib/services/learning-group-dashboard.service'
+import { getGraduationIcon } from '@/domain/constants/user-graduation.constants'
 
 type SortField = 'firstname' | 'lastname'
 type SortDirection = 'asc' | 'desc'
 
-export function LearningGroupDashboardTable({ users }: { users: UserWithTaskProgress[] }) {
+export function LearningGroupDashboardTable({
+  users,
+}: {
+  users: UserWithTaskProgressInformation[]
+}) {
   const [sortField, setSortField] = useState<SortField>('lastname')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
@@ -56,39 +67,6 @@ export function LearningGroupDashboardTable({ users }: { users: UserWithTaskProg
     )
   }
 
-  // Zähle Task-Statuses für einen User
-  const getTaskCounts = (user: UserWithTaskProgress) => {
-    const counts = {
-      notStarted: 0,
-      inProgress: 0,
-      finished: 0,
-    }
-
-    user.taskProgressEntries.forEach((tp) => {
-      const status = tp.status as TaskStatusValue
-      if (status === 'not-started') {
-        counts.notStarted++
-      } else if (status === 'in-progress') {
-        counts.inProgress++
-      } else if (status === 'finished') {
-        counts.finished++
-      }
-    })
-
-    return counts
-  }
-
-  // Hole Lernort-Beschreibung
-  const getLearningLocationDescription = (
-    learningLocation: string | { id: string; description?: string | null } | null | undefined,
-  ): string => {
-    if (!learningLocation) return '-'
-    if (typeof learningLocation === 'object' && learningLocation !== null) {
-      return learningLocation.description || '-'
-    }
-    return '-'
-  }
-
   return (
     <div className="table__wrap">
       <table className="table">
@@ -121,42 +99,66 @@ export function LearningGroupDashboardTable({ users }: { users: UserWithTaskProg
             <th className="table__header-cell">
               <span>Aufgaben</span>
             </th>
+            <th className="table__header-cell">
+              <span>Hilfe & Partner</span>
+            </th>
           </tr>
         </thead>
         <tbody className="table__body">
           {sortedUsers.length > 0 ? (
             sortedUsers.map((user) => {
-              const taskCounts = getTaskCounts(user)
               const GraduationIcon = getGraduationIcon(user.graduation)
-              const graduationLabel = getGraduationLabel(user.graduation)
 
               return (
                 <tr key={user.userId} className="table__row">
                   <td className="table__cell">{user.firstname || ''}</td>
                   <td className="table__cell">{user.lastname || ''}</td>
                   <td className="table__cell">
-                    <div className="flex items-center gap-2">
-                      <GraduationIcon className="h-4 w-4" />
-                      <span>{graduationLabel}</span>
-                    </div>
+                    <GraduationIcon className="h-4 w-4" />
                   </td>
-                  <td className="table__cell">
-                    {getLearningLocationDescription(user.learningLocation)}
-                  </td>
+                  <td className="table__cell">{user.learningLocationDescription || '-'}</td>
                   <td className="table__cell">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1.5">
                         <Circle className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">{taskCounts.notStarted}</span>
+                        <span className="text-sm text-gray-600">
+                          {user.amountOfNotStartedTasks}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Loader2 className="h-4 w-4 text-orange-500" />
-                        <span className="text-sm text-orange-600">{taskCounts.inProgress}</span>
+                        <span className="text-sm text-orange-600">
+                          {user.progressTasksNames.join(', ')}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="h-4 w-4 text-green-600" />
-                        <span className="text-sm text-green-600">{taskCounts.finished}</span>
+                        <span className="text-sm text-green-600">{user.amountOfFinishedTasks}</span>
                       </div>
+                    </div>
+                  </td>
+                  <td className="table__cell">
+                    <div>
+                      {user.needHelpTasksNames.length > 0 && (
+                        <div className="flex items-center gap-1.5">
+                          <HelpCircle className="h-4 w-4 text-red-500" />
+                          <span className="text-sm text-red-600">
+                            {user.needHelpTasksNames.join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {user.searchPartnerTasksNames.length > 0 && (
+                        <div className="flex items-center gap-1.5">
+                          <Users className="h-4 w-4 text-blue-500" />
+                          <span className="text-sm text-blue-600">
+                            {user.searchPartnerTasksNames.join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {user.needHelpTasksNames.length === 0 &&
+                        user.searchPartnerTasksNames.length === 0 && (
+                          <span className="text-sm text-gray-400">-</span>
+                        )}
                     </div>
                   </td>
                 </tr>
@@ -164,7 +166,7 @@ export function LearningGroupDashboardTable({ users }: { users: UserWithTaskProg
             })
           ) : (
             <tr className="table__row">
-              <td colSpan={5} className="table__cell table__cell--empty">
+              <td colSpan={6} className="table__cell table__cell--empty">
                 Keine Schüler vorhanden.
               </td>
             </tr>
