@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useTheme } from 'next-themes'
-import type { Task } from '@/payload-types'
+import type { LearningLocation, Task } from '@/payload-types'
 import type { UserWithTaskProgress } from '@/lib/types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { StudentDetailsModal } from '../student-details/student-details-modal'
@@ -12,11 +12,13 @@ import { useRouter } from 'next/navigation'
 export function DataTable({
   columns,
   data,
+  learningLocations,
 }: {
   // This receives the tasks array
   columns: Task[]
   // This receives the pupils array
   data: UserWithTaskProgress[]
+  learningLocations: LearningLocation[]
 }) {
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -144,7 +146,7 @@ export function DataTable({
                         verticalAlign: 'bottom',
                         position: 'relative',
                       }}
-                      title={`${userWithTask.user.lastname || ''}, ${userWithTask.user.firstname || ''}`}
+                      title={`${userWithTask.user.lastname || ''}, useEffect${userWithTask.user.firstname || ''}`}
                       onClick={() => handleColumnClick(userWithTask)}
                     >
                       <div
@@ -236,6 +238,7 @@ export function DataTable({
       {selectedUser && (
         <StudentDetailsModal
           userWithTaskProgress={selectedUser}
+          learningLocations={learningLocations}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
         />

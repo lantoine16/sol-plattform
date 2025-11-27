@@ -15,14 +15,16 @@ import { GraduationIcon } from '@/components/ui/graduation-icon'
 import { StudentDetailsModal } from '@/components/features/student-details/student-details-modal'
 import type { UserWithTaskProgress } from '@/lib/types'
 import { useRouter } from 'next/navigation'
-
+import type { LearningLocation } from '@/payload-types'
 type SortField = 'firstname' | 'lastname'
 type SortDirection = 'asc' | 'desc'
 
 export function LearningGroupDashboardTable({
   users,
+  learningLocations,
 }: {
   users: UserWithTaskProgressInformation[]
+  learningLocations: LearningLocation[]
 }) {
   const [sortField, setSortField] = useState<SortField>('lastname')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
@@ -220,6 +222,7 @@ export function LearningGroupDashboardTable({
       {selectedUser && (
         <StudentDetailsModal
           userWithTaskProgress={selectedUser}
+          learningLocations={learningLocations}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
         />

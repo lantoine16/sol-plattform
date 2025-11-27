@@ -7,6 +7,7 @@ import { learningGroupDashboardService } from '@/lib/services/learning-group-das
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
 import { LearningGroupDashboardTable } from '@/components/features/dashboard/learning-group-dashboard-table'
 import { ResetUserStatuses } from '../features/reset-user-statuses'
+import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
 
 export async function LearningGroupDashboardView({
   initPageResult,
@@ -54,6 +55,8 @@ export async function LearningGroupDashboardView({
     selectedSubjectIds,
   )
 
+  const learningLocations = await learningLocationRepository.findAll()
+
   return (
     <DefaultTemplate
       visibleEntities={initPageResult.visibleEntities}
@@ -80,7 +83,7 @@ export async function LearningGroupDashboardView({
             <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
           </div>
           <div className="px-4">
-            <LearningGroupDashboardTable users={usersWithTaskProgress} />
+            <LearningGroupDashboardTable users={usersWithTaskProgress} learningLocations={learningLocations} />
           </div>
         </div>
       </Gutter>

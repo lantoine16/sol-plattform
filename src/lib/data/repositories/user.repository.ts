@@ -150,6 +150,26 @@ export class UserRepository {
     const result = await Promise.all(updatePromises)
     return result
   }
+
+  /**
+   * Update the current learning location for a single user
+   * @param userId - The user ID
+   * @param learningLocationId - The learning location ID (can be null to remove)
+   * @returns Updated user
+   */
+  async updateCurrentLearningLocation(
+    userId: string,
+    learningLocationId: string | null,
+  ): Promise<User> {
+    const payload = await getPayloadClient()
+    return payload.update({
+      collection: 'users',
+      id: userId,
+      data: {
+        currentLearningLocation: learningLocationId,
+      },
+    })
+  }
 }
 
 export const userRepository = new UserRepository()

@@ -6,6 +6,7 @@ import React from 'react'
 import { learningGroupDashboardService } from '@/lib/services/learning-group-dashboard.service'
 import { userRepository } from '@/lib/data/repositories/user.repository'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
+import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
 import { SortService } from '@/lib/services/sort.service'
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
 import { DataTable } from '@/components/features/learning-group-details/data-table'
@@ -93,6 +94,8 @@ export async function LearningGroupDetailsView({
     }
   })
 
+  const learningLocations = await learningLocationRepository.findAll()
+
   return (
     <DefaultTemplate
       visibleEntities={initPageResult.visibleEntities}
@@ -116,7 +119,7 @@ export async function LearningGroupDetailsView({
             selectedSubjectIds={selectedSubjectIds}
           />
           <div className="px-4">
-            <DataTable columns={tasks} data={tasksByUser} />
+            <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
           </div>
         </div>
       </Gutter>
