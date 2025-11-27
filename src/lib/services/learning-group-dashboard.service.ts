@@ -3,17 +3,11 @@ import { subjectRepository } from '../data/repositories/subject.repository'
 import { taskRepository } from '../data/repositories/task.repository'
 import { SetLearningLocationsOptions, userRepository } from '../data/repositories/user.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
-import type { LearningGroup, Subject, TaskProgress, Task, Graduation } from '@/payload-types'
-
+import type { LearningGroup, Subject, Task, Graduation, TaskProgress } from '@/payload-types'
+import type { User } from '@/payload-types'
 export interface UserWithTaskProgressInformation {
-  userId: string
-  firstname: string
-  lastname: string
-  graduation: {
-    id: string
-    number: number
-  }
-  learningLocationDescription?: string | null
+  user: User
+  taskProgresses: TaskProgress[]
   amountOfNotStartedTasks: number
   amountOfFinishedTasks: number
   progressTasksNames: string[]
@@ -203,19 +197,13 @@ export class LearningGroupDashboardService {
         })
 
         return {
-          userId: user.id,
-          firstname: user.firstname || '',
-          lastname: user.lastname || '',
-          graduation: {
-            id: graduationId,
-            number: graduationNumber,
-          },
-          learningLocationDescription,
+          user: user,
           amountOfNotStartedTasks: taskStatuses.notStarted,
           amountOfFinishedTasks: taskStatuses.finished,
           progressTasksNames: taskStatuses.inProgress,
           needHelpTasksNames: taskStatuses.needHelp,
           searchPartnerTasksNames: taskStatuses.searchPartner,
+          taskProgresses: userTaskProgress,
         }
       },
     )
