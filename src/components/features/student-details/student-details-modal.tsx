@@ -49,6 +49,75 @@ export function StudentDetailsModal({
     }
   }, [isOpen, user?.id, subjectIds.join(',')])
 
+  const handleTaskProgressUpdate = async (
+    taskId: string,
+    status: 'not-started' | 'in-progress' | 'finished',
+  ) => {
+    // Optimistically update the local state
+    setTaskProgressEntries((prevEntries) => {
+      const entryIndex = prevEntries.findIndex((entry) => {
+        const entryTaskId = typeof entry.task === 'string' ? entry.task : entry.task.id
+        return entryTaskId === taskId
+      })
+
+      if (entryIndex === -1) {
+        return prevEntries
+      }
+
+      const updatedEntries = [...prevEntries]
+      updatedEntries[entryIndex] = {
+        ...updatedEntries[entryIndex],
+        status,
+      }
+
+      return updatedEntries
+    })
+  }
+
+  const handleHelpNeededUpdate = (taskId: string, helpNeeded: boolean) => {
+    // Optimistically update the local state
+    setTaskProgressEntries((prevEntries) => {
+      const entryIndex = prevEntries.findIndex((entry) => {
+        const entryTaskId = typeof entry.task === 'string' ? entry.task : entry.task.id
+        return entryTaskId === taskId
+      })
+
+      if (entryIndex === -1) {
+        return prevEntries
+      }
+
+      const updatedEntries = [...prevEntries]
+      updatedEntries[entryIndex] = {
+        ...updatedEntries[entryIndex],
+        helpNeeded,
+      }
+
+      return updatedEntries
+    })
+  }
+
+  const handleSearchPartnerUpdate = (taskId: string, searchPartner: boolean) => {
+    // Optimistically update the local state
+    setTaskProgressEntries((prevEntries) => {
+      const entryIndex = prevEntries.findIndex((entry) => {
+        const entryTaskId = typeof entry.task === 'string' ? entry.task : entry.task.id
+        return entryTaskId === taskId
+      })
+
+      if (entryIndex === -1) {
+        return prevEntries
+      }
+
+      const updatedEntries = [...prevEntries]
+      updatedEntries[entryIndex] = {
+        ...updatedEntries[entryIndex],
+        searchPartner,
+      }
+
+      return updatedEntries
+    })
+  }
+
   if (!isOpen || !user || !mounted) {
     return null
   }
@@ -113,7 +182,13 @@ export function StudentDetailsModal({
                 <p className="text-gray-500 dark:text-gray-400">Lade Aufgaben...</p>
               </div>
             ) : (
-              <UserTasksOverview userId={user.id} userTaskStatuses={taskProgressEntries} />
+              <UserTasksOverview
+                userId={user.id}
+                userTaskStatuses={taskProgressEntries}
+                onTaskProgressUpdate={handleTaskProgressUpdate}
+                onHelpNeededUpdate={handleHelpNeededUpdate}
+                onSearchPartnerUpdate={handleSearchPartnerUpdate}
+              />
             )}
           </div>
         </div>

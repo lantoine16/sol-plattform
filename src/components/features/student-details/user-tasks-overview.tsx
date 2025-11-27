@@ -3,12 +3,22 @@ import { Separator } from '@/components/ui/separator'
 import { UserTaskCard } from './user-task-card'
 import { UserTaskStatusService } from '@/lib/services/user-task-status.service'
 import type { TaskProgress } from '@/payload-types'
+import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 
 type UserTasksOverviewProps = {
   userId: string
   userTaskStatuses: TaskProgress[]
+  onTaskProgressUpdate?: (taskId: string, status: TaskStatusValue) => void
+  onHelpNeededUpdate?: (taskId: string, helpNeeded: boolean) => void
+  onSearchPartnerUpdate?: (taskId: string, searchPartner: boolean) => void
 }
-export function UserTasksOverview({ userId, userTaskStatuses }: UserTasksOverviewProps) {
+export function UserTasksOverview({
+  userId,
+  userTaskStatuses,
+  onTaskProgressUpdate,
+  onHelpNeededUpdate,
+  onSearchPartnerUpdate,
+}: UserTasksOverviewProps) {
   const { notStartedTasks, inProgressTasks, finishedTasks } =
     UserTaskStatusService.groupTasksByStatus(userTaskStatuses)
   return (
@@ -39,7 +49,10 @@ export function UserTasksOverview({ userId, userTaskStatuses }: UserTasksOvervie
         {/* Not Started Tasks */}
         <div className="flex flex-col gap-4">
           {notStartedTasks.map((task) => {
-            const taskStatus = userTaskStatuses.find((ts) => ts.id === task.id)
+            const taskStatus = userTaskStatuses.find((ts) => {
+              const tsTaskId = typeof ts.task === 'string' ? ts.task : ts.task.id
+              return tsTaskId === task.id
+            })
             return (
               <UserTaskCard
                 key={task.id}
@@ -50,6 +63,9 @@ export function UserTasksOverview({ userId, userTaskStatuses }: UserTasksOvervie
                 nextStatus="in-progress"
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
+                onStatusChange={onTaskProgressUpdate}
+                onHelpNeededChange={onHelpNeededUpdate}
+                onSearchPartnerChange={onSearchPartnerUpdate}
               />
             )
           })}
@@ -58,7 +74,10 @@ export function UserTasksOverview({ userId, userTaskStatuses }: UserTasksOvervie
         {/* In Progress Tasks */}
         <div className="flex flex-col gap-4">
           {inProgressTasks.map((task) => {
-            const taskStatus = userTaskStatuses.find((ts) => ts.id === task.id)
+            const taskStatus = userTaskStatuses.find((ts) => {
+              const tsTaskId = typeof ts.task === 'string' ? ts.task : ts.task.id
+              return tsTaskId === task.id
+            })
             return (
               <UserTaskCard
                 key={task.id}
@@ -69,6 +88,9 @@ export function UserTasksOverview({ userId, userTaskStatuses }: UserTasksOvervie
                 nextStatus="finished"
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
+                onStatusChange={onTaskProgressUpdate}
+                onHelpNeededChange={onHelpNeededUpdate}
+                onSearchPartnerChange={onSearchPartnerUpdate}
               />
             )
           })}
@@ -77,7 +99,10 @@ export function UserTasksOverview({ userId, userTaskStatuses }: UserTasksOvervie
         {/* Finished Tasks */}
         <div className="flex flex-col gap-4">
           {finishedTasks.map((task) => {
-            const taskStatus = userTaskStatuses.find((ts) => ts.id === task.id)
+            const taskStatus = userTaskStatuses.find((ts) => {
+              const tsTaskId = typeof ts.task === 'string' ? ts.task : ts.task.id
+              return tsTaskId === task.id
+            })
             return (
               <UserTaskCard
                 userId={userId}
@@ -88,6 +113,9 @@ export function UserTasksOverview({ userId, userTaskStatuses }: UserTasksOvervie
                 nextStatus={undefined}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
+                onStatusChange={onTaskProgressUpdate}
+                onHelpNeededChange={onHelpNeededUpdate}
+                onSearchPartnerChange={onSearchPartnerUpdate}
               />
             )
           })}

@@ -10,7 +10,6 @@ import {
   updateTaskHelpNeeded,
   updateTaskSearchPartner,
 } from '@/lib/actions/task-progress.actions'
-import { useRouter } from 'next/navigation'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TASK_ICONS } from '@/domain/constants/task-icons.constants'
 
@@ -22,6 +21,9 @@ type UserTaskCardProps = {
   nextStatus?: TaskStatusValue
   helpNeeded?: boolean
   searchPartner?: boolean
+  onStatusChange?: (taskId: string, status: TaskStatusValue) => void
+  onHelpNeededChange?: (taskId: string, helpNeeded: boolean) => void
+  onSearchPartnerChange?: (taskId: string, searchPartner: boolean) => void
 }
 
 export function UserTaskCard({
@@ -32,28 +34,21 @@ export function UserTaskCard({
   nextStatus,
   helpNeeded = false,
   searchPartner = false,
+  onStatusChange,
+  onHelpNeededChange,
+  onSearchPartnerChange,
 }: UserTaskCardProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isHelpNeededLoading, setIsHelpNeededLoading] = useState(false)
   const [isSearchPartnerLoading, setIsSearchPartnerLoading] = useState(false)
-  const router = useRouter()
-  const [localSearchPartner, setLocalSearchPartner] = useState(searchPartner)
-  const [localHelpNeeded, setLocalHelpNeeded] = useState(helpNeeded)
 
-  // Update local state when props change
-  useEffect(() => {
-    setLocalSearchPartner(searchPartner)
-  }, [searchPartner])
-
-  useEffect(() => {
-    setLocalHelpNeeded(helpNeeded)
-  }, [helpNeeded])
   const handleStatusChange = async (status: TaskStatusValue) => {
     setIsLoading(true)
     try {
       const result = await updateTaskProgress(taskId, userId, status)
       if (result.success) {
-        router.refresh()
+        // Update local state immediately for instant UI feedback
+        onStatusChange?.(taskId, status)
       } else {
         console.error('Failed to update task progress:', result.error)
       }
@@ -65,34 +60,34 @@ export function UserTaskCard({
   }
 
   const handleHelpNeededChange = async (checked: boolean) => {
-    setLocalHelpNeeded(checked) // Optimistic update - sofort aktualisieren
     setIsHelpNeededLoading(true)
     try {
-      const result = await updateTaskHelpNeeded(taskId, userId, checked) 
-      if(!result.success) {
+      const result = await updateTaskHelpNeeded(taskId, userId, checked)
+      if (result.success) {
+        // Update parent state immediately for instant UI feedback
+        onHelpNeededChange?.(taskId, checked)
+      } else {
         console.error('Failed to update help needed:', result.error)
-        setLocalHelpNeeded(!checked) // Revert on error
       }
     } catch (error) {
       console.error('Failed to update help needed:', error)
-      setLocalHelpNeeded(!checked) // Revert on error
     } finally {
       setIsHelpNeededLoading(false)
     }
   }
 
   const handleSearchPartnerChange = async (checked: boolean) => {
-    setLocalSearchPartner(checked) // Optimistic update - sofort aktualisieren
     setIsSearchPartnerLoading(true)
     try {
       const result = await updateTaskSearchPartner(taskId, userId, checked)
-      if (!result.success) {
+      if (result.success) {
+        // Update parent state immediately for instant UI feedback
+        onSearchPartnerChange?.(taskId, checked)
+      } else {
         console.error('Failed to update search partner:', result.error)
-        setLocalSearchPartner(!checked) // Revert on error
       }
     } catch (error) {
       console.error('Failed to update search partner:', error)
-      setLocalSearchPartner(!checked) // Revert on error
     } finally {
       setIsSearchPartnerLoading(false)
     }
@@ -125,7 +120,7 @@ export function UserTaskCard({
           <div className="flex items-center gap-1.5">
             <Checkbox
               id={`help-needed-${taskId}`}
-              checked={localHelpNeeded}
+              checked={helpNeeded}
               onCheckedChange={(checked) => {
                 handleHelpNeededChange(checked === true)
               }}
@@ -138,7 +133,7 @@ export function UserTaskCard({
           <div className="flex items-center gap-1.5">
             <Checkbox
               id={`search-partner-${taskId}`}
-              checked={localSearchPartner}
+              checked={searchPartner}
               onCheckedChange={(checked) => {
                 handleSearchPartnerChange(checked === true)
               }}
