@@ -2,7 +2,7 @@ import { TASK_STATUS_OPTIONS } from '@/domain/constants/task-status.constants'
 import { Separator } from '@/components/ui/separator'
 import { UserTaskCard } from './user-task-card'
 import { UserTaskStatusService } from '@/lib/services/user-task-status.service'
-import type { TaskProgress } from '@/payload-types'
+import type { TaskProgress, Subject } from '@/payload-types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 
 type UserTasksOverviewProps = {
@@ -53,6 +53,8 @@ export function UserTasksOverview({
               const tsTaskId = typeof ts.task === 'string' ? ts.task : ts.task.id
               return tsTaskId === task.id
             })
+            const subject = typeof task.subject === 'object' ? task.subject : null
+            const subjectColor = subject?.color || null
             return (
               <UserTaskCard
                 key={task.id}
@@ -63,6 +65,7 @@ export function UserTasksOverview({
                 nextStatus={TASK_STATUS_OPTIONS[1].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
+                subjectColor={subjectColor}
                 onStatusChange={onTaskProgressUpdate}
                 onHelpNeededChange={onHelpNeededUpdate}
                 onSearchPartnerChange={onSearchPartnerUpdate}
@@ -78,6 +81,8 @@ export function UserTasksOverview({
               const tsTaskId = typeof ts.task === 'string' ? ts.task : ts.task.id
               return tsTaskId === task.id
             })
+            const subject = typeof task.subject === 'object' ? task.subject : null
+            const subjectColor = subject?.color || null
             return (
               <UserTaskCard
                 key={task.id}
@@ -88,6 +93,7 @@ export function UserTasksOverview({
                 nextStatus={TASK_STATUS_OPTIONS[2].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
+                subjectColor={subjectColor}
                 onStatusChange={onTaskProgressUpdate}
                 onHelpNeededChange={onHelpNeededUpdate}
                 onSearchPartnerChange={onSearchPartnerUpdate}
@@ -103,6 +109,8 @@ export function UserTasksOverview({
               const tsTaskId = typeof ts.task === 'string' ? ts.task : ts.task.id
               return tsTaskId === task.id
             })
+            const subject = typeof task.subject === 'object' ? task.subject : null
+            const subjectColor = subject?.color || null
             return (
               <UserTaskCard
                 userId={userId}
@@ -113,6 +121,7 @@ export function UserTasksOverview({
                 nextStatus={undefined}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
+                subjectColor={subjectColor}
                 onStatusChange={onTaskProgressUpdate}
                 onHelpNeededChange={onHelpNeededUpdate}
                 onSearchPartnerChange={onSearchPartnerUpdate}
