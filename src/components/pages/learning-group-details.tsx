@@ -34,7 +34,8 @@ export async function LearningGroupDetailsView({
   const subjectSearchParamName = 'subject'
 
   // Get learning groups and subjects
-  const { learningGroups, subjects } = await learningGroupDashboardService.getLearningGroupsAndSubjects()
+  const { learningGroups, subjects } =
+    await learningGroupDashboardService.getLearningGroupsAndSubjects()
 
   // Get selected values using the learning group dashboard service
   const { selectedLearningGroupId, selectedSubjectIds } =
@@ -46,7 +47,10 @@ export async function LearningGroupDetailsView({
       subjects,
     )
 
-  const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '')
+  const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '', {
+    depth: 2,
+  })
+
   // Get learning group dashboard data based on filters
   const taskProgressEntries = await taskProgressRepository.findByUsersAndSubject(
     users.map((user) => user.id),
@@ -106,7 +110,6 @@ export async function LearningGroupDetailsView({
     }
   })
 
-
   return (
     <DefaultTemplate
       visibleEntities={initPageResult.visibleEntities}
@@ -130,7 +133,7 @@ export async function LearningGroupDetailsView({
             selectedSubjectIds={selectedSubjectIds}
           />
           <div className="px-4">
-            <DataTable columns={tasks} data={tasksByUser} subjectIds={selectedSubjectIds} />
+            <DataTable columns={tasks} data={tasksByUser}/>
           </div>
         </div>
       </Gutter>

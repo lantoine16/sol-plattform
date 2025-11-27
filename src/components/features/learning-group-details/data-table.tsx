@@ -8,29 +8,23 @@ import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { StudentDetailsModal } from '../student-details/student-details-modal'
 import { StatusIcon } from './status-icon'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
-
+import { useRouter } from 'next/navigation'
 export function DataTable({
   columns,
   data,
-  subjectIds,
 }: {
   // This receives the tasks array
   columns: Task[]
   // This receives the pupils array
   data: UserWithTaskProgress[]
-  subjectIds: string[]
 }) {
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { theme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
 
-  // Warte auf Mount, um Hydration-Mismatch zu vermeiden
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const router = useRouter()
 
-  const isDarkMode = mounted && (resolvedTheme === 'dark' || theme === 'dark')
+  const isDarkMode = resolvedTheme === 'dark' || theme === 'dark'
 
   // Update selectedUser when data changes (e.g. after router.refresh)
   useEffect(() => {
@@ -50,6 +44,7 @@ export function DataTable({
   const handleCloseModal = () => {
     setIsModalOpen(false)
     setSelectedUser(null)
+    router.refresh()
   }
 
   // Erstelle eine Map für schnellen Zugriff: userId -> taskId -> status

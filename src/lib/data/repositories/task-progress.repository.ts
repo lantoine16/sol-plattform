@@ -275,5 +275,4 @@ export class TaskProgressRepository {
   }
 }
 
-
 export const taskProgressRepository = new TaskProgressRepository()
