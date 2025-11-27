@@ -8,7 +8,7 @@ import { userRepository } from '@/lib/data/repositories/user.repository'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
 import { DataTable } from '@/components/features/learning-group-details/data-table'
-import type { UserWithTasks } from '@/lib/types'
+import type { UserWithTaskProgress } from '@/lib/types'
 
 export async function LearningGroupDetailsView({
   initPageResult,
@@ -93,27 +93,16 @@ export async function LearningGroupDetailsView({
       return dateA - dateB
     })
 
-  const tasksByUser: UserWithTasks[] = users.map((user) => {
+  const tasksByUser: UserWithTaskProgress[] = users.map((user) => {
     // Finde alle TaskProgress-Einträge für diesen User
     const userTaskProgress = taskProgressEntries.filter((tp) => {
       const userId = typeof tp.user === 'object' ? tp.user?.id : tp.user
       return userId === user.id
     })
 
-    // Transformiere zu der gewünschten Struktur
-    const tasks = userTaskProgress.map((tp) => {
-      return {
-        taskId: typeof tp.task === 'object' ? tp.task?.id || '' : tp.task,
-        status: tp.status,
-        helpNeeded: tp.helpNeeded || false,
-      }
-    })
-
     return {
-      userId: user.id,
-      lastname: user.lastname || '',
-      firstname: user.firstname || '',
-      tasks,
+      user: user,
+      taskProgresses: userTaskProgress,
     }
   })
 
@@ -140,7 +129,7 @@ export async function LearningGroupDetailsView({
             selectedSubjectIds={selectedSubjectIds}
           />
           <div className="px-4">
-            <DataTable columns={tasks} data={tasksByUser} />
+            <DataTable columns={tasks} data={tasksByUser} subjectIds={selectedSubjectIds} />
           </div>
         </div>
       </Gutter>

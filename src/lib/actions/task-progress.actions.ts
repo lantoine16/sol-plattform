@@ -3,6 +3,7 @@
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { getPayloadClient } from '@/lib/data/payload-client'
+import type { TaskProgress } from '@/payload-types'
 
 /**
  * Update task progress status for the current user
@@ -140,4 +141,10 @@ export async function updateTaskSearchPartner(
       error: error instanceof Error ? error.message : 'Unknown error occurred',
     }
   }
+}
+export async function getTaskProgressEntries(
+  userIds: string[],
+  subjectIds: string[],
+): Promise<TaskProgress[]> {
+  return await taskProgressRepository.findByUsersAndSubject(userIds, subjectIds, { depth: 2 })
 }

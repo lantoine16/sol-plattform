@@ -1,6 +1,5 @@
 import type { Task } from '@/payload-types'
-import type { UserTaskStatus } from '@/lib/types'
-
+import type { TaskProgress } from '@/payload-types'
 export class UserTaskStatusService {
   /**
    * Groups tasks by their status from userTaskStatuses
@@ -12,32 +11,25 @@ export class UserTaskStatusService {
    *   - finishedTasks: Tasks with status "finished"
    */
   static groupTasksByStatus(
-    tasks: Task[],
-    userTaskStatuses: UserTaskStatus[],
+    userTaskStatuses: TaskProgress[],
   ): {
     notStartedTasks: Task[]
     inProgressTasks: Task[]
     finishedTasks: Task[]
   } {
-    // Create a map of taskId -> status for quick lookup
-    const statusMap = new Map<string, UserTaskStatus['status']>()
-    userTaskStatuses.forEach((userTaskStatus) => {
-      statusMap.set(userTaskStatus.taskId, userTaskStatus.status)
-    })
 
     const notStartedTasks: Task[] = []
     const inProgressTasks: Task[] = []
     const finishedTasks: Task[] = []
 
-    tasks.forEach((task) => {
-      const status = statusMap.get(task.id)
-
+    userTaskStatuses.forEach((userTaskStatus) => {
+      const task = userTaskStatus.task as Task
+      const status = userTaskStatus.status as 'not-started' | 'in-progress' | 'finished'
       if (status === 'in-progress') {
         inProgressTasks.push(task)
       } else if (status === 'finished') {
         finishedTasks.push(task)
-      } else if (status === 'not-started')  {
-        // Includes "not-started", "need-help", and tasks without a status
+      } else if (status === 'not-started') {
         notStartedTasks.push(task)
       }
     })

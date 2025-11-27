@@ -3,23 +3,24 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTheme } from 'next-themes'
 import type { Task } from '@/payload-types'
-import type { UserWithTasks } from '@/lib/types'
+import type { UserWithTaskProgress } from '@/lib/types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { StudentDetailsModal } from '../student-details/student-details-modal'
 import { StatusIcon } from './status-icon'
-import { cn } from '@/lib/utils'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
 
 export function DataTable({
   columns,
   data,
+  subjectIds,
 }: {
   // This receives the tasks array
   columns: Task[]
   // This receives the pupils array
-  data: UserWithTasks[]
+  data: UserWithTaskProgress[]
+  subjectIds: string[]
 }) {
-  const [selectedUser, setSelectedUser] = useState<UserWithTasks | null>(null)
+  const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { theme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -34,14 +35,14 @@ export function DataTable({
   // Update selectedUser when data changes (e.g. after router.refresh)
   useEffect(() => {
     if (selectedUser) {
-      const updatedUser = data.find((u) => u.userId === selectedUser.userId)
+      const updatedUser = data.find((u) => u.user.id === selectedUser.user.id)
       if (updatedUser) {
         setSelectedUser(updatedUser)
       }
     }
   }, [data, selectedUser])
 
-  const handleColumnClick = (user: UserWithTasks) => {
+  const handleColumnClick = (user: UserWithTaskProgress) => {
     setSelectedUser(user)
     setIsModalOpen(true)
   }
@@ -57,22 +58,25 @@ export function DataTable({
 
     data.forEach((user) => {
       const taskMap = new Map<string, { status: TaskStatusValue; helpNeeded: boolean }>()
-      user.tasks.forEach((task) => {
-        taskMap.set(String(task.taskId), {
-          status: task.status,
-          helpNeeded: task.helpNeeded || false,
-        })
+      user.taskProgresses.forEach((taskProgress) => {
+        taskMap.set(
+          String(typeof taskProgress.task === 'object' ? taskProgress.task?.id : taskProgress.task),
+          {
+            status: taskProgress.status,
+            helpNeeded: taskProgress.helpNeeded || false,
+          },
+        )
       })
-      map.set(user.userId, taskMap)
+      map.set(user.user.id, taskMap)
     })
 
     return map
   }, [data])
 
   // Kompakte Namensdarstellung für Schüler: "Vorname + erster Buchstabe des Nachnamens"
-  const getCompactName = (user: UserWithTasks) => {
-    const lastNameInitial = user.lastname?.charAt(0).toUpperCase() || ''
-    const fullName = `${user.firstname || ''} ${lastNameInitial}.`.trim()
+  const getCompactName = (userWithTask: UserWithTaskProgress) => {
+    const lastNameInitial = userWithTask.user.lastname?.charAt(0).toUpperCase() || ''
+    const fullName = `${userWithTask.user.firstname || ''} ${lastNameInitial}.`.trim()
     // Maximal 14 Zeichen, sonst mit ... abkürzen
     if (fullName.length > 14) {
       return fullName.substring(0, 11) + '...'
@@ -130,11 +134,11 @@ export function DataTable({
                 >
                   Aufgabe
                 </th>
-                {data.map((user) => {
-                  const compactName = getCompactName(user)
+                {data.map((userWithTask) => {
+                  const compactName = getCompactName(userWithTask)
                   return (
                     <th
-                      key={user.userId}
+                      key={userWithTask.user.id}
                       className="border-b border-r p-1 font-semibold text-[10px] leading-tight hover:bg-accent/50 transition-colors cursor-pointer"
                       style={{
                         minWidth: '28px',
@@ -145,8 +149,8 @@ export function DataTable({
                         verticalAlign: 'bottom',
                         position: 'relative',
                       }}
-                      title={`${user.lastname}, ${user.firstname}`}
-                      onClick={() => handleColumnClick(user)}
+                      title={`${userWithTask.user.lastname || ''}, ${userWithTask.user.firstname || ''}`}
+                      onClick={() => handleColumnClick(userWithTask)}
                     >
                       <div
                         className="whitespace-nowrap"
@@ -191,11 +195,11 @@ export function DataTable({
                       >
                         {shortDescription}
                       </td>
-                      {data.map((user) => {
-                        const taskStatus = getTaskStatusForUser(taskId, user.userId)
+                      {data.map((userWithTask) => {
+                        const taskStatus = getTaskStatusForUser(taskId, userWithTask.user.id)
                         return (
                           <td
-                            key={user.userId}
+                            key={userWithTask.user.id}
                             className="border-r border-b p-0 text-center align-middle"
                             style={{
                               minWidth: '28px',
@@ -234,12 +238,14 @@ export function DataTable({
           </table>
         </div>
       </div>
-      <StudentDetailsModal
-        tasks={columns}
-        user={selectedUser}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      {selectedUser && (
+        <StudentDetailsModal
+          subjectIds={subjectIds}
+          user={selectedUser.user}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
+      )}
     </>
   )
 }

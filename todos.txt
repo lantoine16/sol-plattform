@@ -1,0 +1,11 @@
+TODOS:
+    • Auswahl Schüler bei Tasks: Vorname und Nachname
+    • Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
+    • „Bereit für Leistungsübersicht“ definieren
+    • Passwort aus Benutzererstelleung entfernen
+    • Performanceoptimierung bei Sammelabfragen
+    • Payload logo und Schrift durch IGS ersetzen
+    • email-adapter einrichten
+    • Rechte 
+    • Startseite auf Dashboard umsetzen
+    Impressum

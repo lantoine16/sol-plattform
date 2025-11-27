@@ -2,27 +2,52 @@
 
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import type { UserWithTasks } from '@/lib/types'
-import type { Task } from '@/payload-types'
 import { Button } from '@payloadcms/ui'
 import { X } from 'lucide-react'
 import { UserTasksOverview } from './user-tasks-overview'
 import { cn } from '@/lib/utils'
-
+import type { User, TaskProgress } from '@/payload-types'
+import { getTaskProgressEntries } from '@/lib/actions/task-progress.actions'
 type StudentDetailsModalProps = {
-  tasks: Task[]
-  user: UserWithTasks | null
+  user: User
+  subjectIds: string[]
   isOpen: boolean
   onClose: () => void
 }
 
-export function StudentDetailsModal({ tasks, user, isOpen, onClose }: StudentDetailsModalProps) {
+export function StudentDetailsModal({
+  user,
+  subjectIds,
+  isOpen,
+  onClose,
+}: StudentDetailsModalProps) {
   const [mounted, setMounted] = useState(false)
+  const [taskProgressEntries, setTaskProgressEntries] = useState<TaskProgress[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     setMounted(true)
     return () => setMounted(false)
   }, [])
+
+  useEffect(() => {
+    if (isOpen && user && subjectIds.length > 0) {
+      setIsLoading(true)
+      getTaskProgressEntries([user.id], subjectIds)
+        .then((entries) => {
+          setTaskProgressEntries(entries)
+          setIsLoading(false)
+        })
+        .catch((error) => {
+          console.error('Error loading task progress entries:', error)
+          setIsLoading(false)
+        })
+    } else {
+      // Reset data when modal is closed
+      setTaskProgressEntries([])
+      setIsLoading(false)
+    }
+  }, [isOpen, user?.id, subjectIds.join(',')])
 
   if (!isOpen || !user || !mounted) {
     return null
@@ -83,7 +108,13 @@ export function StudentDetailsModal({ tasks, user, isOpen, onClose }: StudentDet
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            <UserTasksOverview userId={user.userId} tasks={tasks} userTaskStatuses={user.tasks} />
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <p className="text-gray-500 dark:text-gray-400">Lade Aufgaben...</p>
+              </div>
+            ) : (
+              <UserTasksOverview userId={user.id} userTaskStatuses={taskProgressEntries} />
+            )}
           </div>
         </div>
       </div>

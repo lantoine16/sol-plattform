@@ -1,18 +1,16 @@
 import { TASK_STATUS_OPTIONS } from '@/domain/constants/task-status.constants'
 import { Separator } from '@/components/ui/separator'
 import { UserTaskCard } from './user-task-card'
-import type { Task } from '@/payload-types'
-import type { UserTaskStatus } from '@/lib/types'
 import { UserTaskStatusService } from '@/lib/services/user-task-status.service'
+import type { TaskProgress } from '@/payload-types'
 
 type UserTasksOverviewProps = {
   userId: string
-  tasks: Task[]
-  userTaskStatuses: UserTaskStatus[]
+  userTaskStatuses: TaskProgress[]
 }
-export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasksOverviewProps) {
+export function UserTasksOverview({ userId, userTaskStatuses }: UserTasksOverviewProps) {
   const { notStartedTasks, inProgressTasks, finishedTasks } =
-    UserTaskStatusService.groupTasksByStatus(tasks, userTaskStatuses)
+    UserTaskStatusService.groupTasksByStatus(userTaskStatuses)
   return (
     <div className="space-y-4">
       {/* First row: 3 columns with status labels */}
@@ -41,7 +39,7 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
         {/* Not Started Tasks */}
         <div className="flex flex-col gap-4">
           {notStartedTasks.map((task) => {
-            const taskStatus = userTaskStatuses.find((ts) => ts.taskId === task.id)
+            const taskStatus = userTaskStatuses.find((ts) => ts.id === task.id)
             return (
               <UserTaskCard
                 key={task.id}
@@ -50,8 +48,8 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
                 description={task.description || ''}
                 previousStatus={undefined}
                 nextStatus="in-progress"
-                helpNeeded={taskStatus?.helpNeeded}
-                searchPartner={taskStatus?.searchPartner}
+                helpNeeded={taskStatus?.helpNeeded || false}
+                searchPartner={taskStatus?.searchPartner || false}
               />
             )
           })}
@@ -60,7 +58,7 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
         {/* In Progress Tasks */}
         <div className="flex flex-col gap-4">
           {inProgressTasks.map((task) => {
-            const taskStatus = userTaskStatuses.find((ts) => ts.taskId === task.id)
+            const taskStatus = userTaskStatuses.find((ts) => ts.id === task.id)
             return (
               <UserTaskCard
                 key={task.id}
@@ -69,8 +67,8 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
                 description={task.description || ''}
                 previousStatus="not-started"
                 nextStatus="finished"
-                helpNeeded={taskStatus?.helpNeeded}
-                searchPartner={taskStatus?.searchPartner}
+                helpNeeded={taskStatus?.helpNeeded || false}
+                searchPartner={taskStatus?.searchPartner || false}
               />
             )
           })}
@@ -79,7 +77,7 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
         {/* Finished Tasks */}
         <div className="flex flex-col gap-4">
           {finishedTasks.map((task) => {
-            const taskStatus = userTaskStatuses.find((ts) => ts.taskId === task.id)
+            const taskStatus = userTaskStatuses.find((ts) => ts.id === task.id)
             return (
               <UserTaskCard
                 userId={userId}
@@ -88,8 +86,8 @@ export function UserTasksOverview({ tasks, userId, userTaskStatuses }: UserTasks
                 description={task.description || ''}
                 previousStatus="in-progress"
                 nextStatus={undefined}
-                helpNeeded={taskStatus?.helpNeeded}
-                searchPartner={taskStatus?.searchPartner}
+                helpNeeded={taskStatus?.helpNeeded || false}
+                searchPartner={taskStatus?.searchPartner || false}
               />
             )
           })}
