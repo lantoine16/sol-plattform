@@ -106,6 +106,7 @@ export async function LearningGroupDetailsView({
     }
   })
 
+
   return (
     <DefaultTemplate
       visibleEntities={initPageResult.visibleEntities}

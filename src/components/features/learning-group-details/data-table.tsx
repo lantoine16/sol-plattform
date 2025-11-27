@@ -240,8 +240,7 @@ export function DataTable({
       </div>
       {selectedUser && (
         <StudentDetailsModal
-          subjectIds={subjectIds}
-          user={selectedUser.user}
+          userWithTaskProgress={selectedUser}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
         />

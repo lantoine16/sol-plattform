@@ -8,46 +8,19 @@ import { UserTasksOverview } from './user-tasks-overview'
 import { cn } from '@/lib/utils'
 import type { User, TaskProgress } from '@/payload-types'
 import { getTaskProgressEntries } from '@/lib/actions/task-progress.actions'
+import type { UserWithTaskProgress } from '@/lib/types'
 type StudentDetailsModalProps = {
-  user: User
-  subjectIds: string[]
+  userWithTaskProgress: UserWithTaskProgress
   isOpen: boolean
   onClose: () => void
 }
 
 export function StudentDetailsModal({
-  user,
-  subjectIds,
-  isOpen,
+  userWithTaskProgress,
   onClose,
 }: StudentDetailsModalProps) {
-  const [mounted, setMounted] = useState(false)
-  const [taskProgressEntries, setTaskProgressEntries] = useState<TaskProgress[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [taskProgressEntries, setTaskProgressEntries] = useState<TaskProgress[]>(userWithTaskProgress.taskProgresses)
 
-  useEffect(() => {
-    setMounted(true)
-    return () => setMounted(false)
-  }, [])
-
-  useEffect(() => {
-    if (isOpen && user && subjectIds.length > 0) {
-      setIsLoading(true)
-      getTaskProgressEntries([user.id], subjectIds)
-        .then((entries) => {
-          setTaskProgressEntries(entries)
-          setIsLoading(false)
-        })
-        .catch((error) => {
-          console.error('Error loading task progress entries:', error)
-          setIsLoading(false)
-        })
-    } else {
-      // Reset data when modal is closed
-      setTaskProgressEntries([])
-      setIsLoading(false)
-    }
-  }, [isOpen, user?.id, subjectIds.join(',')])
 
   const handleTaskProgressUpdate = async (
     taskId: string,
@@ -118,10 +91,6 @@ export function StudentDetailsModal({
     })
   }
 
-  if (!isOpen || !user || !mounted) {
-    return null
-  }
-
   const modalContent = (
     <>
       {/* Overlay - nur Hintergrund */}
@@ -162,7 +131,7 @@ export function StudentDetailsModal({
                 id="modal-title"
                 className="text-2xl font-semibold text-gray-900 dark:text-gray-100"
               >
-                {user.firstname} {user.lastname}
+                {userWithTaskProgress.user.firstname} {userWithTaskProgress.user.lastname}
               </h1>
             </div>
             <Button buttonStyle="secondary" onClick={onClose} className="shrink-0 cursor-pointer">
@@ -174,22 +143,14 @@ export function StudentDetailsModal({
           {/* Content */}
           <div
             className="flex-1 overflow-y-auto px-6 py-4"
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
           >
-            {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <p className="text-gray-500 dark:text-gray-400">Lade Aufgaben...</p>
-              </div>
-            ) : (
               <UserTasksOverview
-                userId={user.id}
+                userId={userWithTaskProgress.user.id}
                 userTaskStatuses={taskProgressEntries}
                 onTaskProgressUpdate={handleTaskProgressUpdate}
                 onHelpNeededUpdate={handleHelpNeededUpdate}
                 onSearchPartnerUpdate={handleSearchPartnerUpdate}
               />
-            )}
           </div>
         </div>
       </div>

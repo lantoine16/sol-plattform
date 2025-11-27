@@ -60,7 +60,7 @@ export function UserTasksOverview({
                 userId={userId}
                 description={task.description || ''}
                 previousStatus={undefined}
-                nextStatus="in-progress"
+                nextStatus={TASK_STATUS_OPTIONS[1].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
                 onStatusChange={onTaskProgressUpdate}
@@ -84,8 +84,8 @@ export function UserTasksOverview({
                 taskId={task.id}
                 userId={userId}
                 description={task.description || ''}
-                previousStatus="not-started"
-                nextStatus="finished"
+                previousStatus={TASK_STATUS_OPTIONS[0].value}
+                nextStatus={TASK_STATUS_OPTIONS[2].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
                 onStatusChange={onTaskProgressUpdate}
@@ -109,7 +109,7 @@ export function UserTasksOverview({
                 key={task.id}
                 taskId={task.id}
                 description={task.description || ''}
-                previousStatus="in-progress"
+                previousStatus={TASK_STATUS_OPTIONS[1].value}
                 nextStatus={undefined}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
