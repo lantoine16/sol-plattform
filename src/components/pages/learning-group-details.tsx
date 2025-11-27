@@ -6,6 +6,7 @@ import React from 'react'
 import { learningGroupDashboardService } from '@/lib/services/learning-group-dashboard.service'
 import { userRepository } from '@/lib/data/repositories/user.repository'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
+import { SortService } from '@/lib/services/sort.service'
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
 import { DataTable } from '@/components/features/learning-group-details/data-table'
 import type { UserWithTaskProgress } from '@/lib/types'
@@ -66,36 +67,18 @@ export async function LearningGroupDetailsView({
   )
 
   // Hole die vollständigen Task-Objekte (ohne Duplikate)
-  const tasks = Array.from(uniqueTaskIds)
-    .map((taskId) => {
-      // Finde das Task-Objekt aus den TaskProgress-Einträgen
-      const taskProgress = taskProgressEntries.find((tp) => {
-        const tpTaskId = typeof tp.task === 'object' ? tp.task?.id || '' : tp.task
-        return tpTaskId === taskId
+  const tasks = SortService.sortTasksBySubjectAndDate(
+    Array.from(uniqueTaskIds)
+      .map((taskId) => {
+        // Finde das Task-Objekt aus den TaskProgress-Einträgen
+        const taskProgress = taskProgressEntries.find((tp) => {
+          const tpTaskId = typeof tp.task === 'object' ? tp.task?.id || '' : tp.task
+          return tpTaskId === taskId
+        })
+        return typeof taskProgress?.task === 'object' ? taskProgress.task : null
       })
-      return typeof taskProgress?.task === 'object' ? taskProgress.task : null
-    })
-    .filter((task): task is NonNullable<typeof task> => task !== null)
-    .sort((a, b) => {
-      // 1. Sortiere nach Fach (alphabetisch)
-      const subjectA = typeof a.subject === 'object' ? a.subject?.description || '' : ''
-      const subjectB = typeof b.subject === 'object' ? b.subject?.description || '' : ''
-
-      const subjectComparison = subjectA.localeCompare(subjectB, 'de', {
-        sensitivity: 'base',
-      })
-
-      //wenn beide Aufgaben nicht das gleiche Fach haben, sortiere nach Fach alphabetisch
-      if (subjectComparison !== 0) {
-        return subjectComparison
-      }
-
-      // 2. Innerhalb eines Fachs: Sortiere nach updatedAt (aufsteigend, älteste zuerst)
-      const dateA = new Date(a.updatedAt).getTime()
-      const dateB = new Date(b.updatedAt).getTime()
-
-      return dateA - dateB
-    })
+      .filter((task): task is NonNullable<typeof task> => task !== null),
+  )
 
   const tasksByUser: UserWithTaskProgress[] = users.map((user) => {
     // Finde alle TaskProgress-Einträge für diesen User
@@ -133,7 +116,7 @@ export async function LearningGroupDetailsView({
             selectedSubjectIds={selectedSubjectIds}
           />
           <div className="px-4">
-            <DataTable columns={tasks} data={tasksByUser}/>
+            <DataTable columns={tasks} data={tasksByUser} />
           </div>
         </div>
       </Gutter>

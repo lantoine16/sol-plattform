@@ -10,3 +10,5 @@ TODOS:
     • Startseite auf Dashboard umsetzen
     Impressum
     Dashboard - Liste sortieren wie andere payload listern
+    Bestätigen Button wenn man Stunde beendet
+    Schüler Lernort wechseln

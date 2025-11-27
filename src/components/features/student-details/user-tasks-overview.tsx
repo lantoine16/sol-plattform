@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { TASK_STATUS_OPTIONS } from '@/domain/constants/task-status.constants'
 import { Separator } from '@/components/ui/separator'
 import { UserTaskCard } from './user-task-card'
 import { UserTaskStatusService } from '@/lib/services/user-task-status.service'
-import type { TaskProgress, Subject } from '@/payload-types'
+import { SortService } from '@/lib/services/sort.service'
+import type { TaskProgress, Subject, Task } from '@/payload-types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 
 type UserTasksOverviewProps = {
@@ -21,6 +23,20 @@ export function UserTasksOverview({
 }: UserTasksOverviewProps) {
   const { notStartedTasks, inProgressTasks, finishedTasks } =
     UserTaskStatusService.groupTasksByStatus(userTaskStatuses)
+
+  // Sortierte Tasks mit useMemo für Performance
+  const sortedNotStartedTasks = useMemo(
+    () => SortService.sortTasksBySubjectAndDate(notStartedTasks),
+    [notStartedTasks],
+  )
+  const sortedInProgressTasks = useMemo(
+    () => SortService.sortTasksBySubjectAndDate(inProgressTasks),
+    [inProgressTasks],
+  )
+  const sortedFinishedTasks = useMemo(
+    () => SortService.sortTasksBySubjectAndDate(finishedTasks),
+    [finishedTasks],
+  )
   return (
     <div className="space-y-4">
       {/* First row: 3 columns with status labels */}
@@ -48,7 +64,7 @@ export function UserTasksOverview({
       <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 items-stretch">
         {/* Not Started Tasks */}
         <div className="flex flex-col gap-4">
-          {notStartedTasks.map((task) => {
+          {sortedNotStartedTasks.map((task) => {
             const taskStatus = userTaskStatuses.find((ts) => {
               const tsTaskId = typeof ts.task === 'string' ? ts.task : ts.task.id
               return tsTaskId === task.id
@@ -76,7 +92,7 @@ export function UserTasksOverview({
         <Separator orientation="vertical" className="h-auto" />
         {/* In Progress Tasks */}
         <div className="flex flex-col gap-4">
-          {inProgressTasks.map((task) => {
+          {sortedInProgressTasks.map((task) => {
             const taskStatus = userTaskStatuses.find((ts) => {
               const tsTaskId = typeof ts.task === 'string' ? ts.task : ts.task.id
               return tsTaskId === task.id
@@ -104,7 +120,7 @@ export function UserTasksOverview({
         <Separator orientation="vertical" className="h-auto" />
         {/* Finished Tasks */}
         <div className="flex flex-col gap-4">
-          {finishedTasks.map((task) => {
+          {sortedFinishedTasks.map((task) => {
             const taskStatus = userTaskStatuses.find((ts) => {
               const tsTaskId = typeof ts.task === 'string' ? ts.task : ts.task.id
               return tsTaskId === task.id
