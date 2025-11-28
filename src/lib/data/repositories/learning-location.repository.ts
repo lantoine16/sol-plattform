@@ -1,4 +1,4 @@
-import { getPayloadClient } from '../payload-client'
+import { getPayloadWithAuth } from '../payload-client'
 import type { LearningLocation } from '@/payload-types'
 
 export class LearningLocationRepository {
@@ -9,12 +9,14 @@ export class LearningLocationRepository {
     sort?: string
     limit?: number
   }): Promise<{ docs: LearningLocation[]; totalDocs: number }> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     return payload.find({
       collection: 'learning-location',
       ...options,
       // Standardmäßig alle Datensätze laden, wenn kein Limit angegeben ist
       limit: options?.limit ?? 0,
+      req,
+      overrideAccess: false,
     })
   }
 

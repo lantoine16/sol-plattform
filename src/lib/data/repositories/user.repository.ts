@@ -1,4 +1,4 @@
-import { getPayloadClient } from '../payload-client'
+import { getPayloadWithAuth } from '../payload-client'
 import type { User } from '@/payload-types'
 import type { UserRoleValue } from '@/domain/constants/user-role.constants'
 import { USER_ROLE_DEFAULT_VALUE } from '@/domain/constants/user-role.constants'
@@ -20,12 +20,14 @@ export class UserRepository {
     limit?: number
     depth?: number
   }): Promise<{ docs: User[]; totalDocs: number }> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     return payload.find({
       collection: 'users',
       ...options,
       // Standardmäßig alle Datensätze laden, wenn kein Limit angegeben ist
       limit: options?.limit ?? 0,
+      req,
+      overrideAccess: false,
     })
   }
 
@@ -86,7 +88,7 @@ export class UserRepository {
     currentLearningLocation?: string | null
     defaultLearningLocation?: string | null
   }): Promise<User> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     const userData: any = {
       firstname: data.firstname,
       lastname: data.lastname,
@@ -115,6 +117,8 @@ export class UserRepository {
     return payload.create({
       collection: 'users',
       data: userData,
+      req,
+      overrideAccess: false,
     })
   }
 
@@ -137,7 +141,7 @@ export class UserRepository {
   }
 
   async setLearningLocations(data: SetLearningLocationsOptions[]): Promise<User[]> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     const updatePromises = data.map((item) =>
       payload.update({
         collection: 'users',
@@ -145,6 +149,8 @@ export class UserRepository {
         data: {
           currentLearningLocation: item.learningLocationId,
         },
+        req,
+        overrideAccess: false,
       }),
     )
     const result = await Promise.all(updatePromises)
@@ -161,13 +167,15 @@ export class UserRepository {
     userId: string,
     learningLocationId: string | null,
   ): Promise<User> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     return payload.update({
       collection: 'users',
       id: userId,
       data: {
         currentLearningLocation: learningLocationId,
       },
+      req,
+      overrideAccess: false,
     })
   }
 }

@@ -1,4 +1,4 @@
-import { getPayloadClient } from '../payload-client'
+import { getPayloadWithAuth } from '../payload-client'
 import type { Task } from '@/payload-types'
 
 export interface TasksCreateOptions {
@@ -25,12 +25,14 @@ export class TaskRepository {
     limit?: number
     depth?: number
   }): Promise<{ docs: Task[]; totalDocs: number }> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     return payload.find({
       collection: 'tasks',
       ...options,
       // Standardmäßig alle Datensätze laden, wenn kein Limit angegeben ist
       limit: options?.limit ?? 0,
+      req,
+      overrideAccess: false,
     })
   }
 
@@ -107,7 +109,7 @@ export class TaskRepository {
   }
 
   async createTasks(tasks: TasksCreateOptions): Promise<Task[]> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     const createdTasks = await Promise.all(
       tasks.description.map((description) => {
         return payload.create({
@@ -118,6 +120,8 @@ export class TaskRepository {
             learningGroup: tasks.learningGroups,
             user: tasks.users,
           },
+          req,
+          overrideAccess: false,
         })
       }),
     )

@@ -1,6 +1,7 @@
-import type { CollectionSlug, PayloadRequest } from 'payload'
-import { getPayloadClient } from '@/lib/data/payload-client'
+import type { CollectionSlug } from 'payload'
 import { parseBulkData } from '@/domain/utils/parse-bulk-data.util'
+import { subjectRepository } from '@/lib/data/repositories/subject.repository'
+import { learningGroupRepository } from '@/lib/data/repositories/learning-group.repository'
 
 /**
  * Verarbeitet Bulk-Erstellung von Subjects oder LearningGroups aus einem mehrzeiligen Text.
@@ -25,19 +26,12 @@ export async function processLearningGroupsSubjectBulkCreate({
     return []
   }
 
-  const payload = await getPayloadClient()
+  // Verwende das entsprechende Repository basierend auf der Collection
+  if (collection === 'subjects') {
+    return await subjectRepository.createBulk(itemNames)
+  } else if (collection === 'learning-groups') {
+    return await learningGroupRepository.createBulk(itemNames)
+  }
 
-  // Erstelle alle Einträge parallel
-  const createdItems = await Promise.all(
-    itemNames.map((name) =>
-      payload.create({
-        collection,
-        data: {
-          [descriptionField]: name,
-        },
-      }),
-    ),
-  )
-
-  return createdItems
+  throw new Error(`Unsupported collection: ${collection}`)
 }

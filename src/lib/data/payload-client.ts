@@ -22,3 +22,13 @@ export async function getCurrentUser() {
   return user
 }
 
+/**
+ * Get Payload instance with authenticated user and request context
+ * Use this for Local API calls that need access control
+ */
+export async function getPayloadWithAuth() {
+  const headers = await getHeaders()
+  const payload = await getPayloadClient()
+  const { user } = await payload.auth({ headers })
+  return { payload, user, req: { user, payload } }
+}

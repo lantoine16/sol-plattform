@@ -1,4 +1,4 @@
-import { getPayloadClient } from '../payload-client'
+import { getPayloadWithAuth } from '../payload-client'
 import type { TaskProgress } from '@/payload-types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TASK_PROGRESS_DEFAULT_STATUS_VALUE } from '@/domain/constants/task-status.constants'
@@ -24,12 +24,14 @@ export class TaskProgressRepository {
     limit?: number
     depth?: number
   }): Promise<{ docs: TaskProgress[]; totalDocs: number }> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     return payload.find({
       collection: 'task-progress',
       ...options,
       // Standardmäßig alle Datensätze laden, wenn kein Limit angegeben ist
       limit: options?.limit ?? 0,
+      req,
+      overrideAccess: false,
     })
   }
 
@@ -74,7 +76,7 @@ export class TaskProgressRepository {
       return []
     }
 
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
 
     // 1. Finde alle Tasks, die zu diesem Fach gehören
     const tasksResult = await payload.find({
@@ -85,6 +87,8 @@ export class TaskProgressRepository {
         },
       },
       limit: 10000, // Ausreichend groß für alle Tasks
+      req,
+      overrideAccess: false,
     })
 
     const taskIds = tasksResult.docs.map((task) => task.id)
@@ -172,7 +176,7 @@ export class TaskProgressRepository {
     status: TaskStatusValue
   }): Promise<TaskProgress> {
     const existing = await this.findByUserAndTask([data.task], [data.user])
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
 
     if (existing) {
       return payload.update({
@@ -181,6 +185,8 @@ export class TaskProgressRepository {
         data: {
           status: data.status,
         },
+        req,
+        overrideAccess: false,
       })
     }
 
@@ -193,11 +199,13 @@ export class TaskProgressRepository {
         helpNeeded: false,
         searchPartner: false,
       },
+      req,
+      overrideAccess: false,
     })
   }
 
   async createTaskProgresses(data: TasksProgressesCreateOptions): Promise<TaskProgress[]> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     const createPromises: Promise<TaskProgress>[] = []
 
     data.user.forEach((userId) => {
@@ -212,6 +220,8 @@ export class TaskProgressRepository {
               helpNeeded: false,
               searchPartner: false,
             },
+            req,
+            overrideAccess: false,
           }),
         )
       })
@@ -222,28 +232,34 @@ export class TaskProgressRepository {
   }
 
   async deleteTaskProgresses(users: string[], tasks: string[]): Promise<void> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     await payload.delete({
       collection: 'task-progress',
       where: {
         and: [{ user: { in: users } }, { task: { in: tasks } }],
       },
+      req,
+      overrideAccess: false,
     })
   }
 
   async deleteTaskProgressesByTask(taskId: string): Promise<void> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     await payload.delete({
       collection: 'task-progress',
       where: { task: { equals: taskId } },
+      req,
+      overrideAccess: false,
     })
   }
 
   async deleteTaskProgressesByUser(userId: string): Promise<void> {
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
     await payload.delete({
       collection: 'task-progress',
       where: { user: { equals: userId } },
+      req,
+      overrideAccess: false,
     })
   }
 
@@ -256,7 +272,7 @@ export class TaskProgressRepository {
       return []
     }
 
-    const payload = await getPayloadClient()
+    const { payload, req } = await getPayloadWithAuth()
 
     // Update all entries to set helpNeeded and searchPartner to false
     const updatePromises = ids.map((id) =>
@@ -267,11 +283,107 @@ export class TaskProgressRepository {
           helpNeeded: false,
           searchPartner: false,
         },
+        req,
+        overrideAccess: false,
       }),
     )
 
     const result = await Promise.all(updatePromises)
     return result
+  }
+
+  /**
+   * Update helpNeeded flag for a task progress entry
+   * Creates a new entry if it doesn't exist
+   */
+  async updateHelpNeeded(
+    taskId: string,
+    userId: string,
+    helpNeeded: boolean,
+  ): Promise<TaskProgress> {
+    const existing = await this.findByUserAndTask([taskId], [userId])
+
+    if (existing && existing.length > 0) {
+      const { payload, req } = await getPayloadWithAuth()
+      return payload.update({
+        collection: 'task-progress',
+        id: existing[0].id,
+        data: {
+          helpNeeded,
+        },
+        req,
+        overrideAccess: false,
+      })
+    } else {
+      // Create new entry if it doesn't exist
+      await this.createOrUpdate({
+        user: userId,
+        task: taskId,
+        status: 'not-started',
+      })
+      // Update again with helpNeeded
+      const created = await this.findByUserAndTask([taskId], [userId])
+      if (created && created.length > 0) {
+        const { payload, req } = await getPayloadWithAuth()
+        return payload.update({
+          collection: 'task-progress',
+          id: created[0].id,
+          data: {
+            helpNeeded,
+          },
+          req,
+          overrideAccess: false,
+        })
+      }
+      throw new Error('Failed to create or update task progress for helpNeeded')
+    }
+  }
+
+  /**
+   * Update searchPartner flag for a task progress entry
+   * Creates a new entry if it doesn't exist
+   */
+  async updateSearchPartner(
+    taskId: string,
+    userId: string,
+    searchPartner: boolean,
+  ): Promise<TaskProgress> {
+    const existing = await this.findByUserAndTask([taskId], [userId])
+
+    if (existing && existing.length > 0) {
+      const { payload, req } = await getPayloadWithAuth()
+      return payload.update({
+        collection: 'task-progress',
+        id: existing[0].id,
+        data: {
+          searchPartner,
+        },
+        req,
+        overrideAccess: false,
+      })
+    } else {
+      // Create new entry if it doesn't exist
+      await this.createOrUpdate({
+        user: userId,
+        task: taskId,
+        status: 'not-started',
+      })
+      // Update again with searchPartner
+      const created = await this.findByUserAndTask([taskId], [userId])
+      if (created && created.length > 0) {
+        const { payload, req } = await getPayloadWithAuth()
+        return payload.update({
+          collection: 'task-progress',
+          id: created[0].id,
+          data: {
+            searchPartner,
+          },
+          req,
+          overrideAccess: false,
+        })
+      }
+      throw new Error('Failed to create or update task progress for searchPartner')
+    }
   }
 }
 

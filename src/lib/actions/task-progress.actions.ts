@@ -2,7 +2,6 @@
 
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
-import { getPayloadClient } from '@/lib/data/payload-client'
 import type { TaskProgress } from '@/payload-types'
 
 /**
@@ -47,36 +46,7 @@ export async function updateTaskHelpNeeded(
   helpNeeded: boolean,
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const payload = await getPayloadClient()
-    const existing = await taskProgressRepository.findByUserAndTask([taskId], [userId])
-
-    if (existing && existing.length > 0) {
-      await payload.update({
-        collection: 'task-progress',
-        id: existing[0].id,
-        data: {
-          helpNeeded,
-        },
-      })
-    } else {
-      // Create new entry if it doesn't exist
-      await taskProgressRepository.createOrUpdate({
-        user: userId,
-        task: taskId,
-        status: 'not-started',
-      })
-      // Update again with helpNeeded
-      const created = await taskProgressRepository.findByUserAndTask([taskId], [userId])
-      if (created && created.length > 0) {
-        await payload.update({
-          collection: 'task-progress',
-          id: created[0].id,
-          data: {
-            helpNeeded,
-          },
-        })
-      }
-    }
+    await taskProgressRepository.updateHelpNeeded(taskId, userId, helpNeeded)
 
     return {
       success: true,
@@ -102,35 +72,7 @@ export async function updateTaskSearchPartner(
   searchPartner: boolean,
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const payload = await getPayloadClient()
-    const existing = await taskProgressRepository.findByUserAndTask([taskId], [userId])
-    if (existing && existing.length > 0) {
-      await payload.update({
-        collection: 'task-progress',
-        id: existing[0].id,
-        data: {
-          searchPartner,
-        },
-      })
-    } else {
-      // Create new entry if it doesn't exist
-      await taskProgressRepository.createOrUpdate({
-        user: userId,
-        task: taskId,
-        status: 'not-started',
-      })
-      // Update again with searchPartner
-      const created = await taskProgressRepository.findByUserAndTask([taskId], [userId])
-      if (created && created.length > 0) {
-        await payload.update({
-          collection: 'task-progress',
-          id: created[0].id,
-          data: {
-            searchPartner,
-          },
-        })
-      }
-    }
+    await taskProgressRepository.updateSearchPartner(taskId, userId, searchPartner)
 
     return {
       success: true,
