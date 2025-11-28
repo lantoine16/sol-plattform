@@ -27,6 +27,10 @@ export default buildConfig({
     },
     // Custom Admin Layout Components
     components: {
+      graphics: {
+        Logo: '@/components/payload/Logo',
+        Icon: '@/components/payload/Logo',
+      },
       //actions: ['@/components/admin/FrontendLink'],
       beforeNavLinks: ['@/components/payload/CustomNavLinks'],
       // Nav: '@/components/CustomNav',
