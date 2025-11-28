@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { SUBJECT_COLOR_OPTIONS } from '@/domain/constants/subject-color.constants'
-import { USER_ROLE_ADMIN, USER_ROLE_PUPIL, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
+import { USER_ROLE_ADMIN } from '@/domain/constants/user-role.constants'
 
 export const Subjects: CollectionConfig = {
   slug: 'subjects',
@@ -11,7 +11,7 @@ export const Subjects: CollectionConfig = {
   admin: {
     useAsTitle: 'description',
     hidden: ({ user }) => {
-      return user?.role === USER_ROLE_PUPIL
+      return !(user?.role === USER_ROLE_ADMIN)
     },
   },
   fields: [
@@ -48,17 +48,17 @@ export const Subjects: CollectionConfig = {
     create: ({ req }) => {
       const user = req.user
       if (!user) return false
-      return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+      return user.role === USER_ROLE_ADMIN
     },
     update: ({ req }) => {
       const user = req.user
       if (!user) return false
-      return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+      return user.role === USER_ROLE_ADMIN
     },
     delete: ({ req }) => {
       const user = req.user
       if (!user) return false
-      return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+      return user.role === USER_ROLE_ADMIN
     },
   },
 }
