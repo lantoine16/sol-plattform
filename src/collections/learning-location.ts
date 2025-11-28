@@ -1,3 +1,4 @@
+import { USER_ROLE_ADMIN, USER_ROLE_PUPIL, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
 import type { CollectionConfig } from 'payload'
 
 export const LearningLocations: CollectionConfig = {
@@ -12,6 +13,9 @@ export const LearningLocations: CollectionConfig = {
       edit: {
         SaveButton: '@/components/payload/LearningLocationsSaveButton',
       },
+    },
+    hidden: ({ user }) => {
+      return user?.role === USER_ROLE_PUPIL
     },
   },
   fields: [
@@ -55,4 +59,24 @@ export const LearningLocations: CollectionConfig = {
       hasMany: true,
     },
   ],
+  access: {
+    read: () => {
+      return true
+    },
+    create: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+    },
+    update: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+    },
+    delete: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+    },
+  },
 }

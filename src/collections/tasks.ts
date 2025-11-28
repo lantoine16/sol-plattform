@@ -2,9 +2,7 @@ import type { CollectionConfig } from 'payload'
 import type { Task } from '@/payload-types'
 import { updateTaskProgressesForTask } from '@/lib/services/create-tasks.service'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
-import { redirect } from 'next/navigation'
-import { RedirectType } from 'next/dist/client/components/redirect-error'
-import { revalidatePath } from 'next/cache'
+import { USER_ROLE_ADMIN, USER_ROLE_PUPIL, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
 
 export const Tasks: CollectionConfig = {
   slug: 'tasks',
@@ -18,6 +16,9 @@ export const Tasks: CollectionConfig = {
       edit: {
         SaveButton: '@/components/payload/TasksSaveButton',
       },
+    },
+    hidden: ({ user }) => {
+      return user?.role === USER_ROLE_PUPIL
     },
   },
   hooks: {
@@ -110,4 +111,24 @@ export const Tasks: CollectionConfig = {
       hasMany: true,
     },
   ],
+  access: {
+    read: () => {
+      return true
+    },
+    create: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+    },
+    update: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+    },
+    delete: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+    },
+  },
 }
