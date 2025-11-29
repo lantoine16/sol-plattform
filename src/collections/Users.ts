@@ -1,5 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { USER_ROLE_OPTIONS, USER_ROLE_DEFAULT_VALUE } from '@/domain/constants/user-role.constants'
+import {
+  USER_ROLE_OPTIONS,
+  USER_ROLE_DEFAULT_VALUE,
+  USER_ROLE_PUPIL,
+  USER_ROLE_TEACHER,
+  USER_ROLE_ADMIN,
+} from '@/domain/constants/user-role.constants'
 import { updateTaskProgressesForUser } from '@/lib/services/create-users.service'
 import { User } from '@/payload-types'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
@@ -15,6 +21,9 @@ export const Users: CollectionConfig = {
       edit: {
         SaveButton: '@/components/payload/UsersSaveButton',
       },
+    },
+    hidden: ({ user }) => {
+      return user?.role === USER_ROLE_PUPIL
     },
   },
   auth: {
@@ -60,10 +69,16 @@ export const Users: CollectionConfig = {
       label: 'Vorname',
       type: 'text',
       required: true,
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN
+        },
+      },
       admin: {
         condition: (data) => {
           // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
-          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
           const hasId = data?.id || data?.createdAt || data?.updatedAt
           return hasId
         },
@@ -74,10 +89,16 @@ export const Users: CollectionConfig = {
       label: 'Nachname',
       type: 'text',
       required: true,
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN
+        },
+      },
       admin: {
         condition: (data) => {
           // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
-          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
           const hasId = data?.id || data?.createdAt || data?.updatedAt
           return hasId
         },
@@ -90,6 +111,13 @@ export const Users: CollectionConfig = {
       hasMany: true,
       relationTo: 'learning-groups',
       required: false,
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN
+        },
+      },
     },
     {
       name: 'currentLearningLocation',
@@ -97,6 +125,43 @@ export const Users: CollectionConfig = {
       type: 'relationship',
       relationTo: 'learning-location',
       required: false,
+      access: {
+        update: async ({ req, doc }) => {
+          const user = req.user
+          if (!user) return false
+
+          // Admins und Lehrer können immer ändern
+          if (user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER) {
+            return true
+          }
+
+          // Schüler: Prüfe ob die Graduation das Ändern erlaubt
+          if (user.role === USER_ROLE_PUPIL) {
+            // Prüfe canChangeLearningLocation in der Graduation des Users
+            // user.graduation kann eine ID oder ein populiertes Objekt sein
+            const graduation = user.graduation
+
+            if (!graduation) {
+              return false // Keine Graduation = kein Recht
+            }
+
+            // Wenn es ein Objekt ist, prüfe direkt
+            if (typeof graduation === 'object' && graduation !== null) {
+              return graduation.canChangeLearningLocation === true
+            }
+
+            // Wenn es eine ID ist, lade die Graduation
+            const graduationDoc = await req.payload.findByID({
+              collection: 'graduations',
+              id: graduation,
+            })
+
+            return graduationDoc?.canChangeLearningLocation === true
+          }
+
+          return false
+        },
+      },
     },
     // Überschreibe username Feld um unique und required zu setzen
     //TODO: Klappt noch nicht wirklich, unique nimmt er nicht
@@ -105,6 +170,13 @@ export const Users: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN
+        },
+      },
       admin: {
         condition: (data) => {
           // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
@@ -112,6 +184,30 @@ export const Users: CollectionConfig = {
           return hasId
         },
       },
+    },
+    {
+      name: 'password',
+      label: 'Passwort',
+      type: 'text',
+      // Nicht required: true, da beim Update das Feld leer sein darf (Passwort bleibt dann unverändert)
+      required: false,
+      access: {
+        update: ({ req, doc }) => {
+          const user = req.user
+          if (!user) return false
+
+          // Admins können alle Passwörter ändern
+          if (user.role === USER_ROLE_ADMIN) {
+            return true
+          }
+
+          // Lehrer und Schüler können nur ihr eigenes Passwort ändern
+          // doc ist das Dokument, das gerade bearbeitet wird
+          return doc?.id === user.id
+        },
+      },
+      //dieses Feld dient nur der Access-Control, daher hidden
+      hidden: true,
     },
     // Email added by default
     // Add more fields as needed
@@ -122,6 +218,13 @@ export const Users: CollectionConfig = {
       required: true,
       defaultValue: USER_ROLE_DEFAULT_VALUE,
       options: [...USER_ROLE_OPTIONS],
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN
+        },
+      },
     },
     {
       name: 'graduation',
@@ -129,6 +232,13 @@ export const Users: CollectionConfig = {
       type: 'relationship',
       relationTo: 'graduations',
       required: false,
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+        },
+      },
     },
     {
       name: 'defaultLearningLocation',
@@ -136,6 +246,13 @@ export const Users: CollectionConfig = {
       type: 'relationship',
       relationTo: 'learning-location',
       required: false,
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
+        },
+      },
     },
     {
       name: 'taskProgress',
@@ -184,12 +301,15 @@ export const Users: CollectionConfig = {
       },
     ],
     afterOperation: [
-      async ({ operation, result }) => {
+      async ({ operation, result, req }) => {
+        //Schüler können Lerngruppe nich updaten, daher müssen sie die TaskProgresses nicht updaten
+        if (req.user?.role === USER_ROLE_PUPIL) {
+          return
+        }
         if (operation === 'updateByID') {
           // Im afterChange Hook sollte data.id verfügbar sein
           const user = result as User
           await updateTaskProgressesForUser(user)
-          //redirect(`/collections/tasks/${task.id}`)
         } else if (operation === 'update') {
           Promise.all(
             result.docs.map((user) => {
@@ -208,5 +328,54 @@ export const Users: CollectionConfig = {
         }
       },
     ],
+  },
+  access: {
+    read: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      if (user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER) {
+        return true
+      }
+      if (user.role === USER_ROLE_PUPIL) {
+        return {
+          id: {
+            equals: user.id,
+          },
+        }
+      }
+      return false
+    },
+    create: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      return user.role === USER_ROLE_ADMIN
+    },
+    update: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+
+      // Admins und Lehrer können alle Nutzer updaten (Lehrer nur manche Felder )
+      if (user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER) {
+        return true
+      }
+
+      // Schüler können nur ihre eigenen Dokumente updaten
+      if (user.role === USER_ROLE_PUPIL) {
+        return { id: { equals: user.id } }
+      }
+
+      return false
+    },
+    delete: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      return user.role === USER_ROLE_ADMIN
+    },
+    // Nur Admins können Benutzer entsperren (Force Unlock Button)
+    unlock: ({ req }) => {
+      const user = req.user
+      if (!user) return false
+      return user.role === USER_ROLE_ADMIN
+    },
   },
 }

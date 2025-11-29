@@ -161,6 +161,7 @@ export interface User {
   lastname?: string | null;
   learningGroup?: (string | LearningGroup)[] | null;
   currentLearningLocation?: (string | null) | LearningLocation;
+  password?: string | null;
   role: 'pupil' | 'teacher' | 'admin';
   graduation?: (string | null) | Graduation;
   defaultLearningLocation?: (string | null) | LearningLocation;
@@ -186,7 +187,6 @@ export interface User {
         expiresAt: string;
       }[]
     | null;
-  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -379,6 +379,7 @@ export interface UsersSelect<T extends boolean = true> {
   lastname?: T;
   learningGroup?: T;
   currentLearningLocation?: T;
+  password?: T;
   role?: T;
   graduation?: T;
   defaultLearningLocation?: T;
