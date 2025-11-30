@@ -46,6 +46,10 @@ export default buildConfig({
           Component: '@/components/pages/learning-group-details',
           path: '/detailView',
         },
+        taskBoard: {
+          Component: '@/components/pages/task-board-page',
+          path: '/taskboard',
+        },
       },
     },
   },

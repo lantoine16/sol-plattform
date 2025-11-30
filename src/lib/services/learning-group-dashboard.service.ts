@@ -39,16 +39,11 @@ export class LearningGroupDashboardService {
   /**
    * Get selected values from search params for learning groups and subjects
    */
-  getSubjectAndLearngingGroupsFilterValues(
+  getLearngingGroupsFilterValues(
     searchParams: Record<string, string | string[] | undefined>,
     learningGroupSearchParamName: string,
-    subjectSearchParamName: string,
     learningGroups: LearningGroup[],
-    subjects: Subject[],
-  ): {
-    selectedLearningGroupId: string | undefined
-    selectedSubjectIds: string[]
-  } {
+  ): string | undefined {
     // Get selected learning group ID
     const learningGroupParam = searchParams[learningGroupSearchParamName]
     const selectedLearningGroupId =
@@ -58,6 +53,14 @@ export class LearningGroupDashboardService {
           ? learningGroupParam[0]
           : learningGroups[0]?.id
 
+    return selectedLearningGroupId
+  }
+
+  getSubjectFilterValues(
+    searchParams: Record<string, string | string[] | undefined>,
+    subjectSearchParamName: string,
+    subjects: Subject[],
+  ): string[] {
     // Get selected subject IDs
     const subjectParam = searchParams[subjectSearchParamName]
     let selectedSubjectIds: string[]
@@ -78,13 +81,8 @@ export class LearningGroupDashboardService {
       // Wenn keine Werte vorhanden sind, sind alle ausgewählt (Standard)
       selectedSubjectIds = subjects.map((subject) => subject.id)
     }
-
-    return {
-      selectedLearningGroupId,
-      selectedSubjectIds,
-    }
+    return selectedSubjectIds
   }
-
   /**
    * Get users with processed task progress data for the learning group dashboard
    * Users are fetched with depth 2 to resolve TaskProgress and graduation relationships

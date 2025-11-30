@@ -3,13 +3,14 @@ import React from 'react'
 import { NavGroup, Link } from '@payloadcms/ui'
 import { usePathname } from 'next/navigation'
 
-export const AfterNavLinks = () => {
+export const BeforeNavLinks = () => {
   const pathname = usePathname()
   const dashboardHref = '/dashboard'
   const detailViewHref = '/detailView'
+  const taskBoardHref = '/taskboard'
   const isDashboardActive = pathname.includes(dashboardHref)
   const isDetailViewActive = pathname.includes(detailViewHref)
-
+  const isTaskBoardActive = pathname.includes(taskBoardHref)
   return (
     <NavGroup label={'Ansichten'}>
       <Link
@@ -36,8 +37,20 @@ export const AfterNavLinks = () => {
         {isDetailViewActive && <div className="nav__link-indicator" />}
         <span className="nav__link-label">Detailansicht</span>
       </Link>
+      <Link
+        href={taskBoardHref}
+        className="nav__link"
+        id="nav-task-board"
+        style={{
+          cursor: isTaskBoardActive ? 'text' : 'pointer',
+          pointerEvents: isTaskBoardActive ? 'none' : 'auto',
+        }}
+      >
+        {isTaskBoardActive && <div className="nav__link-indicator" />}
+        <span className="nav__link-label">Taskboard</span>
+      </Link>
     </NavGroup>
   )
 }
 
-export default AfterNavLinks
+export default BeforeNavLinks

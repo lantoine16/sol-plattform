@@ -9,6 +9,7 @@ type LearningGroupSubjectsSelectorsProps = {
   subjectSearchParamName: string
   selectedLearningGroupId: string | undefined
   selectedSubjectIds: string[]
+  showLearningGroupSelector?: boolean
 }
 
 export function LearningGroupSubjectsSelectors({
@@ -18,6 +19,7 @@ export function LearningGroupSubjectsSelectors({
   subjectSearchParamName,
   selectedLearningGroupId,
   selectedSubjectIds,
+  showLearningGroupSelector = true,
 }: LearningGroupSubjectsSelectorsProps) {
   const learningGroupItems: Item[] = useMemo(
     () =>
@@ -39,6 +41,7 @@ export function LearningGroupSubjectsSelectors({
 
   return (
     <div className="flex flex-row items-center flex-wrap gap-2">
+      {showLearningGroupSelector && (
       <SelectElement
         items={learningGroupItems}
         selectedIds={selectedLearningGroupId}
@@ -47,6 +50,7 @@ export function LearningGroupSubjectsSelectors({
         itemName="Lerngruppe"
         isMulti={false}
       />
+      )}
       <SelectElement
         items={subjectItems}
         selectedIds={selectedSubjectIds}

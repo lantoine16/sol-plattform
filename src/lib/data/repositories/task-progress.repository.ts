@@ -63,6 +63,7 @@ export class TaskProgressRepository {
     return result.docs
   }
 
+
   /**
    * Find task progress entries for users filtered by subject
    * Returns all tasks with their progress for the given users that belong to the specified subject

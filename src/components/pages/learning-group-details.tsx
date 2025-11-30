@@ -40,12 +40,17 @@ export async function LearningGroupDetailsView({
     await learningGroupDashboardService.getLearningGroupsAndSubjects()
 
   // Get selected values using the learning group dashboard service
-  const { selectedLearningGroupId, selectedSubjectIds } =
-    learningGroupDashboardService.getSubjectAndLearngingGroupsFilterValues(
+  const selectedLearningGroupId=
+    learningGroupDashboardService.getLearngingGroupsFilterValues(
       searchParams,
       learningGroupSearchParamName,
+    learningGroups,
+  )
+
+  const selectedSubjectIds =
+    learningGroupDashboardService.getSubjectFilterValues(
+      searchParams,
       subjectSearchParamName,
-      learningGroups,
       subjects,
     )
 

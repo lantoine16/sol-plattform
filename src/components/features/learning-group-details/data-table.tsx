@@ -21,7 +21,6 @@ export function DataTable({
   learningLocations: LearningLocation[]
 }) {
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const { theme, resolvedTheme } = useTheme()
 
   const router = useRouter()
@@ -40,11 +39,9 @@ export function DataTable({
 
   const handleColumnClick = (user: UserWithTaskProgress) => {
     setSelectedUser(user)
-    setIsModalOpen(true)
   }
 
   const handleCloseModal = () => {
-    setIsModalOpen(false)
     setSelectedUser(null)
     router.refresh()
   }
@@ -239,7 +236,7 @@ export function DataTable({
         <TaskBoardComponent
           userWithTaskProgress={selectedUser}
           learningLocations={learningLocations}
-          isOpen={isModalOpen}
+          showAsModal={true}
           onClose={handleCloseModal}
         />
       )}

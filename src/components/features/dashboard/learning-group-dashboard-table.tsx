@@ -29,7 +29,6 @@ export function LearningGroupDashboardTable({
   const [sortField, setSortField] = useState<SortField>('lastname')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const router = useRouter()
   // Sortierte Benutzerliste
@@ -71,11 +70,9 @@ export function LearningGroupDashboardTable({
       taskProgresses: userWithTaskProgress.taskProgresses,
     }
     setSelectedUser(userWithTaskProgressForModal)
-    setIsModalOpen(true)
   }
 
   const handleCloseModal = () => {
-    setIsModalOpen(false)
     setSelectedUser(null)
     router.refresh()
   }
@@ -223,7 +220,7 @@ export function LearningGroupDashboardTable({
         <TaskBoardComponent
           userWithTaskProgress={selectedUser}
           learningLocations={learningLocations}
-          isOpen={isModalOpen}
+          showAsModal={true}
           onClose={handleCloseModal}
         />
       )}

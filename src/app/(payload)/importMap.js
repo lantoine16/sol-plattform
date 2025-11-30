@@ -11,6 +11,7 @@ import { default as default_e34c28bdc97e3fecf976b23b26d64cc9 } from '@/component
 import { default as default_eabe176a4bb30ac84e080835885bf7b7 } from '@/components/payload/CustomNavLinks'
 import { default as default_48836601570b6889352c50623467c75c } from '@/components/pages/learning-group-dashboard'
 import { default as default_a22c3a6f8a49b6e0731bef381a517330 } from '@/components/pages/learning-group-details'
+import { default as default_8f7f05e9320c6649d298c9fc3708304b } from '@/components/pages/task-board-page'
 
 export const importMap = {
   "@/components/payload/HideAuthFieldsOnCreate#default": default_e296ff360e36f227fadad2fa6f13dbaa,
@@ -25,5 +26,6 @@ export const importMap = {
   "@/components/payload/Logo#default": default_e34c28bdc97e3fecf976b23b26d64cc9,
   "@/components/payload/CustomNavLinks#default": default_eabe176a4bb30ac84e080835885bf7b7,
   "@/components/pages/learning-group-dashboard#default": default_48836601570b6889352c50623467c75c,
-  "@/components/pages/learning-group-details#default": default_a22c3a6f8a49b6e0731bef381a517330
+  "@/components/pages/learning-group-details#default": default_a22c3a6f8a49b6e0731bef381a517330,
+  "@/components/pages/task-board-page#default": default_8f7f05e9320c6649d298c9fc3708304b
 }

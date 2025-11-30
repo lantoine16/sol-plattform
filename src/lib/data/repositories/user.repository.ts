@@ -31,6 +31,17 @@ export class UserRepository {
     })
   }
 
+  async findById(id: string, options?: { depth?: number }): Promise<User> {
+    const { payload, req } = await getPayloadWithAuth()
+
+    return payload.findByID({
+      collection: 'users',
+      id: id,
+      depth: options?.depth,
+      req,
+      overrideAccess: false,
+    })
+  }
   /**
    * Find users by multiple learning group IDs
    */

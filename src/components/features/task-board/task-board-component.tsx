@@ -12,14 +12,15 @@ import { updateUserLearningLocation } from '@/lib/actions/user.actions'
 type StudentDetailsModalProps = {
   userWithTaskProgress: UserWithTaskProgress
   learningLocations: LearningLocation[]
-  isOpen: boolean
-  onClose: () => void
+  showAsModal?: boolean
+  onClose?: () => void
 }
 
 export function TaskBoardComponent({
   userWithTaskProgress,
-  onClose,
   learningLocations,
+  showAsModal = true,
+  onClose = () => {},
 }: StudentDetailsModalProps) {
   const [taskProgressEntries, setTaskProgressEntries] = useState<TaskProgress[]>(
     userWithTaskProgress.taskProgresses,
@@ -147,14 +148,20 @@ export function TaskBoardComponent({
   const modalContent = (
     <>
       {/* Overlay - nur Hintergrund */}
-      <div
-        className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      {showAsModal && (
+        <div
+          className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
       {/* Modal Content */}
       <div
-        className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none"
+        className={
+          showAsModal
+            ? 'fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none'
+            : ''
+        }
         aria-modal="true"
         role="dialog"
         aria-labelledby="modal-title"
@@ -166,53 +173,72 @@ export function TaskBoardComponent({
         }}
       >
         <div
-          className={cn(
-            'relative flex flex-col',
-            'bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl',
-            'w-full max-w-[1200px] max-h-[90vh]',
-            'mx-4 my-4',
-            'overflow-hidden',
-            'pointer-events-auto',
-          )}
+          className={
+            showAsModal
+              ? cn(
+                  'relative flex flex-col',
+                  'bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl',
+                  'w-full max-w-[1200px] max-h-[90vh]',
+                  'mx-4 my-4',
+                  'overflow-hidden',
+                  'pointer-events-auto',
+                )
+              : ''
+          }
           onClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex flex-row items-center gap-5">
-              <h1
-                id="modal-title"
-                className="text-2xl font-semibold text-gray-900 dark:text-gray-100"
-              >
-                {user.firstname} {user.lastname}
-              </h1>
-
+          <div
+            className={
+              showAsModal
+                ? 'flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700'
+                : ''
+            }
+          >
+            <div className={showAsModal ? 'flex flex-row items-center gap-5' : ''}>
+              {showAsModal && (
+                <h1
+                  id="modal-title"
+                  className="text-2xl font-semibold text-gray-900 dark:text-gray-100"
+                >
+                  {user.firstname} {user.lastname}
+                </h1>
+              )}
               {!allowChangeLearningLocation && currentLearningLocation ? (
-                <div className="text-xl text-gray-600 dark:text-gray-400">
+                <div className="text-2xl text-gray-900 dark:text-gray-100">
                   Lernort: {currentLearningLocation?.label}
                 </div>
               ) : null}
               {allowChangeLearningLocation && (
-                <Select
-                  options={learningLocations.map((learningLocation) => ({
-                    value: learningLocation.id,
-                    label: learningLocation.description || '',
-                  }))}
-                  value={currentLearningLocation ? [currentLearningLocation] : undefined}
-                  onChange={(value) => {
-                    handleChangeLearningLocation(value as { value: string; label: string })
-                  }}
-                  disabled={isUpdatingLearningLocation}
-                />
+                <div className="flex flex-row items-center gap-2">
+                  <label htmlFor="learningLocation" className="text-2xl text-gray-900 dark:text-gray-100">
+                    Lernort:
+                  </label>
+                  <Select
+                    className="min-w-[200px]"
+                    options={learningLocations.map((learningLocation) => ({
+                      value: learningLocation.id,
+                      label: learningLocation.description || '',
+                    }))}
+                    value={currentLearningLocation ? [currentLearningLocation] : undefined}
+                    onChange={(value) => {
+                      handleChangeLearningLocation(value as { value: string; label: string })
+                    }}
+                    disabled={isUpdatingLearningLocation}
+                  />
+                </div>
               )}
             </div>
-            <Button buttonStyle="secondary" onClick={onClose} className="shrink-0 cursor-pointer">
-              <X className="size-4 mr-1" />
-              Schließen
-            </Button>
+            {showAsModal && (
+              <Button buttonStyle="secondary" onClick={onClose} className="shrink-0 cursor-pointer">
+                <X className="size-4 mr-1" />
+                Schließen
+              </Button>
+            )}
           </div>
           {/* Content */}
-          <div className="flex-1 overflow-y-auto px-6 py-4">
+          <div className={"flex-1 overflow-y-auto " + (showAsModal ? "px-6 py-4" : "my-6")}>
             <UserTasksOverview
               userId={userWithTaskProgress.user.id}
               userTaskStatuses={taskProgressEntries}
@@ -225,6 +251,5 @@ export function TaskBoardComponent({
       </div>
     </>
   )
-
-  return createPortal(modalContent, document.body)
+  return showAsModal ? createPortal(modalContent, document.body) : modalContent
 }

@@ -37,14 +37,17 @@ export async function LearningGroupDashboardView({
     await learningGroupDashboardService.getLearningGroupsAndSubjects()
 
   // Get selected values using the learning group dashboard service
-  const { selectedLearningGroupId, selectedSubjectIds } =
-    learningGroupDashboardService.getSubjectAndLearngingGroupsFilterValues(
-      searchParams,
-      learningGroupSearchParamName,
-      subjectSearchParamName,
-      learningGroups,
-      subjects,
-    )
+  const selectedLearningGroupId = learningGroupDashboardService.getLearngingGroupsFilterValues(
+    searchParams,
+    learningGroupSearchParamName,
+    learningGroups,
+  )
+
+  const selectedSubjectIds = learningGroupDashboardService.getSubjectFilterValues(
+    searchParams,
+    subjectSearchParamName,
+    subjects,
+  )
 
   const {
     users: usersWithTaskProgress,
@@ -83,7 +86,10 @@ export async function LearningGroupDashboardView({
             <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
           </div>
           <div className="px-4">
-            <LearningGroupDashboardTable users={usersWithTaskProgress} learningLocations={learningLocations} />
+            <LearningGroupDashboardTable
+              users={usersWithTaskProgress}
+              learningLocations={learningLocations}
+            />
           </div>
         </div>
       </Gutter>
