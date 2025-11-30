@@ -4,11 +4,13 @@ TODOS:
     • „Bereit für Leistungsübersicht“ definieren
     • Passwort aus Benutzererstelleung entfernen
     • Performanceoptimierung bei Sammelabfragen
-    • Payload logo und Schrift durch IGS ersetzen
     • email-adapter einrichten
-    • Rechte 
+    • Rechte: Bei Seiten mit richtigen Routing
     • Startseite auf Dashboard umsetzen
+    API Button entfernen
     Impressum
     Dashboard - Liste sortieren wie andere payload listern
     Bestätigen Button wenn man Stunde beendet
-    Schüler Lernort wechseln
+    Tasks Erstellung mit Blockkomponente überarbeiten
+    Schüleransicht mit dashboard 
+    Tabelle Dashboard - Sortieren wie bei anderen Tabellen

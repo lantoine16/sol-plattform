@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import type { UserWithTaskProgressInformation } from '@/lib/services/learning-group-dashboard.service'
 import { GraduationIcon } from '@/components/ui/graduation-icon'
-import { StudentDetailsModal } from '@/components/features/student-details/student-details-modal'
+import { TaskBoardComponent } from '@/components/features/task-board/task-board-component'
 import type { UserWithTaskProgress } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 import type { LearningLocation } from '@/payload-types'
@@ -220,7 +220,7 @@ export function LearningGroupDashboardTable({
         </tbody>
       </table>
       {selectedUser && (
-        <StudentDetailsModal
+        <TaskBoardComponent
           userWithTaskProgress={selectedUser}
           learningLocations={learningLocations}
           isOpen={isModalOpen}

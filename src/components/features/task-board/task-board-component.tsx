@@ -16,7 +16,7 @@ type StudentDetailsModalProps = {
   onClose: () => void
 }
 
-export function StudentDetailsModal({
+export function TaskBoardComponent({
   userWithTaskProgress,
   onClose,
   learningLocations,

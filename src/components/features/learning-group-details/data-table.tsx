@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes'
 import type { LearningLocation, Task } from '@/payload-types'
 import type { UserWithTaskProgress } from '@/lib/types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
-import { StudentDetailsModal } from '../student-details/student-details-modal'
+import { TaskBoardComponent } from '../task-board/task-board-component'
 import { StatusIcon } from './status-icon'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
 import { useRouter } from 'next/navigation'
@@ -236,7 +236,7 @@ export function DataTable({
         </div>
       </div>
       {selectedUser && (
-        <StudentDetailsModal
+        <TaskBoardComponent
           userWithTaskProgress={selectedUser}
           learningLocations={learningLocations}
           isOpen={isModalOpen}
