@@ -11,6 +11,7 @@ import { SortService } from '@/lib/services/sort.service'
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
 import { DataTable } from '@/components/features/learning-group-details/data-table'
 import type { UserWithTaskProgress } from '@/lib/types'
+import { USER_ROLE_ADMIN, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
 
 export async function LearningGroupDetailsView({
   initPageResult,
@@ -19,6 +20,13 @@ export async function LearningGroupDetailsView({
 }: AdminViewServerProps) {
   if (!initPageResult.req.user) {
     return <p>You must be logged in to view this page.</p>
+  }
+
+  if (
+    initPageResult.req.user.role !== USER_ROLE_ADMIN &&
+    initPageResult.req.user.role !== USER_ROLE_TEACHER
+  ) {
+    return <p>You are not authorized to view this page.</p>
   }
 
   if (!searchParams) {
@@ -40,19 +48,17 @@ export async function LearningGroupDetailsView({
     await learningGroupDashboardService.getLearningGroupsAndSubjects()
 
   // Get selected values using the learning group dashboard service
-  const selectedLearningGroupId=
-    learningGroupDashboardService.getLearngingGroupsFilterValues(
-      searchParams,
-      learningGroupSearchParamName,
+  const selectedLearningGroupId = learningGroupDashboardService.getLearngingGroupsFilterValues(
+    searchParams,
+    learningGroupSearchParamName,
     learningGroups,
   )
 
-  const selectedSubjectIds =
-    learningGroupDashboardService.getSubjectFilterValues(
-      searchParams,
-      subjectSearchParamName,
-      subjects,
-    )
+  const selectedSubjectIds = learningGroupDashboardService.getSubjectFilterValues(
+    searchParams,
+    subjectSearchParamName,
+    subjects,
+  )
 
   const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '', {
     depth: 2,

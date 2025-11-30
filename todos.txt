@@ -15,4 +15,5 @@ TODOS:
     Schüleransicht mit dashboard 
     Tabelle Dashboard - Sortieren wie bei anderen Tabellen
     Taskboard Lernort klarmachen dass es kein Suchfeld ist
+    favicon
     

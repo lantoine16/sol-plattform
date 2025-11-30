@@ -8,14 +8,20 @@ import { LearningGroupSubjectsSelectors } from '@/components/features/learning-g
 import { LearningGroupDashboardTable } from '@/components/features/dashboard/learning-group-dashboard-table'
 import { ResetUserStatuses } from '../features/reset-user-statuses'
 import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
+import { USER_ROLE_ADMIN, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
 
 export async function LearningGroupDashboardView({
   initPageResult,
   params,
   searchParams,
 }: AdminViewServerProps) {
+  
   if (!initPageResult.req.user) {
     return <p>You must be logged in to view this page.</p>
+  }
+
+  if (initPageResult.req.user.role !== USER_ROLE_ADMIN && initPageResult.req.user.role !== USER_ROLE_TEACHER) {
+    return <p>You are not authorized to view this page.</p>
   }
 
   if (!searchParams) {

@@ -10,6 +10,7 @@ import { userRepository } from '@/lib/data/repositories/user.repository'
 import { UserWithTaskProgress } from '@/lib/types'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
+import { USER_ROLE_ADMIN, USER_ROLE_PUPIL } from '@/domain/constants/user-role.constants'
 
 export async function TaskBoardPage({
   initPageResult,
@@ -18,6 +19,13 @@ export async function TaskBoardPage({
 }: AdminViewServerProps) {
   if (!initPageResult.req.user) {
     return <p>You must be logged in to view this page.</p>
+  }
+
+  if (
+    initPageResult.req.user.role !== USER_ROLE_ADMIN &&
+    initPageResult.req.user.role !== USER_ROLE_PUPIL
+  ) {
+    return <p>You are not authorized to view this page.</p>
   }
 
   if (!searchParams) {
