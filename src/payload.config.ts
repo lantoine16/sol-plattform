@@ -36,7 +36,6 @@ export default buildConfig({
       // Nav: '@/components/CustomNav',
       views: {
         // Learning Group Dashboard - zeigt alle Schüler der ausgewählten Lerngruppe
-        // WICHTIG: Nicht "dashboard" nennen, da das die Standard-Dashboard-View ist
         learningGroupDashboard: {
           Component: '@/components/pages/learning-group-dashboard',
           path: '/dashboard',

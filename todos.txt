@@ -5,8 +5,6 @@ TODOS:
     • Passwort aus Benutzererstelleung entfernen
     • Performanceoptimierung bei Sammelabfragen
     • email-adapter einrichten
-    • Rechte: Bei Seiten mit richtigen Routing
-    • Startseite auf Dashboard umsetzen
     API Button entfernen
     Impressum
     Dashboard - Liste sortieren wie andere payload listern
@@ -16,4 +14,5 @@ TODOS:
     Tabelle Dashboard - Sortieren wie bei anderen Tabellen
     Taskboard Lernort klarmachen dass es kein Suchfeld ist
     favicon
-    
+    Darkmode bei Taskboard
+    Redirect direkt machen und nicht erst andere Seiten laden (in CustomNavLinks)
