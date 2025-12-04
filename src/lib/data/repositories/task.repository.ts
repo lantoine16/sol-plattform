@@ -114,7 +114,6 @@ export class TaskRepository {
   }
 
   async createTasks(tasks: TasksCreateOptions): Promise<Task[]> {
-    console.log(tasks)
     const { payload, req } = await getPayloadWithAuth()
     const createdTasks = await Promise.all(
       tasks.tasks.map((taskData) => {

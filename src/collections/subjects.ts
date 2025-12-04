@@ -39,6 +39,14 @@ export const Subjects: CollectionConfig = {
       collection: 'tasks',
       on: 'subject',
       hasMany: true,
+      admin: {
+        condition: (data) => {
+          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
+          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
+        },
+      },
     },
   ],
   access: {

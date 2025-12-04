@@ -56,7 +56,7 @@ export const Tasks: CollectionConfig = {
   fields: [
     {
       name: 'taskBlocks',
-      label: 'Aufgaben',
+      label: 'Titel und Beschreibung der Aufgaben',
       type: 'blocks',
       blocks: [TitleDescriptionBlock],
       defaultValue: () => [
@@ -80,7 +80,7 @@ export const Tasks: CollectionConfig = {
         singular: 'Aufgabe',
         plural: 'Aufgaben',
       },
-      // minRows: 1,
+      minRows: 1,
       // Make this field not required for API operations
       required: false,
       virtual: true,
@@ -143,6 +143,14 @@ export const Tasks: CollectionConfig = {
       collection: 'task-progress',
       on: 'task',
       hasMany: true,
+      admin: {
+        condition: (data) => {
+          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
+          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
+        },
+      },
     },
   ],
   access: {
