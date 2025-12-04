@@ -73,10 +73,11 @@ export function UserTasksOverview({
             const subjectColor = subject?.color || null
             return (
               <UserTaskCard
+                title={task.title || ''}
                 key={task.id}
                 taskId={task.id}
                 userId={userId}
-                description={task.title || ''}
+                description={task.description || ''}
                 previousStatus={undefined}
                 nextStatus={TASK_STATUS_OPTIONS[1].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
@@ -101,10 +102,11 @@ export function UserTasksOverview({
             const subjectColor = subject?.color || null
             return (
               <UserTaskCard
+                title={task.title || ''}
                 key={task.id}
                 taskId={task.id}
                 userId={userId}
-                description={task.title || ''}
+                description={task.description || ''}
                 previousStatus={TASK_STATUS_OPTIONS[0].value}
                 nextStatus={TASK_STATUS_OPTIONS[2].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
@@ -129,10 +131,11 @@ export function UserTasksOverview({
             const subjectColor = subject?.color || null
             return (
               <UserTaskCard
+                title={task.title || ''}
                 userId={userId}
                 key={task.id}
                 taskId={task.id}
-                description={task.title || ''}
+                description={task.description || ''}
                 previousStatus={TASK_STATUS_OPTIONS[1].value}
                 nextStatus={undefined}
                 helpNeeded={taskStatus?.helpNeeded || false}

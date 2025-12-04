@@ -18,7 +18,8 @@ import { useTheme } from 'next-themes'
 type UserTaskCardProps = {
   taskId: string
   userId: string
-  description: string
+  title: string
+  description?: string
   previousStatus?: TaskStatusValue
   nextStatus?: TaskStatusValue
   helpNeeded?: boolean
@@ -32,6 +33,7 @@ type UserTaskCardProps = {
 export function UserTaskCard({
   taskId,
   userId,
+  title,
   description,
   previousStatus,
   nextStatus,
@@ -108,8 +110,10 @@ export function UserTaskCard({
   return (
     <Card style={{ backgroundColor }}>
       <CardHeader>
-        <CardTitle className="overflow-hidden text-ellipsis">{description}</CardTitle>
-        <CardDescription className="flex gap-2 mt-1 flex-wrap justify-between">
+        <CardTitle className="overflow-hidden text-ellipsis">{title}</CardTitle>
+        <CardDescription className="flex flex-col gap-2">
+          <div>{description}</div>
+          <div className="flex gap-2 mt-1 flex-wrap justify-between">
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -157,6 +161,7 @@ export function UserTaskCard({
               />
               <SearchPartnerIcon className="h-4 w-4" />
             </div>
+          </div>
           </div>
         </CardDescription>
       </CardHeader>

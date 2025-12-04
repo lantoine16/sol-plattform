@@ -69,20 +69,26 @@ export interface Config {
     'title-description': TitleDescription;
   };
   collections: {
-    users: User;
-    'learning-groups': LearningGroup;
-    'learning-location': LearningLocation;
-    subjects: Subject;
     tasks: Task;
     'task-progress': TaskProgress;
+    users: User;
+    subjects: Subject;
     graduations: Graduation;
+    'learning-groups': LearningGroup;
+    'learning-location': LearningLocation;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
+    tasks: {
+      taskProgress: 'task-progress';
+    };
     users: {
       taskProgress: 'task-progress';
+    };
+    subjects: {
+      tasks: 'tasks';
     };
     'learning-groups': {
       users: 'users';
@@ -90,21 +96,15 @@ export interface Config {
     'learning-location': {
       users: 'users';
     };
-    subjects: {
-      tasks: 'tasks';
-    };
-    tasks: {
-      taskProgress: 'task-progress';
-    };
   };
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
-    'learning-groups': LearningGroupsSelect<false> | LearningGroupsSelect<true>;
-    'learning-location': LearningLocationSelect<false> | LearningLocationSelect<true>;
-    subjects: SubjectsSelect<false> | SubjectsSelect<true>;
     tasks: TasksSelect<false> | TasksSelect<true>;
     'task-progress': TaskProgressSelect<false> | TaskProgressSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
+    subjects: SubjectsSelect<false> | SubjectsSelect<true>;
     graduations: GraduationsSelect<false> | GraduationsSelect<true>;
+    'learning-groups': LearningGroupsSelect<false> | LearningGroupsSelect<true>;
+    'learning-location': LearningLocationSelect<false> | LearningLocationSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -163,99 +163,6 @@ export interface TitleDescription {
   id?: string | null;
   blockName?: string | null;
   blockType: 'title-description';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: string;
-  firstname?: string | null;
-  lastname?: string | null;
-  learningGroup?: (string | LearningGroup)[] | null;
-  currentLearningLocation?: (string | null) | LearningLocation;
-  password?: string | null;
-  role: 'pupil' | 'teacher' | 'admin';
-  graduation?: (string | null) | Graduation;
-  defaultLearningLocation?: (string | null) | LearningLocation;
-  taskProgress?: {
-    docs?: (string | TaskProgress)[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  updatedAt: string;
-  createdAt: string;
-  email?: string | null;
-  username?: string | null;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "learning-groups".
- */
-export interface LearningGroup {
-  id: string;
-  description?: string | null;
-  users?: {
-    docs?: (string | User)[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "learning-location".
- */
-export interface LearningLocation {
-  id: string;
-  description?: string | null;
-  users?: {
-    docs?: (string | User)[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "graduations".
- */
-export interface Graduation {
-  id: string;
-  description: string;
-  number: number;
-  canChangeLearningLocation?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "task-progress".
- */
-export interface TaskProgress {
-  id: string;
-  user: string | User;
-  task: string | Task;
-  status: 'not-started' | 'in-progress' | 'finished';
-  helpNeeded?: boolean | null;
-  searchPartner?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -318,27 +225,104 @@ export interface Subject {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-groups".
+ */
+export interface LearningGroup {
+  id: string;
+  description?: string | null;
+  users?: {
+    docs?: (string | User)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: string;
+  firstname?: string | null;
+  lastname?: string | null;
+  learningGroup?: (string | LearningGroup)[] | null;
+  currentLearningLocation?: (string | null) | LearningLocation;
+  password?: string | null;
+  role: 'pupil' | 'teacher' | 'admin';
+  graduation?: (string | null) | Graduation;
+  defaultLearningLocation?: (string | null) | LearningLocation;
+  taskProgress?: {
+    docs?: (string | TaskProgress)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+  email?: string | null;
+  username?: string | null;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-location".
+ */
+export interface LearningLocation {
+  id: string;
+  description?: string | null;
+  users?: {
+    docs?: (string | User)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "graduations".
+ */
+export interface Graduation {
+  id: string;
+  description: string;
+  number: number;
+  canChangeLearningLocation?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "task-progress".
+ */
+export interface TaskProgress {
+  id: string;
+  user: string | User;
+  task: string | Task;
+  status: 'not-started' | 'in-progress' | 'finished';
+  helpNeeded?: boolean | null;
+  searchPartner?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
   id: string;
   document?:
-    | ({
-        relationTo: 'users';
-        value: string | User;
-      } | null)
-    | ({
-        relationTo: 'learning-groups';
-        value: string | LearningGroup;
-      } | null)
-    | ({
-        relationTo: 'learning-location';
-        value: string | LearningLocation;
-      } | null)
-    | ({
-        relationTo: 'subjects';
-        value: string | Subject;
-      } | null)
     | ({
         relationTo: 'tasks';
         value: string | Task;
@@ -348,8 +332,24 @@ export interface PayloadLockedDocument {
         value: string | TaskProgress;
       } | null)
     | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null)
+    | ({
+        relationTo: 'subjects';
+        value: string | Subject;
+      } | null)
+    | ({
         relationTo: 'graduations';
         value: string | Graduation;
+      } | null)
+    | ({
+        relationTo: 'learning-groups';
+        value: string | LearningGroup;
+      } | null)
+    | ({
+        relationTo: 'learning-location';
+        value: string | LearningLocation;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -395,69 +395,6 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
- */
-export interface UsersSelect<T extends boolean = true> {
-  firstname?: T;
-  lastname?: T;
-  learningGroup?: T;
-  currentLearningLocation?: T;
-  password?: T;
-  role?: T;
-  graduation?: T;
-  defaultLearningLocation?: T;
-  taskProgress?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  username?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "learning-groups_select".
- */
-export interface LearningGroupsSelect<T extends boolean = true> {
-  description?: T;
-  users?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "learning-location_select".
- */
-export interface LearningLocationSelect<T extends boolean = true> {
-  description?: T;
-  users?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "subjects_select".
- */
-export interface SubjectsSelect<T extends boolean = true> {
-  description?: T;
-  color?: T;
-  tasks?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tasks_select".
  */
 export interface TasksSelect<T extends boolean = true> {
@@ -497,12 +434,75 @@ export interface TaskProgressSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  firstname?: T;
+  lastname?: T;
+  learningGroup?: T;
+  currentLearningLocation?: T;
+  password?: T;
+  role?: T;
+  graduation?: T;
+  defaultLearningLocation?: T;
+  taskProgress?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  username?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subjects_select".
+ */
+export interface SubjectsSelect<T extends boolean = true> {
+  description?: T;
+  color?: T;
+  tasks?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "graduations_select".
  */
 export interface GraduationsSelect<T extends boolean = true> {
   description?: T;
   number?: T;
   canChangeLearningLocation?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-groups_select".
+ */
+export interface LearningGroupsSelect<T extends boolean = true> {
+  description?: T;
+  users?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-location_select".
+ */
+export interface LearningLocationSelect<T extends boolean = true> {
+  description?: T;
+  users?: T;
   updatedAt?: T;
   createdAt?: T;
 }
