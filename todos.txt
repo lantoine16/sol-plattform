@@ -1,16 +1,26 @@
-TODOS:
-    • Auswahl Schüler bei Tasks: Vorname und Nachname
-    • Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
-    • „Bereit für Leistungsübersicht“ definieren
-    • Passwort aus Benutzererstelleung entfernen, prüfen was bei USername bei mehreren Vor- oder Nachnahmen passiert
-    • Performanceoptimierung bei Sammelabfragen
-    • email-adapter einrichten
-    API Button entfernen
-    Impressum
-    Dashboard - Liste sortieren wie andere payload listern
-    Bestätigen Button wenn man Stunde beendet
-    Tasks Erstellung mit Blockkomponente überarbeiten
-    Taskboard Lernort klarmachen dass es kein Suchfeld ist
-    favicon und Tabname ändern
-    Darkmode bei Taskboard
-    PopUp Aufgabenfortschritt feste Höhe
+Features:
+    - „Bereit für Leistungsübersicht“ definieren
+    - Bestätigen Button wenn man Stunde beendet
+    - Taskboard Lernort Filter nach oben rechts verschieben und in eine eigene Komponente packen
+    - Email-adapter einrichten
+    - Impressum
+    - Dashboard - Liste sortieren wie andere payload listern
+    
+Nutzer: 
+    - Auswahl Schüler bei Tasks: Vorname und Nachname 
+    - Passwort aus Benutzererstelleung entfernen   
+    - prüfen was bei USername bei mehreren Vor- oder Nachnahmen passiert
+
+Layout: 
+    - favicon und Tabname ändern
+    - Darkmode bei Taskboard
+    - PopUp Aufgabenfortschritt feste Höhe
+
+Verschönerungen:
+    - Bei Sammelerstellung [ohne Titel] Ertstelle wegmachen
+    - bei Aufgabe hinzufügen bei nur einer Auswahlmöglichkeit diese direkt hinzufügen
+    - Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
+    - API Button entfernen
+
+Performance:
+    - Performanceoptimierung bei Sammelabfragen
