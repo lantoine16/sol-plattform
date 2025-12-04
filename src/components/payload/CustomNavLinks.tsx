@@ -1,7 +1,7 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { NavGroup, Link, useAuth } from '@payloadcms/ui'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import {
   USER_ROLE_PUPIL,
   USER_ROLE_TEACHER,
@@ -10,9 +10,7 @@ import {
 
 export const BeforeNavLinks = () => {
   const pathname = usePathname()
-  const router = useRouter()
   const { user } = useAuth()
-  const hasRedirected = useRef(false)
 
   const dashboardHref = '/dashboard'
   const detailViewHref = '/detailView'
@@ -20,23 +18,6 @@ export const BeforeNavLinks = () => {
   const isDashboardActive = pathname.includes(dashboardHref)
   const isDetailViewActive = pathname.includes(detailViewHref)
   const isTaskBoardActive = pathname.includes(taskBoardHref)
-
-  //TODO schönere Lösung finden um direkt weiterzuleiten
-  // Weiterleitung für die Root-Route basierend auf Benutzerrolle
-  useEffect(() => {
-    // Nur einmal weiterleiten
-    if (hasRedirected.current) return
-
-    // Nur für die Root-Route weiterleiten
-    if (pathname === '/' && user) {
-      hasRedirected.current = true
-      if (user.role === USER_ROLE_PUPIL) {
-        router.replace('/taskboard')
-      } else if (user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER) {
-        router.replace('/dashboard')
-      }
-    }
-  }, [pathname, user, router])
 
   return (
     <NavGroup label={'Ansichten'}>
