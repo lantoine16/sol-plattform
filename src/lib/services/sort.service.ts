@@ -21,9 +21,11 @@ export class SortService {
         return subjectComparison
       }
 
-      return a.description?.localeCompare(b.description || '', 'de', {
-        sensitivity: 'base',
-      }) || 0
+      return (
+        a.title?.localeCompare(b.title || '', 'de', {
+          sensitivity: 'base',
+        }) || 0
+      )
     })
   }
 }

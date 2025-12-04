@@ -27,14 +27,14 @@ export async function processBulkTaskCreate({
   user,
 }: BulkTaskCreateOptions): Promise<Task[]> {
   // Teile die Eingabe in Zeilen auf und filtere leere Zeilen
-  const taskDescriptions = parseBulkData(bulkData)
+  const taskTitles = parseBulkData(bulkData)
 
-  if (taskDescriptions.length === 0) {
+  if (taskTitles.length === 0) {
     return []
   }
 
   const createdTasks = await taskRepository.createTasks({
-    description: taskDescriptions,
+    title: taskTitles,
     subject,
     learningGroups: learningGroup,
     users: user,

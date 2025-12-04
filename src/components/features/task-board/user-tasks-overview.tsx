@@ -76,7 +76,7 @@ export function UserTasksOverview({
                 key={task.id}
                 taskId={task.id}
                 userId={userId}
-                description={task.description || ''}
+                description={task.title || ''}
                 previousStatus={undefined}
                 nextStatus={TASK_STATUS_OPTIONS[1].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
@@ -104,7 +104,7 @@ export function UserTasksOverview({
                 key={task.id}
                 taskId={task.id}
                 userId={userId}
-                description={task.description || ''}
+                description={task.title || ''}
                 previousStatus={TASK_STATUS_OPTIONS[0].value}
                 nextStatus={TASK_STATUS_OPTIONS[2].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
@@ -132,7 +132,7 @@ export function UserTasksOverview({
                 userId={userId}
                 key={task.id}
                 taskId={task.id}
-                description={task.description || ''}
+                description={task.title || ''}
                 previousStatus={TASK_STATUS_OPTIONS[1].value}
                 nextStatus={undefined}
                 helpNeeded={taskStatus?.helpNeeded || false}

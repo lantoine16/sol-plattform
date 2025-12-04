@@ -250,7 +250,7 @@ export interface TaskProgress {
  */
 export interface Task {
   id: string;
-  description?: string | null;
+  title?: string | null;
   subject: string | Subject;
   learningGroup?: (string | LearningGroup)[] | null;
   user?: (string | User)[] | null;
@@ -438,7 +438,7 @@ export interface SubjectsSelect<T extends boolean = true> {
  * via the `definition` "tasks_select".
  */
 export interface TasksSelect<T extends boolean = true> {
-  description?: T;
+  title?: T;
   subject?: T;
   learningGroup?: T;
   user?: T;

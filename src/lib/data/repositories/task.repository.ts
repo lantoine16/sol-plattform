@@ -2,7 +2,7 @@ import { getPayloadWithAuth } from '../payload-client'
 import type { Task } from '@/payload-types'
 
 export interface TasksCreateOptions {
-  description: string[]
+  title: string[]
   subject: string
   learningGroups?: string[] | null
   users?: string[] | null
@@ -49,7 +49,7 @@ export class TaskRepository {
         subject: { equals: subjectId },
         learningGroup: { equals: learningGroupId },
       },
-      sort: options?.sort || 'description',
+      sort: options?.sort || 'title',
     })
     return result.docs
   }
@@ -92,7 +92,7 @@ export class TaskRepository {
       where: {
         or: conditions,
       },
-      sort: options?.sort || 'description',
+      sort: options?.sort || 'title',
     })
     return result.docs
   }
@@ -111,11 +111,11 @@ export class TaskRepository {
   async createTasks(tasks: TasksCreateOptions): Promise<Task[]> {
     const { payload, req } = await getPayloadWithAuth()
     const createdTasks = await Promise.all(
-      tasks.description.map((description) => {
+      tasks.title.map((title) => {
         return payload.create({
           collection: 'tasks',
           data: {
-            description,
+            title,
             subject: tasks.subject,
             learningGroup: tasks.learningGroups,
             user: tasks.users,

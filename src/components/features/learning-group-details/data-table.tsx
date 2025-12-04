@@ -166,7 +166,7 @@ export function DataTable({
               {columns.length > 0 ? (
                 columns.map((task) => {
                   const taskId = String(task.id)
-                  const shortDescription = getShortTaskDescription(task.description)
+                  const shortDescription = getShortTaskDescription(task.title)
                   const backgroundColor = getSubjectColorFromTask(task)
 
                   return (
@@ -185,7 +185,7 @@ export function DataTable({
                           maxWidth: '70px',
                           backgroundColor: backgroundColor || undefined,
                         }}
-                        title={task.description || ''}
+                        title={task.title || ''}
                       >
                         {shortDescription}
                       </td>

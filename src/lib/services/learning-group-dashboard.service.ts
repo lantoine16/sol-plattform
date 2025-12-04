@@ -146,19 +146,19 @@ export class LearningGroupDashboardService {
           if (status === 'not-started') {
             taskStatuses.notStarted++
           } else if (status === 'in-progress') {
-            if (task.description) {
-              taskStatuses.inProgress.push(task.description)
+            if (task.title) {
+              taskStatuses.inProgress.push(task.title)
             }
           } else if (status === 'finished') {
             taskStatuses.finished++
           }
 
-          if (tp.helpNeeded && task.description) {
-            taskStatuses.needHelp.push(task.description)
+          if (tp.helpNeeded && task.title) {
+            taskStatuses.needHelp.push(task.title)
           }
 
-          if (tp.searchPartner && task.description) {
-            taskStatuses.searchPartner.push(task.description)
+          if (tp.searchPartner && task.title) {
+            taskStatuses.searchPartner.push(task.title)
           }
         })
 

@@ -11,7 +11,7 @@ export const Tasks: CollectionConfig = {
     plural: 'Aufgaben',
   },
   admin: {
-    useAsTitle: 'description',
+    useAsTitle: 'title',
     components: {
       edit: {
         SaveButton: '@/components/payload/TasksSaveButton',
@@ -66,8 +66,8 @@ export const Tasks: CollectionConfig = {
       },
     },
     {
-      name: 'description',
-      label: 'Bezeichnung',
+      name: 'title',
+      label: 'Titel',
       type: 'text',
       required: true,
       admin: {
