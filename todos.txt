@@ -10,6 +10,7 @@ Nutzer:
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
     - Passwort aus Benutzererstelleung entfernen   
     - prüfen was bei USername bei mehreren Vor- oder Nachnahmen passiert
+    - Felder neu sortieren
 
 Layout: 
     - favicon und Tabname ändern
@@ -17,6 +18,7 @@ Layout:
     - PopUp Aufgabenfortschritt feste Höhe
 
 Verschönerungen:
+    - Dashboard auf Nutzerabhängige Ansichtsseite umleiten
     - Bei Sammelerstellung [ohne Titel] Ertstelle wegmachen
     - bei Aufgabe hinzufügen bei nur einer Auswahlmöglichkeit diese direkt hinzufügen
     - Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
