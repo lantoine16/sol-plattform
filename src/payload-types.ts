@@ -65,7 +65,9 @@ export interface Config {
   auth: {
     users: UserAuthOperations;
   };
-  blocks: {};
+  blocks: {
+    'title-description': TitleDescription;
+  };
   collections: {
     users: User;
     'learning-groups': LearningGroup;
@@ -150,6 +152,17 @@ export interface UserAuthOperations {
     | {
         username: string;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "title-description".
+ */
+export interface TitleDescription {
+  title: string;
+  description?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'title-description';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -250,7 +263,17 @@ export interface TaskProgress {
  */
 export interface Task {
   id: string;
+  taskBlocks?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'title-description';
+      }[]
+    | null;
   title?: string | null;
+  description?: string | null;
   subject: string | Subject;
   learningGroup?: (string | LearningGroup)[] | null;
   user?: (string | User)[] | null;
@@ -438,7 +461,20 @@ export interface SubjectsSelect<T extends boolean = true> {
  * via the `definition` "tasks_select".
  */
 export interface TasksSelect<T extends boolean = true> {
+  taskBlocks?:
+    | T
+    | {
+        'title-description'?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   title?: T;
+  description?: T;
   subject?: T;
   learningGroup?: T;
   user?: T;

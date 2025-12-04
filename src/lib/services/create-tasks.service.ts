@@ -1,40 +1,48 @@
 import { userRepository } from '../data/repositories/user.repository'
-import { taskRepository } from '../data/repositories/task.repository'
+import { taskRepository, type TaskCreateData } from '../data/repositories/task.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
 import { Task } from '@/payload-types'
 import { parseBulkData } from '@/domain/utils/parse-bulk-data.util'
 
-export interface BulkTaskCreateOptions {
-  bulkData: string
+export interface BlockTaskCreateOptions {
+  blocks: Array<{
+    title?: string
+    description?: string
+  }>
   subject: string
   learningGroup?: string[] | null
   user?: string[] | null
 }
 
 /**
- * Verarbeitet Bulk-Erstellung von Tasks aus einem mehrzeiligen Text.
- * Erstellt ALLE Tasks aus dem bulkData (jede Zeile = ein Task).
+ * Verarbeitet Block-basierte Erstellung von Tasks.
+ * Erstellt ALLE Tasks aus den Blocks (jeder Block = ein Task).
  * Jede Task erhält die gleichen Werte für subject, learningGroup, user.
  * Der afterChange Hook wird automatisch für jede erstellte Task ausgeführt und erstellt die TaskProgress-Einträge.
  *
- * @param options - Optionen für die Bulk-Task-Erstellung
- * @returns Array der erstellten Task-IDs oder leeres Array, wenn keine Daten vorhanden sind
+ * @param options - Optionen für die Block-Task-Erstellung
+ * @returns Array der erstellten Tasks oder leeres Array, wenn keine Daten vorhanden sind
  */
-export async function processBulkTaskCreate({
-  bulkData,
+export async function processBlockTaskCreate({
+  blocks,
   subject,
   learningGroup,
   user,
-}: BulkTaskCreateOptions): Promise<Task[]> {
-  // Teile die Eingabe in Zeilen auf und filtere leere Zeilen
-  const taskTitles = parseBulkData(bulkData)
+}: BlockTaskCreateOptions): Promise<Task[]> {
+  // Filtere nur Blocks mit nicht-leeren Titeln und extrahiere die Daten
+  const taskData: TaskCreateData[] = blocks
+    .filter((block) => block.title && block.title.trim().length > 0)
+    .map((block) => ({
+      title: block.title!.trim(), // Non-null assertion because we filtered above
+      description: block.description?.trim() || null,
+    }))
 
-  if (taskTitles.length === 0) {
-    return []
+  if (taskData.length === 0) {
+    throw new Error('Bitte geben Sie mindestens eine Aufgabe mit Titel ein')
   }
 
   const createdTasks = await taskRepository.createTasks({
-    title: taskTitles,
+    tasks: taskData,
     subject,
     learningGroups: learningGroup,
     users: user,
@@ -47,7 +55,7 @@ export async function processBulkTaskCreate({
     task: createdTasks.map((task) => task.id),
   })
 
-  // Gib die IDs der erstellten Tasks zurück
+  // Gib die erstellten Tasks zurück
   return createdTasks
 }
 

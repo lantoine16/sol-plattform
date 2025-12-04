@@ -2,7 +2,7 @@ TODOS:
     • Auswahl Schüler bei Tasks: Vorname und Nachname
     • Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
     • „Bereit für Leistungsübersicht“ definieren
-    • Passwort aus Benutzererstelleung entfernen
+    • Passwort aus Benutzererstelleung entfernen, prüfen was bei USername bei mehreren Vor- oder Nachnahmen passiert
     • Performanceoptimierung bei Sammelabfragen
     • email-adapter einrichten
     API Button entfernen
@@ -10,9 +10,7 @@ TODOS:
     Dashboard - Liste sortieren wie andere payload listern
     Bestätigen Button wenn man Stunde beendet
     Tasks Erstellung mit Blockkomponente überarbeiten
-    Schüleransicht mit dashboard 
-    Tabelle Dashboard - Sortieren wie bei anderen Tabellen
     Taskboard Lernort klarmachen dass es kein Suchfeld ist
-    favicon
+    favicon und Tabname ändern
     Darkmode bei Taskboard
-    Redirect direkt machen und nicht erst andere Seiten laden (in CustomNavLinks)
+    PopUp Aufgabenfortschritt feste Höhe

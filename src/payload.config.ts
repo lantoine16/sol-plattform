@@ -15,6 +15,7 @@ import { Subjects } from './collections/subjects'
 import { Tasks } from './collections/tasks'
 import { TaskProgress } from './collections/task-progress'
 import { Graduations } from './collections/Graduations'
+import { TitleDescriptionBlock } from './collections/blocks/title-description.block'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -55,6 +56,7 @@ export default buildConfig({
   routes: {
     admin: '/',
   },
+  blocks: [TitleDescriptionBlock],
   collections: [
     Users,
     LearningGroups,

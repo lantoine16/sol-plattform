@@ -1,8 +1,13 @@
 import { getPayloadWithAuth } from '../payload-client'
 import type { Task } from '@/payload-types'
 
+export interface TaskCreateData {
+  title: string
+  description?: string | null
+}
+
 export interface TasksCreateOptions {
-  title: string[]
+  tasks: TaskCreateData[]
   subject: string
   learningGroups?: string[] | null
   users?: string[] | null
@@ -109,23 +114,35 @@ export class TaskRepository {
   }
 
   async createTasks(tasks: TasksCreateOptions): Promise<Task[]> {
+    console.log(tasks)
     const { payload, req } = await getPayloadWithAuth()
     const createdTasks = await Promise.all(
-      tasks.title.map((title) => {
+      tasks.tasks.map((taskData) => {
+        // Validate that title is not empty
+        if (!taskData.title || taskData.title.trim() === '') {
+          throw new Error('Titel darf nicht leer sein')
+        }
+
+        // Create data object without taskBlocks field
+        const createData: any = {
+          title: taskData.title.trim(),
+          description: taskData.description?.trim() || null,
+          subject: tasks.subject,
+          learningGroup: tasks.learningGroups || null,
+          user: tasks.users || null,
+          taskBlocks: [],
+        }
+        // Don't include taskBlocks at all - we're creating tasks directly, not via blocks
+
         return payload.create({
           collection: 'tasks',
-          data: {
-            title,
-            subject: tasks.subject,
-            learningGroup: tasks.learningGroups,
-            user: tasks.users,
-          },
+          data: createData,
           req,
           overrideAccess: false,
         })
       }),
     )
-    return createdTasks
+    return createdTasks as Task[]
   }
 }
 

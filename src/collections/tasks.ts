@@ -2,7 +2,12 @@ import type { CollectionConfig } from 'payload'
 import type { Task } from '@/payload-types'
 import { updateTaskProgressesForTask } from '@/lib/services/create-tasks.service'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
-import { USER_ROLE_ADMIN, USER_ROLE_PUPIL, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
+import {
+  USER_ROLE_ADMIN,
+  USER_ROLE_PUPIL,
+  USER_ROLE_TEACHER,
+} from '@/domain/constants/user-role.constants'
+import { TitleDescriptionBlock } from './blocks/title-description.block'
 
 export const Tasks: CollectionConfig = {
   slug: 'tasks',
@@ -50,26 +55,55 @@ export const Tasks: CollectionConfig = {
   },
   fields: [
     {
-      name: 'bulkCreate',
-      type: 'ui',
-      admin: {
-        components: {
-          Field: '@/components/payload/BulkGroupField#BulkTaskField',
+      name: 'taskBlocks',
+      label: 'Aufgaben',
+      type: 'blocks',
+      blocks: [TitleDescriptionBlock],
+      defaultValue: () => [
+        {
+          blockType: 'title-description',
+          title: '',
+          description: '',
         },
-        disableListColumn: true,
+      ],
+      admin: {
         condition: (data) => {
           // Nur auf der Create-Seite anzeigen (wenn keine ID vorhanden)
           // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
           const hasId = data?.id || data?.createdAt || data?.updatedAt
           return !hasId
         },
+        initCollapsed: false,
+        isSortable: false,
       },
+      labels: {
+        singular: 'Aufgabe',
+        plural: 'Aufgaben',
+      },
+      // minRows: 1,
+      // Make this field not required for API operations
+      required: false,
+      virtual: true,
     },
     {
       name: 'title',
       label: 'Titel',
       type: 'text',
       required: true,
+      admin: {
+        condition: (data) => {
+          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
+          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
+        },
+      },
+    },
+    {
+      name: 'description',
+      label: 'Beschreibung',
+      type: 'textarea',
+      required: false,
       admin: {
         condition: (data) => {
           // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
