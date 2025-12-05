@@ -34,6 +34,20 @@ export function TaskBoardComponent({
     setUser(userWithTaskProgress.user)
   }, [userWithTaskProgress])
 
+  // Verhindere Body-Scrolling wenn Modal offen ist
+  useEffect(() => {
+    if (showAsModal) {
+      // Speichere den ursprünglichen overflow Wert
+      const originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+
+      // Cleanup: Stelle den ursprünglichen Wert wieder her
+      return () => {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [showAsModal])
+
   const handleChangeLearningLocation = async (learningLocation: {
     value: string
     label: string
@@ -178,8 +192,8 @@ export function TaskBoardComponent({
               ? cn(
                   'relative flex flex-col',
                   'bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl',
-                  'w-full max-w-[1200px] max-h-[90vh]',
-                  'mx-4 my-4',
+                  'w-full max-w-[1200px] h-[90vh]',
+                  'my-auto',
                   'overflow-hidden',
                   'pointer-events-auto',
                 )
@@ -212,7 +226,10 @@ export function TaskBoardComponent({
               ) : null}
               {allowChangeLearningLocation && (
                 <div className="flex flex-row items-center gap-2">
-                  <label htmlFor="learningLocation" className="text-2xl text-gray-900 dark:text-gray-100">
+                  <label
+                    htmlFor="learningLocation"
+                    className="text-2xl text-gray-900 dark:text-gray-100"
+                  >
                     Lernort:
                   </label>
                   <Select
@@ -238,7 +255,7 @@ export function TaskBoardComponent({
             )}
           </div>
           {/* Content */}
-          <div className={"flex-1 overflow-y-auto " + (showAsModal ? "px-6 py-4" : "my-6")}>
+          <div className={'flex-1 overflow-y-auto ' + (showAsModal ? 'px-6 py-4' : 'my-6')}>
             <UserTasksOverview
               userId={userWithTaskProgress.user.id}
               userTaskStatuses={taskProgressEntries}
