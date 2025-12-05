@@ -13,9 +13,6 @@ Nutzer:
     - prüfen was bei USername bei mehreren Vor- oder Nachnahmen passiert
     - Felder neu sortieren
 
-Layout: 
-    - favicon und Tabname ändern
-
 Verschönerungen:
     - Dashboard auf Nutzerabhängige Ansichtsseite umleiten
     - Bei Sammelerstellung [ohne Titel] Ertstelle wegmachen

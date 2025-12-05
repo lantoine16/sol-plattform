@@ -52,6 +52,14 @@ export default buildConfig({
         },
       },
     },
+    meta: {
+      titleSuffix: ' - Lernjobmonitoring',
+      icons: [
+        { rel: 'icon', type: 'image/png', url: '/logo.png' },
+        { rel: 'apple-touch-icon', type: 'image/png', url: '/logo.png' }, // für iOS when adding to home screen
+        { rel: 'mask-icon', type: 'image/png', url: '/logo.png' }, // für Safari to mask the Admin Panel Icon
+      ],
+    },
   },
   routes: {
     admin: '/',
