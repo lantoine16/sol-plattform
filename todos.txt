@@ -5,6 +5,7 @@ Features:
     - Email-adapter einrichten
     - Impressum
     - Dashboard - Liste sortieren wie andere payload listern
+    - Detailansicht: Scrollen, alle Zellen klickbar, Darkmode, Icons
     
 Nutzer: 
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
@@ -14,7 +15,6 @@ Nutzer:
 
 Layout: 
     - favicon und Tabname ändern
-    - PopUp Aufgabenfortschritt feste Höhe
 
 Verschönerungen:
     - Dashboard auf Nutzerabhängige Ansichtsseite umleiten

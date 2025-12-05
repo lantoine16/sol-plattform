@@ -174,7 +174,6 @@ export function DataTable({
                       key={task.id}
                       style={{
                         height: '28px',
-                        backgroundColor: backgroundColor || undefined,
                       }}
                     >
                       <td
@@ -183,7 +182,6 @@ export function DataTable({
                           width: '70px',
                           minWidth: '70px',
                           maxWidth: '70px',
-                          backgroundColor: backgroundColor || undefined,
                         }}
                         title={task.title || ''}
                       >
