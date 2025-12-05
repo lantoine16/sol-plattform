@@ -48,6 +48,52 @@ export const Users: CollectionConfig = {
         },
       },
     },
+    // Überschreibe username Feld um unique und required zu setzen
+    //TODO: Klappt noch nicht wirklich, unique nimmt er nicht
+    {
+      name: 'username',
+      type: 'text',
+      required: true,
+      unique: true,
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN
+        },
+      },
+      admin: {
+        condition: (data) => {
+          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
+        },
+      },
+    },
+    {
+      name: 'password',
+      label: 'Passwort',
+      type: 'text',
+      // Nicht required: true, da beim Update das Feld leer sein darf (Passwort bleibt dann unverändert)
+      required: false,
+      access: {
+        update: ({ req, doc }) => {
+          const user = req.user
+          if (!user) return false
+
+          // Admins können alle Passwörter ändern
+          if (user.role === USER_ROLE_ADMIN) {
+            return true
+          }
+
+          // Lehrer und Schüler können nur ihr eigenes Passwort ändern
+          // doc ist das Dokument, das gerade bearbeitet wird
+          return doc?.id === user.id
+        },
+      },
+      //dieses Feld dient nur der Access-Control, daher hidden
+      hidden: true,
+    },
     {
       name: 'bulkCreate',
       type: 'ui',
@@ -104,6 +150,24 @@ export const Users: CollectionConfig = {
         },
       },
     },
+
+    // Email added by default
+    // Add more fields as needed
+    {
+      name: 'role',
+      label: 'Rolle',
+      type: 'select',
+      required: true,
+      defaultValue: USER_ROLE_DEFAULT_VALUE,
+      options: [...USER_ROLE_OPTIONS],
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN
+        },
+      },
+    },
     {
       name: 'learningGroup',
       label: 'Lerngruppe',
@@ -116,6 +180,20 @@ export const Users: CollectionConfig = {
           const user = req.user
           if (!user) return false
           return user.role === USER_ROLE_ADMIN
+        },
+      },
+    },
+    {
+      name: 'graduation',
+      label: 'Graduierung',
+      type: 'relationship',
+      relationTo: 'graduations',
+      required: false,
+      access: {
+        update: ({ req }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
         },
       },
     },
@@ -163,83 +241,7 @@ export const Users: CollectionConfig = {
         },
       },
     },
-    // Überschreibe username Feld um unique und required zu setzen
-    //TODO: Klappt noch nicht wirklich, unique nimmt er nicht
-    {
-      name: 'username',
-      type: 'text',
-      required: true,
-      unique: true,
-      access: {
-        update: ({ req }) => {
-          const user = req.user
-          if (!user) return false
-          return user.role === USER_ROLE_ADMIN
-        },
-      },
-      admin: {
-        condition: (data) => {
-          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
-          const hasId = data?.id || data?.createdAt || data?.updatedAt
-          return hasId
-        },
-      },
-    },
-    {
-      name: 'password',
-      label: 'Passwort',
-      type: 'text',
-      // Nicht required: true, da beim Update das Feld leer sein darf (Passwort bleibt dann unverändert)
-      required: false,
-      access: {
-        update: ({ req, doc }) => {
-          const user = req.user
-          if (!user) return false
 
-          // Admins können alle Passwörter ändern
-          if (user.role === USER_ROLE_ADMIN) {
-            return true
-          }
-
-          // Lehrer und Schüler können nur ihr eigenes Passwort ändern
-          // doc ist das Dokument, das gerade bearbeitet wird
-          return doc?.id === user.id
-        },
-      },
-      //dieses Feld dient nur der Access-Control, daher hidden
-      hidden: true,
-    },
-    // Email added by default
-    // Add more fields as needed
-    {
-      name: 'role',
-      label: 'Rolle',
-      type: 'select',
-      required: true,
-      defaultValue: USER_ROLE_DEFAULT_VALUE,
-      options: [...USER_ROLE_OPTIONS],
-      access: {
-        update: ({ req }) => {
-          const user = req.user
-          if (!user) return false
-          return user.role === USER_ROLE_ADMIN
-        },
-      },
-    },
-    {
-      name: 'graduation',
-      label: 'Graduierung',
-      type: 'relationship',
-      relationTo: 'graduations',
-      required: false,
-      access: {
-        update: ({ req }) => {
-          const user = req.user
-          if (!user) return false
-          return user.role === USER_ROLE_ADMIN || user.role === USER_ROLE_TEACHER
-        },
-      },
-    },
     {
       name: 'defaultLearningLocation',
       label: 'Standardlernort',

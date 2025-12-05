@@ -244,13 +244,13 @@ export interface LearningGroup {
  */
 export interface User {
   id: string;
+  password?: string | null;
   firstname?: string | null;
   lastname?: string | null;
-  learningGroup?: (string | LearningGroup)[] | null;
-  currentLearningLocation?: (string | null) | LearningLocation;
-  password?: string | null;
   role: 'pupil' | 'teacher' | 'admin';
+  learningGroup?: (string | LearningGroup)[] | null;
   graduation?: (string | null) | Graduation;
+  currentLearningLocation?: (string | null) | LearningLocation;
   defaultLearningLocation?: (string | null) | LearningLocation;
   taskProgress?: {
     docs?: (string | TaskProgress)[];
@@ -277,6 +277,18 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "graduations".
+ */
+export interface Graduation {
+  id: string;
+  description: string;
+  number: number;
+  canChangeLearningLocation?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "learning-location".
  */
 export interface LearningLocation {
@@ -287,18 +299,6 @@ export interface LearningLocation {
     hasNextPage?: boolean;
     totalDocs?: number;
   };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "graduations".
- */
-export interface Graduation {
-  id: string;
-  description: string;
-  number: number;
-  canChangeLearningLocation?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -437,13 +437,13 @@ export interface TaskProgressSelect<T extends boolean = true> {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  password?: T;
   firstname?: T;
   lastname?: T;
-  learningGroup?: T;
-  currentLearningLocation?: T;
-  password?: T;
   role?: T;
+  learningGroup?: T;
   graduation?: T;
+  currentLearningLocation?: T;
   defaultLearningLocation?: T;
   taskProgress?: T;
   updatedAt?: T;
