@@ -13,7 +13,6 @@ import {
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TASK_ICONS } from '@/domain/constants/task-icons.constants'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
-import { useTheme } from 'next-themes'
 
 type UserTaskCardProps = {
   taskId: string
@@ -47,11 +46,10 @@ export function UserTaskCard({
   const [isLoading, setIsLoading] = useState(false)
   const [isHelpNeededLoading, setIsHelpNeededLoading] = useState(false)
   const [isSearchPartnerLoading, setIsSearchPartnerLoading] = useState(false)
-  const { theme, resolvedTheme } = useTheme()
-  const isDarkMode = resolvedTheme === 'dark' || theme === 'dark'
 
-  // Berechne die Hintergrundfarbe basierend auf dem Subject
-  const backgroundColor = getSubjectColor(subjectColor, isDarkMode)
+  // Berechne die Farben basierend auf dem Subject
+  const backgroundColor = getSubjectColor(subjectColor, false) // Light Mode Farbe für Hintergrund
+  const borderColor = getSubjectColor(subjectColor, true) // Dark Mode Farbe für Border
 
   const handleStatusChange = async (status: TaskStatusValue) => {
     setIsLoading(true)
@@ -108,60 +106,66 @@ export function UserTaskCard({
   const SearchPartnerIcon = TASK_ICONS.searchPartner
 
   return (
-    <Card style={{ backgroundColor }}>
+    <Card
+      className="dark:!bg-transparent"
+      style={{
+        backgroundColor: backgroundColor,
+        borderColor: borderColor,
+      }}
+    >
       <CardHeader>
         <CardTitle className="overflow-hidden text-ellipsis">{title}</CardTitle>
         <CardDescription className="flex flex-col gap-2">
           <div>{description}</div>
           <div className="flex gap-2 mt-1 flex-wrap justify-between">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => previousStatus && handleStatusChange(previousStatus)}
-              disabled={isLoading || !previousStatus}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => nextStatus && handleStatusChange(nextStatus)}
-              disabled={isLoading || !nextStatus}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5">
-              <Checkbox
-                id={`help-needed-${taskId}`}
-                checked={helpNeeded}
-                onCheckedChange={(checked) => {
-                  handleHelpNeededChange(checked === true)
-                }}
-                disabled={isHelpNeededLoading}
-                aria-label="Hilfe benötigt"
-                onClick={(e) => e.stopPropagation()}
-                className="size-9"
-              />
-              <HelpIcon className="h-5 w-5" />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => previousStatus && handleStatusChange(previousStatus)}
+                disabled={isLoading || !previousStatus}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => nextStatus && handleStatusChange(nextStatus)}
+                disabled={isLoading || !nextStatus}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Checkbox
-                id={`search-partner-${taskId}`}
-                checked={searchPartner}
-                onCheckedChange={(checked) => {
-                  handleSearchPartnerChange(checked === true)
-                }}
-                disabled={isSearchPartnerLoading}
-                aria-label="Partner suchen"
-                onClick={(e) => e.stopPropagation()}
-                className="size-9"
-              />
-              <SearchPartnerIcon className="h-4 w-4" />
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
+                <Checkbox
+                  id={`help-needed-${taskId}`}
+                  checked={helpNeeded}
+                  onCheckedChange={(checked) => {
+                    handleHelpNeededChange(checked === true)
+                  }}
+                  disabled={isHelpNeededLoading}
+                  aria-label="Hilfe benötigt"
+                  onClick={(e) => e.stopPropagation()}
+                  className="size-9"
+                />
+                <HelpIcon className="h-5 w-5" />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Checkbox
+                  id={`search-partner-${taskId}`}
+                  checked={searchPartner}
+                  onCheckedChange={(checked) => {
+                    handleSearchPartnerChange(checked === true)
+                  }}
+                  disabled={isSearchPartnerLoading}
+                  aria-label="Partner suchen"
+                  onClick={(e) => e.stopPropagation()}
+                  className="size-9"
+                />
+                <SearchPartnerIcon className="h-4 w-4" />
+              </div>
             </div>
-          </div>
           </div>
         </CardDescription>
       </CardHeader>

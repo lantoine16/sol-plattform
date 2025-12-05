@@ -14,7 +14,6 @@ Nutzer:
 
 Layout: 
     - favicon und Tabname ändern
-    - Darkmode bei Taskboard
     - PopUp Aufgabenfortschritt feste Höhe
 
 Verschönerungen:
