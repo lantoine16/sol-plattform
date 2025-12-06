@@ -34,7 +34,7 @@ export default buildConfig({
       },
       //actions: ['@/components/admin/FrontendLink'],
       beforeNavLinks: ['@/components/payload/CustomNavLinks'],
-      afterLogin: ['@/components/payload/ImpressumLink'],
+      afterLogin: ['@/components/payload/LegalLinks'],
       // Nav: '@/components/CustomNav',
       views: {
         // Learning Group Dashboard - zeigt alle Schüler der ausgewählten Lerngruppe
