@@ -7,6 +7,7 @@ import { default as default_1d7b04e6126e6c3956b17b8aea5a9fec } from '@/component
 import { BulkLearningLocationField as BulkLearningLocationField_e463fece887a24674e4aba025e6814e6 } from '@/components/payload/BulkGroupField'
 import { default as default_43f6091841a0d1354cc5feee9a7e02cc } from '@/components/payload/LearningLocationsSaveButton'
 import { default as default_e34c28bdc97e3fecf976b23b26d64cc9 } from '@/components/payload/Logo'
+import { default as default_9d54fbf4ac0d3474a688f9f942a20880 } from '@/components/payload/ImpressumLink'
 import { default as default_eabe176a4bb30ac84e080835885bf7b7 } from '@/components/payload/CustomNavLinks'
 import { default as default_48836601570b6889352c50623467c75c } from '@/components/pages/learning-group-dashboard'
 import { default as default_a22c3a6f8a49b6e0731bef381a517330 } from '@/components/pages/learning-group-details'
@@ -22,6 +23,7 @@ export const importMap = {
   "@/components/payload/BulkGroupField#BulkLearningLocationField": BulkLearningLocationField_e463fece887a24674e4aba025e6814e6,
   "@/components/payload/LearningLocationsSaveButton#default": default_43f6091841a0d1354cc5feee9a7e02cc,
   "@/components/payload/Logo#default": default_e34c28bdc97e3fecf976b23b26d64cc9,
+  "@/components/payload/ImpressumLink#default": default_9d54fbf4ac0d3474a688f9f942a20880,
   "@/components/payload/CustomNavLinks#default": default_eabe176a4bb30ac84e080835885bf7b7,
   "@/components/pages/learning-group-dashboard#default": default_48836601570b6889352c50623467c75c,
   "@/components/pages/learning-group-details#default": default_a22c3a6f8a49b6e0731bef381a517330,
