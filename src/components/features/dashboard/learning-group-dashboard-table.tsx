@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from 'react'
 import {
-  ChevronUp,
-  ChevronDown,
   Circle,
   Loader2,
   CheckCircle2,
   HelpCircle,
   Users,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react'
 import type { UserWithTaskProgressInformation } from '@/lib/services/learning-group-dashboard.service'
 import { GraduationIcon } from '@/components/ui/graduation-icon'
@@ -16,7 +16,7 @@ import { TaskBoardComponent } from '@/components/features/task-board/task-board-
 import type { UserWithTaskProgress } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 import type { LearningLocation } from '@/payload-types'
-type SortField = 'firstname' | 'lastname'
+type SortField = 'firstname' | 'lastname' | 'level' | 'learningLocation'
 type SortDirection = 'asc' | 'desc'
 
 export function LearningGroupDashboardTable({
@@ -34,34 +34,51 @@ export function LearningGroupDashboardTable({
   // Sortierte Benutzerliste
   const sortedUsers = useMemo(() => {
     const sorted = [...users].sort((a, b) => {
-      let aValue = ''
-      let bValue = ''
+      let aValue: string | number = ''
+      let bValue: string | number = ''
 
       if (sortField === 'firstname') {
         aValue = (a.user.firstname || '').toLowerCase()
         bValue = (b.user.firstname || '').toLowerCase()
-      } else {
+      } else if (sortField === 'lastname') {
         aValue = (a.user.lastname || '').toLowerCase()
         bValue = (b.user.lastname || '').toLowerCase()
+      } else if (sortField === 'level') {
+        // Sortiere nach Graduation Number
+        aValue =
+          a.user.graduation && typeof a.user.graduation === 'object'
+            ? a.user.graduation.number || 1
+            : 1
+        bValue =
+          b.user.graduation && typeof b.user.graduation === 'object'
+            ? b.user.graduation.number || 1
+            : 1
+      } else if (sortField === 'learningLocation') {
+        // Sortiere nach Lernort-Beschreibung
+        aValue =
+          a.user.currentLearningLocation && typeof a.user.currentLearningLocation === 'object'
+            ? (a.user.currentLearningLocation.description || '').toLowerCase()
+            : ''
+        bValue =
+          b.user.currentLearningLocation && typeof b.user.currentLearningLocation === 'object'
+            ? (b.user.currentLearningLocation.description || '').toLowerCase()
+            : ''
       }
 
-      const comparison = aValue.localeCompare(bValue, 'de', { sensitivity: 'base' })
+      let comparison: number
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        comparison = aValue - bValue
+      } else {
+        comparison = String(aValue).localeCompare(String(bValue), 'de', {
+          sensitivity: 'base',
+        })
+      }
+
       return sortDirection === 'asc' ? comparison : -comparison
     })
 
     return sorted
   }, [users, sortField, sortDirection])
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      // Toggle direction if same field
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
-    } else {
-      // New field, default to ascending
-      setSortField(field)
-      setSortDirection('asc')
-    }
-  }
 
   const handleRowClick = (userWithTaskProgress: UserWithTaskProgressInformation) => {
     // Konvertiere UserWithTaskProgressInformation zu UserWithTaskProgress
@@ -77,14 +94,40 @@ export function LearningGroupDashboardTable({
     router.refresh()
   }
 
-  const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) {
-      return <ChevronUp className="h-4 w-4 opacity-30" />
+  const SortButtons = ({ field, label }: { field: SortField; label: string }) => {
+    const isActive = sortField === field
+    const isAscActive = isActive && sortDirection === 'asc'
+    const isDescActive = isActive && sortDirection === 'desc'
+
+    const handleClick = (e: React.MouseEvent, sortDirection: SortDirection) => {
+      e.stopPropagation()
+      setSortField(field)
+      setSortDirection(sortDirection)
     }
-    return sortDirection === 'asc' ? (
-      <ChevronUp className="h-4 w-4" />
-    ) : (
-      <ChevronDown className="h-4 w-4" />
+
+    return (
+      <div className="sort-column__buttons">
+        <button
+          type="button"
+          className={`sort-column__asc sort-column__button  ${
+            isAscActive ? 'sort-column--active' : ''
+          }`}
+          aria-label={`Sortieren nach ${label} Aufsteigend`}
+          onClick={(e) => handleClick(e, 'asc')}
+        >
+          <ChevronUp className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          className={`sort-column__desc sort-column__button ${
+            isDescActive ? 'sort-column--active' : ''
+          }`}
+          aria-label={`Sortieren nach ${label} Absteigend`}
+          onClick={(e) => handleClick(e, 'desc')}
+        >
+          <ChevronDown className="h-4 w-4" />
+        </button>
+      </div>
     )
   }
 
@@ -93,29 +136,37 @@ export function LearningGroupDashboardTable({
       <table className="table w-full">
         <thead className="table__header">
           <tr className="table__row">
-            <th
-              className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs"
-              onClick={() => handleSort('firstname')}
-            >
-              <span>Vorname</span>
-              <span className="table__sort-icon">
-                <SortIcon field="firstname" />
-              </span>
+            <th className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs">
+              <div className="sort-column">
+                <span className="sort-column__label">
+                  <span className="field-label unstyled">Vorname</span>
+                </span>
+                <SortButtons field="firstname" label="Vorname" />
+              </div>
             </th>
-            <th
-              className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs"
-              onClick={() => handleSort('lastname')}
-            >
-              <span>Nachname</span>
-              <span className="table__sort-icon">
-                <SortIcon field="lastname" />
-              </span>
+            <th className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs">
+              <div className="sort-column">
+                <span className="sort-column__label">
+                  <span className="field-label unstyled">Nachname</span>
+                </span>
+                <SortButtons field="lastname" label="Nachname" />
+              </div>
             </th>
-            <th className="table__header-cell min-w-fit min-w-fit p-1 text-xs">
-              <span>Level</span>
+            <th className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs">
+              <div className="sort-column">
+                <span className="sort-column__label">
+                  <span className="field-label unstyled">Level</span>
+                </span>
+                <SortButtons field="level" label="Level" />
+              </div>
             </th>
-            <th className="table__header-cell min-w-fit p-1 text-xs">
-              <span>Lernort</span>
+            <th className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs">
+              <div className="sort-column">
+                <span className="sort-column__label">
+                  <span className="field-label unstyled">Lernort</span>
+                </span>
+                <SortButtons field="learningLocation" label="Lernort" />
+              </div>
             </th>
             <th className="table__header-cell min-w-fit p-1 text-xs">
               <span>Aufgaben</span>
