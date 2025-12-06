@@ -46,15 +46,17 @@ export function LearningLocationSelector({
   }
 
   if (!allowChangeLearningLocation && currentLearningLocation) {
-    return <div className="text-2xl text-gray-900 dark:text-gray-100">
-      Lernort: {currentLearningLocation?.label}
-    </div>
+    return (
+      <div className="text-2xl text-gray-900 dark:text-gray-100">
+        Mein Lernort: {currentLearningLocation?.label}
+      </div>
+    )
   }
   if (allowChangeLearningLocation) {
     return (
       <div className="flex flex-row items-center gap-2">
         <label htmlFor="learningLocation" className="text-2xl text-gray-900 dark:text-gray-100">
-          Lernort:
+          Mein Lernort:
         </label>
         <Select
           className="min-w-[200px]"

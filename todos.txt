@@ -14,6 +14,7 @@ Nutzer:
     - Benutzernamen unique machen
 
 Verschönerungen:
+    - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
     - Bei Sammelerstellung [ohne Titel] Ertstelle wegmachen
     - bei Aufgabe hinzufügen bei nur einer Auswahlmöglichkeit diese direkt hinzufügen
     - Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
