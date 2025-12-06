@@ -28,7 +28,6 @@ export function LearningLocationSelector({
     value: string
     label: string
   }) => {
-    console.log('learningLocation', learningLocation)
     setIsUpdatingLearningLocation(true)
     try {
       const result = await updateUserLearningLocation(userId, learningLocation.value)

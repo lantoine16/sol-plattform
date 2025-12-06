@@ -110,7 +110,6 @@ export function getSubjectColor(
   colorValue: string | null | undefined,
   isDarkMode: boolean = false,
 ): string {
-  console.log('colorValue', colorValue)
   if (!colorValue) {
     return isDarkMode ? '#1F2937' : '#F9FAFB' // Standard-Grau
   }

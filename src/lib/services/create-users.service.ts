@@ -32,12 +32,16 @@ export async function processBulkUserCreate(input: {
     await userRepository.getAllUsernamesAndEmails()
   const validatedUsers = lines.map((line) => {
     const values = line.split(',').map((s) => s.trim())
-    if (values.length < 3) {
-      throw new Error('Zu wenige Werte im Datensatz: ' + line)
+    if (values.length < 2) {
+      throw new Error(
+        'Zu wenige Werte im Datensatz: ' +
+          line +
+          ' Es muss der Nachname und der Vorname angegeben werden.',
+      )
     }
     const lastname = values[0]
     const firstname = values[1]
-    const password = values[2]
+    const password = values.length > 2 ? values[2] : generatePassword()
     const email = values.length > 3 ? values[3] : null
     let username = values.length > 4 ? values[4] : null
     if (lastname === '') {
@@ -46,7 +50,7 @@ export async function processBulkUserCreate(input: {
     if (firstname === '') {
       throw new Error('Vorname darf nicht leer sein im Datensatz: ' + line)
     }
-    if (password.length < 3) {
+    if (password && password.length < 3) {
       throw new Error('Passwort muss mindestens 3 Zeichen lang sein im Datensatz: ' + line)
     }
     if (username && existingUsernames.includes(username)) {
@@ -61,7 +65,7 @@ export async function processBulkUserCreate(input: {
     }
 
     if (username === null || username === '') {
-      username = firstname.toLowerCase() + '.' + lastname.toLowerCase()
+      username = firstname.split(' ')[0].toLowerCase() + '.' + lastname.split(' ')[0].toLowerCase()
       if (existingUsernames.includes(username)) {
         let counter = 1
         while (existingUsernames.includes(username + counter.toString())) {
@@ -108,6 +112,9 @@ export async function processBulkUserCreate(input: {
   return createdUsers
 }
 
+function generatePassword(): string {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+}
 export async function updateTaskProgressesForUser(user: User): Promise<void> {
   const learningGroupIds: string[] | null | undefined = user.learningGroup
     ? user.learningGroup.map((lg) => (typeof lg === 'string' ? lg : lg.id))

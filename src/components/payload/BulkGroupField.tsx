@@ -9,12 +9,18 @@ import React, { useState, useEffect } from 'react'
 import { useField } from '@payloadcms/ui'
 
 export const BulkUserField: React.FC = () => {
-  const description = `Geben Sie die Benutzerdaten im CSV-Format ein: Nachname,Vorname, Passwort, Email, Benutzername.
-  Email und Benutzername sind optional. Falls kein Benutzername angegeben wird vorname.nachname als benutzername gesetzt. 
-  Pro Benutzer eine Zeile. Leere Zeilen werden ignoriert.`
-  const placeholder = `Mustermann, Max, password, max.mustermann@schule.de, max.mustermann
-Schmidt, Anna, pass456, anna.schmidt@schule.de, anna.schmidt
-Meier, Peter, pass789, peter.meier@schule.de, peter.meier`
+  const description = `Geben Sie die Benutzerdaten im CSV-Format ein. Pro Benutzer eine Zeile: 
+    Nachname,Vorname, Passwort, Email, Benutzername
+
+  Passwort, Email und Benutzername sind optional und können leer gelassen werden. 
+  Falls kein Passwort angegeben wird, wird ein zufälliges Passwort generiert.
+  Falls keine Email angegeben wird, wird keine Email gesetzt.
+  Falls kein Benutzername angegeben wird, wird vorname.nachname als benutzername gesetzt (bei mehrern Vor- oder Nachnamen wird jeweils der erste genommen). 
+  
+  `
+  const placeholder = `Mustermann, Max, passwort123, max.mustermann@schule.de, max.mustermann
+Schmidt, Anna, passwort456, anna.schmidt@schule.de, anna.schmidt
+Meier, Peter, passwort789, peter.meier@schule.de, peter.meier`
   return <BulkGroupField title={'Benutzer'} description={description} placeholder={placeholder} />
 }
 // Wrapper-Komponente für LearningGroups mit Labels aus der Collection-Konfiguration

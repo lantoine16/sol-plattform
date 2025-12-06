@@ -9,8 +9,6 @@ Features:
     
 Nutzer: 
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
-    - Passwort aus Benutzererstelleung entfernen   
-    - prüfen was bei USername bei mehreren Vor- oder Nachnahmen passiert
     - Benutzernamen unique machen
 
 Verschönerungen:
@@ -22,3 +20,6 @@ Verschönerungen:
 
 Performance:
     - Performanceoptimierung bei Sammelabfragen
+
+Wartung:
+    - Alle Packages updaten
