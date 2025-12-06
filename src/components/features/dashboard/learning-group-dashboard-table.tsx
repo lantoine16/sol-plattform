@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Circle,
   Loader2,
@@ -16,9 +16,15 @@ import { TaskBoardComponent } from '@/components/features/task-board/task-board-
 import type { UserWithTaskProgress } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 import type { LearningLocation } from '@/payload-types'
+import { usePreferences } from '@payloadcms/ui'
+import { DASHBOARD_SORT_PREFERENCE_KEY } from '@/domain/constants/preferences-keys.constants'
 type SortField = 'firstname' | 'lastname' | 'level' | 'learningLocation'
 type SortDirection = 'asc' | 'desc'
 
+interface DashboardSortPreference {
+  sortField: SortField
+  sortDirection: SortDirection
+}
 export function LearningGroupDashboardTable({
   users,
   learningLocations,
@@ -26,10 +32,24 @@ export function LearningGroupDashboardTable({
   users: UserWithTaskProgressInformation[]
   learningLocations: LearningLocation[]
 }) {
+  const { getPreference, setPreference } = usePreferences()
   const [sortField, setSortField] = useState<SortField>('lastname')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
 
+    // Retrieve preferences on component mount
+  // This will only be run one time, because the `getPreference` method never changes
+  useEffect(() => {
+    const asyncGetPreference = async () => {
+      const dashboardSortPreference = await getPreference<DashboardSortPreference>(
+        DASHBOARD_SORT_PREFERENCE_KEY,
+      )
+      setSortField(dashboardSortPreference?.sortField ?? 'firstname')
+      setSortDirection(dashboardSortPreference?.sortDirection ?? 'asc')
+    }
+
+    asyncGetPreference()
+  }, [getPreference])
   const router = useRouter()
   // Sortierte Benutzerliste
   const sortedUsers = useMemo(() => {
@@ -103,6 +123,10 @@ export function LearningGroupDashboardTable({
       e.stopPropagation()
       setSortField(field)
       setSortDirection(sortDirection)
+      setPreference(DASHBOARD_SORT_PREFERENCE_KEY, {
+        sortField: field,
+        sortDirection: sortDirection,
+      } as DashboardSortPreference)
     }
 
     return (
