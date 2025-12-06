@@ -14,7 +14,6 @@ export default function DatenschutzPage() {
   const schoolCity = process.env.SCHOOL_CITY
   const schoolPhone = process.env.SCHOOL_PHONE
   const schoolEmail = process.env.SCHOOL_EMAIL
-  const dataProtectionOfficerEmail = process.env.DATA_PROTECTION_OFFICER_EMAIL || schoolEmail
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -286,29 +285,16 @@ export default function DatenschutzPage() {
 
           <section>
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">12. Kontakt</h2>
-            <p>Bei Fragen zum Datenschutz wenden Sie sich bitte an:</p>
-            <div className="mt-4 p-4 bg-gray-50 rounded">
-              <p>
-                {schoolName}
-                <br />
-                {schoolStreet}
-                <br />
-                {schoolPostalCode} {schoolCity}
-                <br />
-                Tel.: {schoolPhone}
-                <br />
-                E-Mail: {dataProtectionOfficerEmail}
-              </p>
-            </div>
+            <p>Bei Fragen zum Datenschutz wenden Sie sich bitte an den oben genannten Kontakt.</p>
           </section>
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-200">
           <Link
             href="/"
-            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            className="text-gray-600 no-underline hover:text-gray-800 hover:underline transition-colors"
           >
-            ← Zurück zur Startseite
+            Zurück zur Login-Seite
           </Link>
         </div>
       </div>
