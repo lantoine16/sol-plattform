@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Button, ReactSelectOption, Select } from '@payloadcms/ui'
+import { Button } from '@payloadcms/ui'
 import { X } from 'lucide-react'
 import { UserTasksOverview } from './user-tasks-overview'
+import { LearningLocationSelector } from './learning-location-selector'
 import { cn } from '@/lib/utils'
 import type { LearningLocation, TaskProgress, User } from '@/payload-types'
 import type { UserWithTaskProgress } from '@/lib/types'
@@ -26,7 +27,6 @@ export function TaskBoardComponent({
     userWithTaskProgress.taskProgresses,
   )
   const [user, setUser] = useState<User>(userWithTaskProgress.user)
-  const [isUpdatingLearningLocation, setIsUpdatingLearningLocation] = useState(false)
 
   // Update state when props change
   useEffect(() => {
@@ -47,36 +47,6 @@ export function TaskBoardComponent({
       }
     }
   }, [showAsModal])
-
-  const handleChangeLearningLocation = async (learningLocation: {
-    value: string
-    label: string
-  }) => {
-    console.log(user.graduation)
-    setIsUpdatingLearningLocation(true)
-    try {
-      const result = await updateUserLearningLocation(user.id, learningLocation.value)
-      if (result.success) {
-        // Update local state optimistically
-        const updatedLearningLocation =
-          learningLocation.value &&
-          learningLocations.find((loc) => loc.id === learningLocation.value)
-            ? learningLocations.find((loc) => loc.id === learningLocation.value)!
-            : null
-
-        setUser((prevUser) => ({
-          ...prevUser,
-          currentLearningLocation: updatedLearningLocation || null,
-        }))
-      } else {
-        console.error('Failed to update learning location:', result.error)
-      }
-    } catch (error) {
-      console.error('Failed to update learning location:', error)
-    } finally {
-      setIsUpdatingLearningLocation(false)
-    }
-  }
 
   const handleTaskProgressUpdate = async (
     taskId: string,
@@ -203,57 +173,35 @@ export function TaskBoardComponent({
           onMouseDown={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div
-            className={
-              showAsModal
-                ? 'flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700'
-                : ''
-            }
-          >
-            <div className={showAsModal ? 'flex flex-row items-center gap-5' : ''}>
-              {showAsModal && (
+          {showAsModal && (
+            <div className="flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex flex-row items-center gap-5">
                 <h1
                   id="modal-title"
                   className="text-2xl font-semibold text-gray-900 dark:text-gray-100"
                 >
                   {user.firstname} {user.lastname}
                 </h1>
-              )}
-              {!allowChangeLearningLocation && currentLearningLocation ? (
-                <div className="text-2xl text-gray-900 dark:text-gray-100">
-                  Lernort: {currentLearningLocation?.label}
-                </div>
-              ) : null}
-              {allowChangeLearningLocation && (
-                <div className="flex flex-row items-center gap-2">
-                  <label
-                    htmlFor="learningLocation"
-                    className="text-2xl text-gray-900 dark:text-gray-100"
-                  >
-                    Lernort:
-                  </label>
-                  <Select
-                    className="min-w-[200px]"
-                    options={learningLocations.map((learningLocation) => ({
-                      value: learningLocation.id,
-                      label: learningLocation.description || '',
-                    }))}
-                    value={currentLearningLocation ? [currentLearningLocation] : undefined}
-                    onChange={(value) => {
-                      handleChangeLearningLocation(value as { value: string; label: string })
-                    }}
-                    disabled={isUpdatingLearningLocation}
-                  />
-                </div>
+
+                <LearningLocationSelector
+                  allowChangeLearningLocation={allowChangeLearningLocation ?? false}
+                  currentLearningLocation={currentLearningLocation}
+                  learningLocations={learningLocations}
+                  userId={user.id}
+                />
+              </div>
+              {showAsModal && (
+                <Button
+                  buttonStyle="secondary"
+                  onClick={onClose}
+                  className="shrink-0 cursor-pointer"
+                >
+                  <X className="size-4 mr-1" />
+                  Schließen
+                </Button>
               )}
             </div>
-            {showAsModal && (
-              <Button buttonStyle="secondary" onClick={onClose} className="shrink-0 cursor-pointer">
-                <X className="size-4 mr-1" />
-                Schließen
-              </Button>
-            )}
-          </div>
+          )}
           {/* Content */}
           <div className={'flex-1 overflow-y-auto ' + (showAsModal ? 'px-6 py-4' : 'my-6')}>
             <UserTasksOverview

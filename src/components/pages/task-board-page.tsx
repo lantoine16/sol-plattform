@@ -11,6 +11,7 @@ import { UserWithTaskProgress } from '@/lib/types'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
 import { USER_ROLE_ADMIN, USER_ROLE_PUPIL } from '@/domain/constants/user-role.constants'
+import { LearningLocationSelector } from '../features/task-board/learning-location-selector'
 
 export async function TaskBoardPage({
   initPageResult,
@@ -79,15 +80,38 @@ export async function TaskBoardPage({
       <SetStepNav nav={steps} />
       <Gutter>
         <div className="space-y-8">
-          <LearningGroupSubjectsSelectors
-            learningGroups={[]}
-            learningGroupSearchParamName={''}
-            selectedLearningGroupId={undefined}
-            subjects={subjects}
-            subjectSearchParamName={subjectSearchParamName}
-            selectedSubjectIds={selectedSubjectIds}
-            showLearningGroupSelector={false}
-          />
+          <div className="flex flex-row flex-wrap items-center gap-2 justify-between">
+            <LearningGroupSubjectsSelectors
+              learningGroups={[]}
+              learningGroupSearchParamName={''}
+              selectedLearningGroupId={undefined}
+              subjects={subjects}
+              subjectSearchParamName={subjectSearchParamName}
+              selectedSubjectIds={selectedSubjectIds}
+              showLearningGroupSelector={false}
+            />
+            <LearningLocationSelector
+              allowChangeLearningLocation={
+                currentUser.graduation &&
+                typeof currentUser.graduation === 'object' &&
+                currentUser.graduation.canChangeLearningLocation !== null &&
+                currentUser.graduation.canChangeLearningLocation !== undefined
+                  ? currentUser.graduation.canChangeLearningLocation
+                  : false
+              }
+              currentLearningLocation={
+                currentUser.currentLearningLocation &&
+                typeof currentUser.currentLearningLocation === 'object'
+                  ? {
+                      value: currentUser.currentLearningLocation.id,
+                      label: currentUser.currentLearningLocation.description ?? '',
+                    }
+                  : null
+              }
+              learningLocations={learningLocations}
+              userId={currentUser.id}
+            />
+          </div>
           <TaskBoardComponent
             userWithTaskProgress={userWithTaskProgress}
             learningLocations={learningLocations}
