@@ -9,18 +9,30 @@ import { LearningGroupDashboardTable } from '@/components/features/dashboard/lea
 import { ResetUserStatuses } from '../features/reset-user-statuses'
 import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
 import { USER_ROLE_ADMIN, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
+import { findByKey } from '@/lib/data/repositories/preference.repository'
+import {
+  SELECTED_LEARNING_GROUP_PREFERENCE_KEY,
+  SELECTED_SUBJECTS_PREFERENCE_KEY,
+} from '@/domain/constants/preferences-keys.constants'
+import SyncSearchParams from '../features/learning-group-subjects-selectors/sync-search-params'
+import {
+  LEARNING_GROUP_SEARCH_PARAM_KEY,
+  SUBJECT_SEARCH_PARAM_KEY,
+} from '@/domain/constants/search-param-keys.constants'
 
 export async function LearningGroupDashboardView({
   initPageResult,
   params,
   searchParams,
 }: AdminViewServerProps) {
-  
   if (!initPageResult.req.user) {
     return <p>You must be logged in to view this page.</p>
   }
 
-  if (initPageResult.req.user.role !== USER_ROLE_ADMIN && initPageResult.req.user.role !== USER_ROLE_TEACHER) {
+  if (
+    initPageResult.req.user.role !== USER_ROLE_ADMIN &&
+    initPageResult.req.user.role !== USER_ROLE_TEACHER
+  ) {
     return <p>You are not authorized to view this page.</p>
   }
 
@@ -35,71 +47,71 @@ export async function LearningGroupDashboardView({
     },
   ]
 
-  const learningGroupSearchParamName = 'learningGroup'
-  const subjectSearchParamName = 'subject'
-
-  // Get learning groups and subjects
-  const { learningGroups, subjects } =
-    await learningGroupDashboardService.getLearningGroupsAndSubjects()
-
   // Get selected values using the learning group dashboard service
-  const selectedLearningGroupId = learningGroupDashboardService.getLearngingGroupsFilterValues(
-    searchParams,
-    learningGroupSearchParamName,
-    learningGroups,
-  )
-
-  const selectedSubjectIds = learningGroupDashboardService.getSubjectFilterValues(
-    searchParams,
-    subjectSearchParamName,
-    subjects,
-  )
+  const [selectedLearningGroupIds, selectedSubjectIds, { learningGroups, subjects }] =
+    await Promise.all([
+      learningGroupDashboardService.getFilterValues(
+        searchParams,
+        LEARNING_GROUP_SEARCH_PARAM_KEY,
+        SELECTED_LEARNING_GROUP_PREFERENCE_KEY,
+      ),
+      learningGroupDashboardService.getFilterValues(
+        searchParams,
+        SUBJECT_SEARCH_PARAM_KEY,
+        SELECTED_SUBJECTS_PREFERENCE_KEY,
+      ),
+      learningGroupDashboardService.getLearningGroupsAndSubjects(),
+    ])
 
   const {
     users: usersWithTaskProgress,
     taskProgressIds,
     userDefaultLearningLocationIds,
   } = await learningGroupDashboardService.getUsersWithTaskProgress(
-    selectedLearningGroupId,
+    selectedLearningGroupIds ? selectedLearningGroupIds[0] : undefined,
     selectedSubjectIds,
   )
 
   const learningLocations = await learningLocationRepository.findAll()
 
   return (
-    <DefaultTemplate
-      visibleEntities={initPageResult.visibleEntities}
-      i18n={initPageResult.req.i18n}
-      payload={initPageResult.req.payload}
-      locale={initPageResult.locale}
-      params={params}
-      permissions={initPageResult.permissions}
-      user={initPageResult.req.user || undefined}
-      searchParams={searchParams}
-    >
-      <SetStepNav nav={steps} />
-      <Gutter>
-        <div className="space-y-8">
-          <div className="flex justify-between items-center flex-wrap flex-row px-4">
-            <LearningGroupSubjectsSelectors
-              learningGroups={learningGroups}
-              subjects={subjects}
-              learningGroupSearchParamName={learningGroupSearchParamName}
-              subjectSearchParamName={subjectSearchParamName}
-              selectedLearningGroupId={selectedLearningGroupId}
-              selectedSubjectIds={selectedSubjectIds}
-            />
-            <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
+    <>
+      <SyncSearchParams
+        subjectSearchParams={selectedSubjectIds}
+        learningGroupSearchParam={selectedLearningGroupIds}
+      />
+      <DefaultTemplate
+        visibleEntities={initPageResult.visibleEntities}
+        i18n={initPageResult.req.i18n}
+        payload={initPageResult.req.payload}
+        locale={initPageResult.locale}
+        params={params}
+        permissions={initPageResult.permissions}
+        user={initPageResult.req.user || undefined}
+        searchParams={searchParams}
+      >
+        <SetStepNav nav={steps} />
+        <Gutter>
+          <div className="space-y-8">
+            <div className="flex justify-between items-center flex-wrap flex-row px-4">
+              <LearningGroupSubjectsSelectors
+                learningGroups={learningGroups}
+                subjects={subjects}
+                selectedLearningGroupId={selectedLearningGroupIds}
+                selectedSubjectIds={selectedSubjectIds}
+              />
+              <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
+            </div>
+            <div className="px-4">
+              <LearningGroupDashboardTable
+                users={usersWithTaskProgress}
+                learningLocations={learningLocations}
+              />
+            </div>
           </div>
-          <div className="px-4">
-            <LearningGroupDashboardTable
-              users={usersWithTaskProgress}
-              learningLocations={learningLocations}
-            />
-          </div>
-        </div>
-      </Gutter>
-    </DefaultTemplate>
+        </Gutter>
+      </DefaultTemplate>
+    </>
   )
 }
 

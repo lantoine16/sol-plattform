@@ -1,10 +1,15 @@
 import { learningGroupRepository } from '../data/repositories/learning-group.repository'
 import { subjectRepository } from '../data/repositories/subject.repository'
-import { taskRepository } from '../data/repositories/task.repository'
+import {
+  LEARNING_GROUP_SEARCH_PARAM_KEY,
+  SUBJECT_SEARCH_PARAM_KEY,
+} from '@/domain/constants/search-param-keys.constants'
 import { SetLearningLocationsOptions, userRepository } from '../data/repositories/user.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
 import type { LearningGroup, Subject, Task, Graduation, TaskProgress } from '@/payload-types'
 import type { User } from '@/payload-types'
+import { findByKey, setByKey } from '../data/repositories/preference.repository'
+import { SELECTED_LEARNING_GROUP_PREFERENCE_KEY } from '@/domain/constants/preferences-keys.constants'
 export interface UserWithTaskProgressInformation {
   user: User
   taskProgresses: TaskProgress[]
@@ -39,57 +44,39 @@ export class LearningGroupDashboardService {
   /**
    * Get selected values from search params for learning groups and subjects
    */
-  getLearngingGroupsFilterValues(
+  async getFilterValues(
     searchParams: Record<string, string | string[] | undefined>,
-    learningGroupSearchParamName: string,
-    learningGroups: LearningGroup[],
-  ): string | undefined {
+    searchParamName: string,
+    preferenceKey: string,
+  ): Promise<string[] | undefined> {
     // Get selected learning group ID
-    const learningGroupParam = searchParams[learningGroupSearchParamName]
-    const selectedLearningGroupId =
-      typeof learningGroupParam === 'string' && learningGroupParam !== ''
-        ? learningGroupParam
-        : Array.isArray(learningGroupParam) && learningGroupParam.length > 0
-          ? learningGroupParam[0]
-          : learningGroups[0]?.id
-
-    return selectedLearningGroupId
-  }
-
-  getSubjectFilterValues(
-    searchParams: Record<string, string | string[] | undefined>,
-    subjectSearchParamName: string,
-    subjects: Subject[],
-  ): string[] {
-    // Get selected subject IDs
-    const subjectParam = searchParams[subjectSearchParamName]
-    let selectedSubjectIds: string[]
-    if (Array.isArray(subjectParam)) {
-      // Wenn ein leerer String vorhanden ist, bedeutet das, dass alle abgewählt wurden
-      if (subjectParam.includes('')) {
-        selectedSubjectIds = []
-      } else {
-        selectedSubjectIds = subjectParam.filter((id) => id !== '' && id !== '0')
+    const currentParams = searchParams[searchParamName]
+    let selectedIds: string[] | undefined
+    if (
+      currentParams === undefined ||
+      (Array.isArray(currentParams) && currentParams.length === 0)
+    ) {
+      const learningGroupPreference = await findByKey<string[]>(preferenceKey)
+      if (learningGroupPreference) {
+        selectedIds = learningGroupPreference
       }
-    } else if (typeof subjectParam === 'string') {
-      if (subjectParam === '') {
-        selectedSubjectIds = []
-      } else {
-        selectedSubjectIds = [subjectParam]
-      }
-    } else {
-      // Wenn keine Werte vorhanden sind, sind alle ausgewählt (Standard)
-      selectedSubjectIds = subjects.map((subject) => subject.id)
+    } else if (Array.isArray(currentParams) && currentParams.length > 0) {
+      selectedIds = currentParams
+    } else if (typeof currentParams === 'string') {
+      selectedIds = [currentParams]
     }
-    return selectedSubjectIds
+    setByKey(preferenceKey, selectedIds)
+    //return as array so the select component always receives an array which makes it easier to handle in the component
+    return selectedIds
   }
+
   /**
    * Get users with processed task progress data for the learning group dashboard
    * Users are fetched with depth 2 to resolve TaskProgress and graduation relationships
    */
   async getUsersWithTaskProgress(
     learningGroupId: string | undefined,
-    subjectIds: string[],
+    subjectIds: string[] | undefined,
   ): Promise<{
     users: UserWithTaskProgressInformation[]
     taskProgressIds: string[]
@@ -106,7 +93,7 @@ export class LearningGroupDashboardService {
     // Bei depth: 2 ist task immer ein Task-Objekt, nicht nur eine ID
     const taskProgressEntries = await taskProgressRepository.findByUsersAndSubject(
       users.map((u) => u.id),
-      subjectIds,
+      subjectIds ?? [],
       { depth: 2 },
     )
 

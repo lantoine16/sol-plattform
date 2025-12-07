@@ -1,9 +1,9 @@
 'use client'
 import * as React from 'react'
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 
-import { ReactSelect, type ReactSelectOption } from '@payloadcms/ui'
+import { ReactSelect, type ReactSelectOption, usePreferences } from '@payloadcms/ui'
 
 export type Item = {
   id: string
@@ -12,8 +12,9 @@ export type Item = {
 
 type SelectItemProps = {
   items: Item[]
-  selectedIds?: string | string[]
+  selectedIds?: string[]
   searchParamName: string
+  preferenceKey: string
   placeholder: string
   itemName: string
   isMulti?: boolean
@@ -23,13 +24,18 @@ export function SelectElement({
   items,
   selectedIds,
   searchParamName,
+  preferenceKey,
   placeholder,
   itemName,
   isMulti,
 }: SelectItemProps) {
+  const { setPreference } = usePreferences()
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const { replace } = useRouter()
+  const [selectedOptionsState, setSelectedOptionsState] = useState<
+    ReactSelectOption | ReactSelectOption[] | undefined
+  >(undefined)
 
   const options: ReactSelectOption[] = useMemo(() => {
     return items.map((item) => ({
@@ -38,47 +44,42 @@ export function SelectElement({
     }))
   }, [items])
 
-  const handleSelectChange = useCallback(
-    (option: ReactSelectOption | ReactSelectOption[] | null) => {
-      const params = new URLSearchParams(searchParams)
+  useEffect(() => {
+    if (selectedIds) {
+      setSelectedOptionsFromSelectedIds(selectedIds)
+    }
+  }, [selectedIds])
 
+  const setSelectedOptionsFromSelectedIds = (selectedIds: string[]) => {
+    const selected = options.filter((option) => selectedIds?.includes(option.value as string))
+    setSelectedOptionsState(selected)
+  }
+
+  const handleSelectChange = useCallback(
+    (option: ReactSelectOption | ReactSelectOption[] | undefined) => {
+      if (option && typeof option === 'object' && !Array.isArray(option)) {
+        option = [option]
+      }
+      const params = new URLSearchParams(searchParams)
       // Entferne alle bestehenden Werte für diesen Parameter
       params.delete(searchParamName)
-      //hänge bei multi select leeren string wenn option null oder empty array ist, sodass nicht alle ausgewählt werden bei den Fächern
-      if (isMulti && (option === null || option.length === 0)) {
-        params.append(searchParamName, '')
-      }
-      // Wenn option ein Array ist (Multi-Select)
-      if (Array.isArray(option) && option.length > 0) {
+
+      if (option) {
+        let selectedIds: string[] = []
         option.forEach((opt) => {
           const value = opt.value as string
-          if (value && value !== '0' && value !== '') {
-            params.append(searchParamName, value)
-          }
+          selectedIds.push(value)
+          params.append(searchParamName, value)
         })
-      } else if (option && !Array.isArray(option)) {
-        // Einzelner Wert (für Rückwärtskompatibilität)
-        const value = option.value as string
-        if (value && value !== '0' && value !== '') {
-          params.set(searchParamName, value)
-        }
+        setSelectedOptionsFromSelectedIds(selectedIds)
+        setPreference(preferenceKey, selectedIds)
       }
-      // Wenn option null ist, bleibt der Parameter gelöscht (leer)
 
       const query = params.toString()
       replace(query ? `${pathname}?${query}` : pathname)
     },
     [pathname, replace, searchParamName, searchParams],
   )
-
-  const selectedOptions = useMemo(() => {
-    if (isMulti) {
-      return options.filter((option) => selectedIds?.includes(option.value as string))
-    }
-    // Wenn selectedId ein String ist (für Rückwärtskompatibilität)
-    const option = options.find((option) => option.value === selectedIds)
-    return option ? [option] : []
-  }, [options])
 
   return (
     <div>
@@ -90,7 +91,7 @@ export function SelectElement({
         isClearable={isMulti}
         isSearchable={true}
         onChange={handleSelectChange}
-        value={selectedOptions}
+        value={selectedOptionsState}
         customProps={{
           valueContainerLabel: itemName,
         }}
@@ -98,4 +99,3 @@ export function SelectElement({
     </div>
   )
 }
-
