@@ -29,7 +29,6 @@ export async function findByKey<T = unknown>(key: string): Promise<T | null> {
     const preference = preferences.docs[0] as PayloadPreference
     return (preference.value as unknown as T) || null
   } catch (err) {
-    console.log('Error fetching preference:', err)
     return null
   }
 }
@@ -62,8 +61,6 @@ export async function setByKey<T = unknown>(key: string, value: T): Promise<Payl
       req,
       overrideAccess: false,
     })
-
-    console.log('existingPreferences', existingPreferences)
 
     if (existingPreferences.docs.length > 0) {
       // Update existing preference

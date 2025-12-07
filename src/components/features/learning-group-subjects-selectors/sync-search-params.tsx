@@ -7,7 +7,6 @@ import {
   LEARNING_GROUP_SEARCH_PARAM_KEY,
   SUBJECT_SEARCH_PARAM_KEY,
 } from '@/domain/constants/search-param-keys.constants'
-
 /**
  * Syncs the search params with the selected learning group and subject ids from the preferences
  * @param subjectSearchParams - The selected subject ids
@@ -17,9 +16,13 @@ import {
 export default function SyncSearchParams({
   subjectSearchParams,
   learningGroupSearchParam,
+  needToSyncSubjectParams,
+  needToSyncLearningGroupParams,
 }: {
   subjectSearchParams: string[] | undefined
-  learningGroupSearchParam: string[] | undefined
+  learningGroupSearchParam?: string[] | undefined
+  needToSyncSubjectParams: boolean
+  needToSyncLearningGroupParams?: boolean
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -30,21 +33,29 @@ export default function SyncSearchParams({
     // Nur einmal beim Mount synchronisieren
     if (hasSynced.current) return
 
+    hasSynced.current = true
     //get the current search params
     const params = new URLSearchParams(searchParams)
 
     // delete the learning group search param if it exists
-    params.delete(LEARNING_GROUP_SEARCH_PARAM_KEY)
-    // set the learning group search param if it exists
-    learningGroupSearchParam &&
-      learningGroupSearchParam.length > 0 &&
-      params.set(LEARNING_GROUP_SEARCH_PARAM_KEY, learningGroupSearchParam[0])
-    // delete the subject search params if they exist
-    params.delete(SUBJECT_SEARCH_PARAM_KEY)
-    // set the subject search params if they exist
-    subjectSearchParams?.forEach((id) => params.append(SUBJECT_SEARCH_PARAM_KEY, id))
+    if (needToSyncLearningGroupParams) {
+      params.delete(LEARNING_GROUP_SEARCH_PARAM_KEY)
+      // set the learning group search param if it exists
+      learningGroupSearchParam &&
+        learningGroupSearchParam.length > 0 &&
+        params.set(LEARNING_GROUP_SEARCH_PARAM_KEY, learningGroupSearchParam[0])
+    }
+    if (needToSyncSubjectParams) {
+      // delete the subject search params if they exist
+      params.delete(SUBJECT_SEARCH_PARAM_KEY)
+      // set the subject search params if they exist
+      subjectSearchParams?.forEach((id) => params.append(SUBJECT_SEARCH_PARAM_KEY, id))
+    }
     // replace the search params without scrolling to the top of the page
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+
+    if (needToSyncLearningGroupParams || needToSyncSubjectParams) {
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    }
   }, [router, pathname])
 
   return null

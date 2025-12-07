@@ -1,15 +1,8 @@
-import { learningGroupRepository } from '../data/repositories/learning-group.repository'
-import { subjectRepository } from '../data/repositories/subject.repository'
-import {
-  LEARNING_GROUP_SEARCH_PARAM_KEY,
-  SUBJECT_SEARCH_PARAM_KEY,
-} from '@/domain/constants/search-param-keys.constants'
 import { SetLearningLocationsOptions, userRepository } from '../data/repositories/user.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
-import type { LearningGroup, Subject, Task, Graduation, TaskProgress } from '@/payload-types'
+import type { Task, Graduation, TaskProgress } from '@/payload-types'
 import type { User } from '@/payload-types'
 import { findByKey, setByKey } from '../data/repositories/preference.repository'
-import { SELECTED_LEARNING_GROUP_PREFERENCE_KEY } from '@/domain/constants/preferences-keys.constants'
 export interface UserWithTaskProgressInformation {
   user: User
   taskProgresses: TaskProgress[]
@@ -27,29 +20,16 @@ function isTaskObject(task: string | Task): task is Task {
 
 export class LearningGroupDashboardService {
   /**
-   * Get all learning groups and subjects for the learning group dashboard
-   */
-  async getLearningGroupsAndSubjects(): Promise<{
-    learningGroups: LearningGroup[]
-    subjects: Subject[]
-  }> {
-    const [learningGroups, subjects] = await Promise.all([
-      learningGroupRepository.findAllSorted(),
-      subjectRepository.findAllSorted(),
-    ])
-
-    return { learningGroups, subjects }
-  }
-
-  /**
    * Get selected values from search params for learning groups and subjects
    */
   async getFilterValues(
     searchParams: Record<string, string | string[] | undefined>,
     searchParamName: string,
     preferenceKey: string,
-  ): Promise<string[] | undefined> {
+    defaultValues: string[] | undefined,
+  ): Promise<{ ids: string[] | undefined; needToSyncParams: boolean }> {
     // Get selected learning group ID
+    let needToSyncParams = false
     const currentParams = searchParams[searchParamName]
     let selectedIds: string[] | undefined
     if (
@@ -59,7 +39,11 @@ export class LearningGroupDashboardService {
       const learningGroupPreference = await findByKey<string[]>(preferenceKey)
       if (learningGroupPreference && Object.keys(learningGroupPreference).length > 0) {
         selectedIds = learningGroupPreference
+      } else {
+        selectedIds = defaultValues
       }
+      //if there are no searchParams we have to sync the params and set the preference
+      needToSyncParams = true
     } else if (Array.isArray(currentParams) && currentParams.length > 0) {
       selectedIds = currentParams
     } else if (typeof currentParams === 'string') {
@@ -67,7 +51,7 @@ export class LearningGroupDashboardService {
     }
     setByKey(preferenceKey, selectedIds)
     //return as array so the select component always receives an array which makes it easier to handle in the component
-    return selectedIds
+    return { ids: selectedIds, needToSyncParams: needToSyncParams }
   }
 
   /**

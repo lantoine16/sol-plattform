@@ -21,6 +21,8 @@ import {
   SELECTED_SUBJECTS_PREFERENCE_KEY,
 } from '@/domain/constants/preferences-keys.constants'
 import SyncSearchParams from '../features/learning-group-subjects-selectors/sync-search-params'
+import { subjectRepository } from '@/lib/data/repositories/subject.repository'
+import { learningGroupRepository } from '@/lib/data/repositories/learning-group.repository'
 
 export async function LearningGroupDetailsView({
   initPageResult,
@@ -49,32 +51,32 @@ export async function LearningGroupDetailsView({
     },
   ]
 
+  const [learningGroups, subjects] = await Promise.all([
+    learningGroupRepository.findAllSorted(),
+    subjectRepository.findAllSorted(),
+  ])
   // Get selected values using the learning group dashboard service
-  let [selectedLearningGroupIds, selectedSubjectIds, { learningGroups, subjects }] =
-    await Promise.all([
-      learningGroupDashboardService.getFilterValues(
-        searchParams,
-        LEARNING_GROUP_SEARCH_PARAM_KEY,
-        SELECTED_LEARNING_GROUP_PREFERENCE_KEY,
-      ),
-      learningGroupDashboardService.getFilterValues(
-        searchParams,
-        SUBJECT_SEARCH_PARAM_KEY,
-        SELECTED_SUBJECTS_PREFERENCE_KEY,
-      ),
-      learningGroupDashboardService.getLearningGroupsAndSubjects(),
-    ])
+  const [
+    { ids: selectedLearningGroupIds, needToSyncParams: needToSyncLearningGroupParams },
+    { ids: selectedSubjectIds, needToSyncParams: needToSyncSubjectParams },
+  ] = await Promise.all([
+    learningGroupDashboardService.getFilterValues(
+      searchParams,
+      LEARNING_GROUP_SEARCH_PARAM_KEY,
+      SELECTED_LEARNING_GROUP_PREFERENCE_KEY,
+      [learningGroups.map((learningGroup) => learningGroup.id)?.[0]],
+    ),
+    learningGroupDashboardService.getFilterValues(
+      searchParams,
+      SUBJECT_SEARCH_PARAM_KEY,
+      SELECTED_SUBJECTS_PREFERENCE_KEY,
+      subjects.map((subject) => subject.id),
+    )
+  ])
 
-  //Set default values if no values are selected
-  selectedLearningGroupIds = selectedLearningGroupIds
-    ? selectedLearningGroupIds
-    : [learningGroups[0]?.id]
-  selectedSubjectIds = selectedSubjectIds
-    ? selectedSubjectIds
-    : subjects.map((subject) => subject.id)
-  
+
   const users = await userRepository.findPupilsByLearningGroup(
-    selectedLearningGroupIds ? selectedLearningGroupIds[0] : '',
+    selectedLearningGroupIds?.[0] ?? '',
     {
       depth: 2,
     },
@@ -83,7 +85,7 @@ export async function LearningGroupDetailsView({
   // Get learning group dashboard data based on filters
   const taskProgressEntries = await taskProgressRepository.findByUsersAndSubject(
     users.map((user) => user.id),
-    selectedSubjectIds ? selectedSubjectIds : [],
+    selectedSubjectIds ?? [],
     { depth: 2 }, // Relationships auflösen (user und task als Objekte)
   )
 
@@ -128,6 +130,8 @@ export async function LearningGroupDetailsView({
       <SyncSearchParams
         subjectSearchParams={selectedSubjectIds}
         learningGroupSearchParam={selectedLearningGroupIds}
+        needToSyncSubjectParams={needToSyncSubjectParams}
+        needToSyncLearningGroupParams={needToSyncLearningGroupParams}
       />
       <DefaultTemplate
         visibleEntities={initPageResult.visibleEntities}

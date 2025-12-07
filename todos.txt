@@ -3,7 +3,7 @@ Features:
     - Bestätigen Button wenn man Stunde beendet
     - Taskboard Lernort Filter nach oben rechts verschieben und in eine eigene Komponente packen
     - Email-adapter einrichten
-    - Dashboard - Liste sortieren wie andere payload listern
+    - Dashboard - Liste sortieren in searchParams
     - Detailansicht: Scrollen, alle Zellen klickbar, Darkmode, Icons
     - Dashboard auf Nutzerabhängige Ansichtsseite umleiten => vor allem bei Schülern wichtig
     
@@ -14,7 +14,7 @@ Nutzer:
 Verschönerungen:
     - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
     - Bei Sammelerstellung [ohne Titel] Ertstelle wegmachen
-    - bei Aufgabe hinzufügen bei nur einer Auswahlmöglichkeit diese direkt hinzufügen
+    - bei Aufgabe ersetllen -> Block hinzufügen bei nur einer Auswahlmöglichkeit diesen direkt hinzufügen
     - Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
     - API Button entfernen
 
