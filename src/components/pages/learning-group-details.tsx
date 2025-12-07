@@ -12,6 +12,15 @@ import { LearningGroupSubjectsSelectors } from '@/components/features/learning-g
 import { DataTable } from '@/components/features/learning-group-details/data-table'
 import type { UserWithTaskProgress } from '@/lib/types'
 import { USER_ROLE_ADMIN, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
+import {
+  LEARNING_GROUP_SEARCH_PARAM_KEY,
+  SUBJECT_SEARCH_PARAM_KEY,
+} from '@/domain/constants/search-param-keys.constants'
+import {
+  SELECTED_LEARNING_GROUP_PREFERENCE_KEY,
+  SELECTED_SUBJECTS_PREFERENCE_KEY,
+} from '@/domain/constants/preferences-keys.constants'
+import SyncSearchParams from '../features/learning-group-subjects-selectors/sync-search-params'
 
 export async function LearningGroupDetailsView({
   initPageResult,
@@ -40,34 +49,41 @@ export async function LearningGroupDetailsView({
     },
   ]
 
-  const learningGroupSearchParamName = 'learningGroup'
-  const subjectSearchParamName = 'subject'
-
-  // Get learning groups and subjects
-  const { learningGroups, subjects } =
-    await learningGroupDashboardService.getLearningGroupsAndSubjects()
-
   // Get selected values using the learning group dashboard service
-  const selectedLearningGroupId = learningGroupDashboardService.getLearngingGroupsFilterValues(
-    searchParams,
-    learningGroupSearchParamName,
-    learningGroups,
-  )
+  let [selectedLearningGroupIds, selectedSubjectIds, { learningGroups, subjects }] =
+    await Promise.all([
+      learningGroupDashboardService.getFilterValues(
+        searchParams,
+        LEARNING_GROUP_SEARCH_PARAM_KEY,
+        SELECTED_LEARNING_GROUP_PREFERENCE_KEY,
+      ),
+      learningGroupDashboardService.getFilterValues(
+        searchParams,
+        SUBJECT_SEARCH_PARAM_KEY,
+        SELECTED_SUBJECTS_PREFERENCE_KEY,
+      ),
+      learningGroupDashboardService.getLearningGroupsAndSubjects(),
+    ])
 
-  const selectedSubjectIds = learningGroupDashboardService.getSubjectFilterValues(
-    searchParams,
-    subjectSearchParamName,
-    subjects,
+  //Set default values if no values are selected
+  selectedLearningGroupIds = selectedLearningGroupIds
+    ? selectedLearningGroupIds
+    : [learningGroups[0]?.id]
+  selectedSubjectIds = selectedSubjectIds
+    ? selectedSubjectIds
+    : subjects.map((subject) => subject.id)
+  
+  const users = await userRepository.findPupilsByLearningGroup(
+    selectedLearningGroupIds ? selectedLearningGroupIds[0] : '',
+    {
+      depth: 2,
+    },
   )
-
-  const users = await userRepository.findPupilsByLearningGroup(selectedLearningGroupId ?? '', {
-    depth: 2,
-  })
 
   // Get learning group dashboard data based on filters
   const taskProgressEntries = await taskProgressRepository.findByUsersAndSubject(
     users.map((user) => user.id),
-    selectedSubjectIds,
+    selectedSubjectIds ? selectedSubjectIds : [],
     { depth: 2 }, // Relationships auflösen (user und task als Objekte)
   )
 
@@ -108,33 +124,37 @@ export async function LearningGroupDetailsView({
   const learningLocations = await learningLocationRepository.findAll()
 
   return (
-    <DefaultTemplate
-      visibleEntities={initPageResult.visibleEntities}
-      i18n={initPageResult.req.i18n}
-      payload={initPageResult.req.payload}
-      locale={initPageResult.locale}
-      params={params}
-      permissions={initPageResult.permissions}
-      user={initPageResult.req.user || undefined}
-      searchParams={searchParams}
-    >
-      <SetStepNav nav={steps} />
-      <Gutter>
-        <div className="space-y-8">
-          <LearningGroupSubjectsSelectors
-            learningGroups={learningGroups}
-            subjects={subjects}
-            learningGroupSearchParamName={learningGroupSearchParamName}
-            subjectSearchParamName={subjectSearchParamName}
-            selectedLearningGroupId={selectedLearningGroupId}
-            selectedSubjectIds={selectedSubjectIds}
-          />
-          <div className="px-4">
-            <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
+    <>
+      <SyncSearchParams
+        subjectSearchParams={selectedSubjectIds}
+        learningGroupSearchParam={selectedLearningGroupIds}
+      />
+      <DefaultTemplate
+        visibleEntities={initPageResult.visibleEntities}
+        i18n={initPageResult.req.i18n}
+        payload={initPageResult.req.payload}
+        locale={initPageResult.locale}
+        params={params}
+        permissions={initPageResult.permissions}
+        user={initPageResult.req.user || undefined}
+        searchParams={searchParams}
+      >
+        <SetStepNav nav={steps} />
+        <Gutter>
+          <div className="space-y-8">
+            <LearningGroupSubjectsSelectors
+              learningGroups={learningGroups}
+              subjects={subjects}
+              selectedLearningGroupId={selectedLearningGroupIds}
+              selectedSubjectIds={selectedSubjectIds}
+            />
+            <div className="px-4">
+              <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
+            </div>
           </div>
-        </div>
-      </Gutter>
-    </DefaultTemplate>
+        </Gutter>
+      </DefaultTemplate>
+    </>
   )
 }
 

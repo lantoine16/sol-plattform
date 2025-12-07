@@ -71,6 +71,9 @@ export function SelectElement({
           selectedIds.push(value)
           params.append(searchParamName, value)
         })
+        if (option.length === 0) {
+          params.append(searchParamName, '')
+        }
         setSelectedOptionsFromSelectedIds(selectedIds)
         setPreference(preferenceKey, selectedIds)
       }

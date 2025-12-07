@@ -37,7 +37,7 @@ export function LearningGroupDashboardTable({
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
 
-    // Retrieve preferences on component mount
+  // Retrieve preferences on component mount
   // This will only be run one time, because the `getPreference` method never changes
   useEffect(() => {
     const asyncGetPreference = async () => {

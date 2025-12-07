@@ -78,7 +78,6 @@ export class TaskProgressRepository {
     }
 
     const { payload, req } = await getPayloadWithAuth()
-
     // 1. Finde alle Tasks, die zu diesem Fach gehören
     const tasksResult = await payload.find({
       collection: 'tasks',

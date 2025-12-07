@@ -63,6 +63,15 @@ export async function LearningGroupDashboardView({
       learningGroupDashboardService.getLearningGroupsAndSubjects(),
     ])
 
+  //Set default values if no values are selected
+  const defaultSelectedLearningGroupIds = selectedLearningGroupIds
+    ? selectedLearningGroupIds
+    : [learningGroups[0]?.id]
+  const defaultSelectedSubjectIds =
+    selectedSubjectIds && selectedSubjectIds.length > 0
+      ? selectedSubjectIds
+      : subjects.map((subject) => subject.id)
+
   const {
     users: usersWithTaskProgress,
     taskProgressIds,
@@ -97,8 +106,8 @@ export async function LearningGroupDashboardView({
               <LearningGroupSubjectsSelectors
                 learningGroups={learningGroups}
                 subjects={subjects}
-                selectedLearningGroupId={selectedLearningGroupIds}
-                selectedSubjectIds={selectedSubjectIds}
+                selectedLearningGroupId={defaultSelectedLearningGroupIds}
+                selectedSubjectIds={defaultSelectedSubjectIds}
               />
               <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
             </div>

@@ -57,7 +57,7 @@ export class LearningGroupDashboardService {
       (Array.isArray(currentParams) && currentParams.length === 0)
     ) {
       const learningGroupPreference = await findByKey<string[]>(preferenceKey)
-      if (learningGroupPreference) {
+      if (learningGroupPreference && Object.keys(learningGroupPreference).length > 0) {
         selectedIds = learningGroupPreference
       }
     } else if (Array.isArray(currentParams) && currentParams.length > 0) {

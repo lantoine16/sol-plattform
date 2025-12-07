@@ -12,7 +12,8 @@ import { taskProgressRepository } from '@/lib/data/repositories/task-progress.re
 import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
 import { USER_ROLE_ADMIN, USER_ROLE_PUPIL } from '@/domain/constants/user-role.constants'
 import { LearningLocationSelector } from '../features/task-board/learning-location-selector'
-
+import { SELECTED_SUBJECTS_PREFERENCE_KEY } from '@/domain/constants/preferences-keys.constants'
+import { SUBJECT_SEARCH_PARAM_KEY } from '@/domain/constants/search-param-keys.constants'
 export async function TaskBoardPage({
   initPageResult,
   params,
@@ -40,23 +41,26 @@ export async function TaskBoardPage({
     },
   ]
 
-  const subjectSearchParamName = 'subject'
+  let [selectedSubjectIds, subjects] = await Promise.all([
+    learningGroupDashboardService.getFilterValues(
+      searchParams,
+      SUBJECT_SEARCH_PARAM_KEY,
+      SELECTED_SUBJECTS_PREFERENCE_KEY,
+    ),
+    await subjectRepository.findAllSorted(),
+  ])
 
-  const subjects = await subjectRepository.findAllSorted()
-
-  const selectedSubjectIds = learningGroupDashboardService.getSubjectFilterValues(
-    searchParams,
-    subjectSearchParamName,
-    subjects,
-  )
-
+  //Set default values if no values are selected
+  selectedSubjectIds = selectedSubjectIds
+    ? selectedSubjectIds
+    : subjects.map((subject) => subject.id)
   // Vollständiges User-Objekt mit allen Relationen laden
 
   const currentUser = await userRepository.findById(initPageResult.req.user.id, { depth: 2 })
 
   const taskProgresses = await taskProgressRepository.findByUsersAndSubject(
     [currentUser.id],
-    selectedSubjectIds,
+    selectedSubjectIds ? selectedSubjectIds : [],
     { depth: 2 },
   )
   const userWithTaskProgress: UserWithTaskProgress = {
@@ -83,10 +87,8 @@ export async function TaskBoardPage({
           <div className="flex flex-row flex-wrap items-center gap-2 justify-between">
             <LearningGroupSubjectsSelectors
               learningGroups={[]}
-              learningGroupSearchParamName={''}
-              selectedLearningGroupId={undefined}
               subjects={subjects}
-              subjectSearchParamName={subjectSearchParamName}
+              selectedLearningGroupId={undefined}
               selectedSubjectIds={selectedSubjectIds}
               showLearningGroupSelector={false}
             />
