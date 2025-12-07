@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import {
   LEARNING_GROUP_SEARCH_PARAM_KEY,
+  SORT_SEARCH_PARAM_KEY,
   SUBJECT_SEARCH_PARAM_KEY,
 } from '@/domain/constants/search-param-keys.constants'
 /**
@@ -18,11 +19,15 @@ export default function SyncSearchParams({
   learningGroupSearchParam,
   needToSyncSubjectParams,
   needToSyncLearningGroupParams,
+  sortParam,
+  needToSyncSortParams,
 }: {
   subjectSearchParams: string[] | undefined
   learningGroupSearchParam?: string[] | undefined
   needToSyncSubjectParams: boolean
   needToSyncLearningGroupParams?: boolean
+  sortParam?: string[] | undefined
+  needToSyncSortParams?: boolean
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -51,9 +56,14 @@ export default function SyncSearchParams({
       // set the subject search params if they exist
       subjectSearchParams?.forEach((id) => params.append(SUBJECT_SEARCH_PARAM_KEY, id))
     }
+    if (needToSyncSortParams) {
+      params.delete(SORT_SEARCH_PARAM_KEY)
+      // set the sort search param if it exists
+      sortParam && sortParam.length > 0 && params.set(SORT_SEARCH_PARAM_KEY, sortParam[0])
+    }
     // replace the search params without scrolling to the top of the page
 
-    if (needToSyncLearningGroupParams || needToSyncSubjectParams) {
+    if (needToSyncLearningGroupParams || needToSyncSubjectParams || needToSyncSortParams) {
       router.replace(`${pathname}?${params.toString()}`, { scroll: false })
     }
   }, [router, pathname])

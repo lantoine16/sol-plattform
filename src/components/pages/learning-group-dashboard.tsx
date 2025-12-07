@@ -9,19 +9,20 @@ import { LearningGroupDashboardTable } from '@/components/features/dashboard/lea
 import { ResetUserStatuses } from '../features/reset-user-statuses'
 import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
 import { USER_ROLE_ADMIN, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
-import { findByKey } from '@/lib/data/repositories/preference.repository'
 import {
   SELECTED_LEARNING_GROUP_PREFERENCE_KEY,
   SELECTED_SUBJECTS_PREFERENCE_KEY,
+  DASHBOARD_SORT_PREFERENCE_KEY,
 } from '@/domain/constants/preferences-keys.constants'
 import SyncSearchParams from '../features/learning-group-subjects-selectors/sync-search-params'
 import {
   LEARNING_GROUP_SEARCH_PARAM_KEY,
+  SORT_SEARCH_PARAM_KEY,
   SUBJECT_SEARCH_PARAM_KEY,
 } from '@/domain/constants/search-param-keys.constants'
 import { subjectRepository } from '@/lib/data/repositories/subject.repository'
 import { learningGroupRepository } from '@/lib/data/repositories/learning-group.repository'
-
+import type { SortField } from '@/components/features/dashboard/learning-group-dashboard-table'
 export async function LearningGroupDashboardView({
   initPageResult,
   params,
@@ -57,6 +58,7 @@ export async function LearningGroupDashboardView({
   const [
     { ids: selectedLearningGroupIds, needToSyncParams: needToSyncLearningGroupParams },
     { ids: selectedSubjectIds, needToSyncParams: needToSyncSubjectParams },
+    {ids: sortParam, needToSyncParams: needToSyncSortParams}
   ] = await Promise.all([
     learningGroupDashboardService.getFilterValues(
       searchParams,
@@ -69,6 +71,12 @@ export async function LearningGroupDashboardView({
       SUBJECT_SEARCH_PARAM_KEY,
       SELECTED_SUBJECTS_PREFERENCE_KEY,
       subjects.map((subject) => subject.id),
+    ),
+    learningGroupDashboardService.getFilterValues(
+      searchParams,
+      SORT_SEARCH_PARAM_KEY,
+      DASHBOARD_SORT_PREFERENCE_KEY,
+      ['lastname'],
     )
   ])
 
@@ -90,6 +98,8 @@ export async function LearningGroupDashboardView({
         learningGroupSearchParam={selectedLearningGroupIds}
         needToSyncSubjectParams={needToSyncSubjectParams}
         needToSyncLearningGroupParams={needToSyncLearningGroupParams}
+        sortParam={sortParam}
+        needToSyncSortParams={needToSyncSortParams}
       />
       <DefaultTemplate
         visibleEntities={initPageResult.visibleEntities}
@@ -117,6 +127,7 @@ export async function LearningGroupDashboardView({
               <LearningGroupDashboardTable
                 users={usersWithTaskProgress}
                 learningLocations={learningLocations}
+                initialSortParam={sortParam as SortField[]}
               />
             </div>
           </div>

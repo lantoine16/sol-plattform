@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Circle,
   Loader2,
@@ -14,56 +14,52 @@ import type { UserWithTaskProgressInformation } from '@/lib/services/learning-gr
 import { GraduationIcon } from '@/components/ui/graduation-icon'
 import { TaskBoardComponent } from '@/components/features/task-board/task-board-component'
 import type { UserWithTaskProgress } from '@/lib/types'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { LearningLocation } from '@/payload-types'
 import { usePreferences } from '@payloadcms/ui'
 import { DASHBOARD_SORT_PREFERENCE_KEY } from '@/domain/constants/preferences-keys.constants'
-type SortField = 'firstname' | 'lastname' | 'level' | 'learningLocation'
-type SortDirection = 'asc' | 'desc'
+import { SORT_SEARCH_PARAM_KEY } from '@/domain/constants/search-param-keys.constants'
+export type SortField =
+  | 'firstname'
+  | '-firstname'
+  | 'lastname'
+  | '-lastname'
+  | 'level'
+  | '-level'
+  | 'learningLocation'
+  | '-learningLocation'
 
-interface DashboardSortPreference {
-  sortField: SortField
-  sortDirection: SortDirection
-}
 export function LearningGroupDashboardTable({
   users,
   learningLocations,
+  initialSortParam,
 }: {
   users: UserWithTaskProgressInformation[]
   learningLocations: LearningLocation[]
+  initialSortParam: SortField[] | undefined
 }) {
-  const { getPreference, setPreference } = usePreferences()
-  const [sortField, setSortField] = useState<SortField>('lastname')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+  const { setPreference } = usePreferences()
+  const [sortParam, setSortParam] = useState<SortField | undefined>(initialSortParam?.[0])
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
-
-  // Retrieve preferences on component mount
-  // This will only be run one time, because the `getPreference` method never changes
-  useEffect(() => {
-    const asyncGetPreference = async () => {
-      const dashboardSortPreference = await getPreference<DashboardSortPreference>(
-        DASHBOARD_SORT_PREFERENCE_KEY,
-      )
-      setSortField(dashboardSortPreference?.sortField ?? 'firstname')
-      setSortDirection(dashboardSortPreference?.sortDirection ?? 'asc')
-    }
-
-    asyncGetPreference()
-  }, [getPreference])
+  const pathname = usePathname()
   const router = useRouter()
+  const searchParams = useSearchParams()
   // Sortierte Benutzerliste
   const sortedUsers = useMemo(() => {
+    if (!sortParam) {
+      return users
+    }
     const sorted = [...users].sort((a, b) => {
       let aValue: string | number = ''
       let bValue: string | number = ''
 
-      if (sortField === 'firstname') {
+      if (sortParam === 'firstname' || sortParam === '-firstname') {
         aValue = (a.user.firstname || '').toLowerCase()
         bValue = (b.user.firstname || '').toLowerCase()
-      } else if (sortField === 'lastname') {
+      } else if (sortParam === 'lastname' || sortParam === '-lastname') {
         aValue = (a.user.lastname || '').toLowerCase()
         bValue = (b.user.lastname || '').toLowerCase()
-      } else if (sortField === 'level') {
+      } else if (sortParam === 'level' || sortParam === '-level') {
         // Sortiere nach Graduation Number
         aValue =
           a.user.graduation && typeof a.user.graduation === 'object'
@@ -73,7 +69,7 @@ export function LearningGroupDashboardTable({
           b.user.graduation && typeof b.user.graduation === 'object'
             ? b.user.graduation.number || 1
             : 1
-      } else if (sortField === 'learningLocation') {
+      } else if (sortParam === 'learningLocation' || sortParam === '-learningLocation') {
         // Sortiere nach Lernort-Beschreibung
         aValue =
           a.user.currentLearningLocation && typeof a.user.currentLearningLocation === 'object'
@@ -94,11 +90,11 @@ export function LearningGroupDashboardTable({
         })
       }
 
-      return sortDirection === 'asc' ? comparison : -comparison
+      return sortParam.startsWith('-') ? -comparison : comparison
     })
 
     return sorted
-  }, [users, sortField, sortDirection])
+  }, [users, sortParam])
 
   const handleRowClick = (userWithTaskProgress: UserWithTaskProgressInformation) => {
     // Konvertiere UserWithTaskProgressInformation zu UserWithTaskProgress
@@ -115,18 +111,19 @@ export function LearningGroupDashboardTable({
   }
 
   const SortButtons = ({ field, label }: { field: SortField; label: string }) => {
-    const isActive = sortField === field
-    const isAscActive = isActive && sortDirection === 'asc'
-    const isDescActive = isActive && sortDirection === 'desc'
+    const isActive = sortParam === field || sortParam === `-${field}`
+    const isAscActive = isActive && !sortParam.startsWith('-')
+    const isDescActive = isActive && sortParam.startsWith('-')
 
-    const handleClick = (e: React.MouseEvent, sortDirection: SortDirection) => {
+    const handleClick = (e: React.MouseEvent, sortDirection: '' | '-') => {
       e.stopPropagation()
-      setSortField(field)
-      setSortDirection(sortDirection)
-      setPreference(DASHBOARD_SORT_PREFERENCE_KEY, {
-        sortField: field,
-        sortDirection: sortDirection,
-      } as DashboardSortPreference)
+      const sortParam = sortDirection === '' ? field : `-${field}`
+      setSortParam(sortParam as SortField)
+      setPreference(DASHBOARD_SORT_PREFERENCE_KEY, sortParam as SortField)
+
+      const params = new URLSearchParams(searchParams)
+      params.set(SORT_SEARCH_PARAM_KEY, sortParam as SortField)
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
     }
 
     return (
@@ -137,7 +134,7 @@ export function LearningGroupDashboardTable({
             isAscActive ? 'sort-column--active' : ''
           }`}
           aria-label={`Sortieren nach ${label} Aufsteigend`}
-          onClick={(e) => handleClick(e, 'asc')}
+          onClick={(e) => handleClick(e, '')}
         >
           <ChevronUp className="h-4 w-4" />
         </button>
@@ -147,7 +144,7 @@ export function LearningGroupDashboardTable({
             isDescActive ? 'sort-column--active' : ''
           }`}
           aria-label={`Sortieren nach ${label} Absteigend`}
-          onClick={(e) => handleClick(e, 'desc')}
+          onClick={(e) => handleClick(e, '-')}
         >
           <ChevronDown className="h-4 w-4" />
         </button>

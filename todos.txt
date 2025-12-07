@@ -3,7 +3,6 @@ Features:
     - Bestätigen Button wenn man Stunde beendet
     - Taskboard Lernort Filter nach oben rechts verschieben und in eine eigene Komponente packen
     - Email-adapter einrichten
-    - Dashboard - Liste sortieren in searchParams
     - Detailansicht: Scrollen, alle Zellen klickbar, Darkmode, Icons
     - Dashboard auf Nutzerabhängige Ansichtsseite umleiten => vor allem bei Schülern wichtig
     
