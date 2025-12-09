@@ -1,0 +1,72 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+coverage
+.nyc_output
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Next.js
+.next
+out
+build
+dist
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+
+# Documentation
+README.md
+DEPLOYMENT.md
+SETUP.md
+*.md
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Helm & Kubernetes
+helm/
+argocd/
+*.yaml
+*.yml
+!package.json
+!pnpm-lock.yaml
+
+# Misc
+.todos
+todos.txt
+*.log
+.cache
+

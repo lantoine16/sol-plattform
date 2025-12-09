@@ -1,0 +1,78 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - 'v*'
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'todos.txt'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'todos.txt'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+          # Multi-arch builds kosten mehr Zeit/Minuten
+          # Wenn du ARM64 brauchst, füge ,linux/arm64 hinzu
+
+      - name: Update ArgoCD (if using Image Updater)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        # Optional: Trigger ArgoCD sync or use ArgoCD Image Updater
+        # This step can be customized based on your ArgoCD setup
+
