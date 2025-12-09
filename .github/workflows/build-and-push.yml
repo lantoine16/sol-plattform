@@ -70,9 +70,3 @@ jobs:
           platforms: linux/amd64
           # Multi-arch builds kosten mehr Zeit/Minuten
           # Wenn du ARM64 brauchst, füge ,linux/arm64 hinzu
-
-      - name: Update ArgoCD (if using Image Updater)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        # Optional: Trigger ArgoCD sync or use ArgoCD Image Updater
-        # This step can be customized based on your ArgoCD setup
-
