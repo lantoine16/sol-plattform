@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import '../(payload)/custom.scss'
+import '../(payload)/custom.css'
 
 export const metadata: Metadata = {
   icons: [

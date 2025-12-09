@@ -23,5 +23,6 @@ Performance:
 Wartung:
     - Alle Packages updaten
 
+ TODO: Tailwind-Styles Workaround (uas custom.css wieder custom.scss machen sodass die layout.tsx unverädnert bleibt
 
     5. Spalten an Postion 3
