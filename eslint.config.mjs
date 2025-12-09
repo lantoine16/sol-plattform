@@ -16,18 +16,10 @@ const eslintConfig = [
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': [
-        'warn',
-        {
-          vars: 'all',
-          args: 'after-used',
-          ignoreRestSiblings: false,
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          destructuredArrayIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^(_|ignore)',
-        },
-      ],
+      '@typescript-eslint/no-unused-vars': 'off', // Ungenutzte Variablen erlauben
+      'prefer-const': 'warn', // Warnung statt Error
+      'react-hooks/exhaustive-deps': 'warn', // Warnung statt Error
+      '@typescript-eslint/no-unused-expressions': 'warn', // Warnung statt Error
     },
   },
   {

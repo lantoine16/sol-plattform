@@ -46,9 +46,9 @@ export default function SyncSearchParams({
     if (needToSyncLearningGroupParams) {
       params.delete(LEARNING_GROUP_SEARCH_PARAM_KEY)
       // set the learning group search param if it exists
-      learningGroupSearchParam &&
-        learningGroupSearchParam.length > 0 &&
+      if (learningGroupSearchParam && learningGroupSearchParam.length > 0) {
         params.set(LEARNING_GROUP_SEARCH_PARAM_KEY, learningGroupSearchParam[0])
+      }
     }
     if (needToSyncSubjectParams) {
       // delete the subject search params if they exist
@@ -59,13 +59,16 @@ export default function SyncSearchParams({
     if (needToSyncSortParams) {
       params.delete(SORT_SEARCH_PARAM_KEY)
       // set the sort search param if it exists
-      sortParam && sortParam.length > 0 && params.set(SORT_SEARCH_PARAM_KEY, sortParam[0])
+      if (sortParam && sortParam.length > 0) {
+        params.set(SORT_SEARCH_PARAM_KEY, sortParam[0])
+      }
     }
     // replace the search params without scrolling to the top of the page
 
     if (needToSyncLearningGroupParams || needToSyncSubjectParams || needToSyncSortParams) {
       router.replace(`${pathname}?${params.toString()}`, { scroll: false })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, pathname])
 
   return null

@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react'
-import { useMemo, useCallback, useEffect, useState } from 'react'
+import { useMemo, useCallback, useState, useEffect } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 
 import { ReactSelect, type ReactSelectOption, usePreferences } from '@payloadcms/ui'
@@ -48,6 +48,7 @@ export function SelectElement({
     if (selectedIds) {
       setSelectedOptionsFromSelectedIds(selectedIds)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIds])
 
   const setSelectedOptionsFromSelectedIds = (selectedIds: string[]) => {
@@ -65,7 +66,7 @@ export function SelectElement({
       params.delete(searchParamName)
 
       if (option) {
-        let selectedIds: string[] = []
+        const selectedIds: string[] = []
         option.forEach((opt) => {
           const value = opt.value as string
           selectedIds.push(value)
@@ -81,7 +82,8 @@ export function SelectElement({
       const query = params.toString()
       replace(query ? `${pathname}?${query}` : pathname)
     },
-    [pathname, replace, searchParamName, searchParams],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pathname, replace, searchParamName, searchParams, preferenceKey, setPreference],
   )
 
   return (

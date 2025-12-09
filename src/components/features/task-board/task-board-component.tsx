@@ -9,7 +9,6 @@ import { LearningLocationSelector } from './learning-location-selector'
 import { cn } from '@/lib/utils'
 import type { LearningLocation, TaskProgress, User } from '@/payload-types'
 import type { UserWithTaskProgress } from '@/lib/types'
-import { updateUserLearningLocation } from '@/lib/actions/user.actions'
 type StudentDetailsModalProps = {
   userWithTaskProgress: UserWithTaskProgress
   learningLocations: LearningLocation[]

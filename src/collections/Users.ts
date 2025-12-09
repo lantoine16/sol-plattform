@@ -204,7 +204,7 @@ export const Users: CollectionConfig = {
       relationTo: 'learning-location',
       required: false,
       access: {
-        update: async ({ req, doc }) => {
+        update: async ({ req }) => {
           const user = req.user
           if (!user) return false
 

@@ -82,7 +82,7 @@ export class LearningGroupDashboardService {
     )
 
     const taskProgress = new Set<string>()
-    let userDefaultLearningLocationIds: SetLearningLocationsOptions[] = []
+    const userDefaultLearningLocationIds: SetLearningLocationsOptions[] = []
 
     // Process each user
     const usersWithTaskProgressInformation: UserWithTaskProgressInformation[] = users.map(
@@ -133,29 +133,8 @@ export class LearningGroupDashboardService {
           }
         })
 
-        // Get learning location description
-        let learningLocationDescription: string | null = null
-        if (user.currentLearningLocation) {
-          if (
-            typeof user.currentLearningLocation === 'object' &&
-            user.currentLearningLocation !== null
-          ) {
-            learningLocationDescription = user.currentLearningLocation.description || null
-          }
-        }
 
-        // Get graduation number
-        let graduationNumber = 1
-        let graduationId = ''
-        if (user.graduation) {
-          if (typeof user.graduation === 'object' && user.graduation !== null) {
-            const graduation = user.graduation as Graduation
-            graduationId = graduation.id
-            graduationNumber = graduation.number || 1
-          } else if (typeof user.graduation === 'string') {
-            graduationId = user.graduation
-          }
-        }
+
 
         userDefaultLearningLocationIds.push({
           userId: user.id,

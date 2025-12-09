@@ -13,11 +13,9 @@ import { learningGroupRepository } from '@/lib/data/repositories/learning-group.
 export async function processLearningGroupsSubjectBulkCreate({
   collection,
   bulkData,
-  descriptionField,
 }: {
   collection: CollectionSlug
   bulkData: string
-  descriptionField: string
 }): Promise<any[]> {
   // Teile die Eingabe in Zeilen auf und filtere leere Zeilen
   const itemNames = parseBulkData(bulkData)

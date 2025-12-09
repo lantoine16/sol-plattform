@@ -2,7 +2,6 @@ import { userRepository } from '../data/repositories/user.repository'
 import { taskRepository, type TaskCreateData } from '../data/repositories/task.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
 import { Task } from '@/payload-types'
-import { parseBulkData } from '@/domain/utils/parse-bulk-data.util'
 
 export interface BlockTaskCreateOptions {
   blocks: Array<{
@@ -50,7 +49,7 @@ export async function processBlockTaskCreate({
 
   const userIds = await getUsersFromLearningGroupsAndUsers(learningGroup, user)
 
-  const createdTaskProgresses = await taskProgressRepository.createTaskProgresses({
+  const _createdTaskProgresses = await taskProgressRepository.createTaskProgresses({
     user: userIds,
     task: createdTasks.map((task) => task.id),
   })

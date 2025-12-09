@@ -28,7 +28,7 @@ export async function findByKey<T = unknown>(key: string): Promise<T | null> {
 
     const preference = preferences.docs[0] as PayloadPreference
     return (preference.value as unknown as T) || null
-  } catch (err) {
+  } catch (_err) {
     return null
   }
 }

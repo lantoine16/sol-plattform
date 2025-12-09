@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator'
 import { UserTaskCard } from './user-task-card'
 import { UserTaskStatusService } from '@/lib/services/user-task-status.service'
 import { SortService } from '@/lib/services/sort.service'
-import type { TaskProgress, Subject, Task } from '@/payload-types'
+import type { TaskProgress } from '@/payload-types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 
 type UserTasksOverviewProps = {
