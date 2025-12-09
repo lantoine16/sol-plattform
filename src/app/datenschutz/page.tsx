@@ -1,13 +1,16 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
+// Force dynamic rendering to read environment variables at runtime
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Datenschutzerklärung - Lernjobmonitoring',
   description: 'Datenschutzerklärung für die Anwendung Lernjobmonitoring',
 }
 
 export default function DatenschutzPage() {
-  // Kontaktdaten aus Umgebungsvariablen
+  // Kontaktdaten aus Umgebungsvariablen (zur Laufzeit geladen)
   const schoolName = process.env.SCHOOL_NAME
   const schoolStreet = process.env.SCHOOL_STREET
   const schoolPostalCode = process.env.SCHOOL_POSTAL_CODE
