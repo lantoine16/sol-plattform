@@ -30,6 +30,34 @@ export class LearningLocationRepository {
     })
     return result.docs
   }
+
+  /**
+   * Create multiple learning groups in bulk
+   * @param descriptions - Array of learning group descriptions
+   * @returns Array of created learning groups
+   */
+  async createBulk(descriptions: string[]): Promise<LearningLocation[]> {
+    if (descriptions.length === 0) {
+      return []
+    }
+
+    const { payload, req } = await getPayloadWithAuth()
+
+    const createdLearningGroups = await Promise.all(
+      descriptions.map((description) =>
+        payload.create({
+          collection: 'learning-location',
+          data: {
+            description,
+          },
+          req,
+          overrideAccess: false,
+        }),
+      ),
+    )
+
+    return createdLearningGroups
+  }
 }
 
 export const learningLocationRepository = new LearningLocationRepository()

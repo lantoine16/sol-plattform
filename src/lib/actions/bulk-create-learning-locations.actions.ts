@@ -1,6 +1,6 @@
 'use server'
 
-import { processLearningGroupsSubjectBulkCreate } from '@/lib/services/create-subjects-learning-groups.service'
+import { processLearningGroupsLocationsBulkCreate } from '@/lib/services/create-subjects-learning-groups.service'
 
 export async function bulkCreateLearningLocationsAction(input: {
   bulkData: string
@@ -9,10 +9,8 @@ export async function bulkCreateLearningLocationsAction(input: {
     throw new Error('Keine Lernorte angegeben')
   }
 
-  return processLearningGroupsSubjectBulkCreate({
+  return processLearningGroupsLocationsBulkCreate({
     collection: 'learning-location',
     bulkData: input.bulkData,
-    descriptionField: 'description',
   })
 }
-

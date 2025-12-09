@@ -1,8 +1,7 @@
 import type { CollectionSlug } from 'payload'
 import { parseBulkData } from '@/domain/utils/parse-bulk-data.util'
-import { subjectRepository } from '@/lib/data/repositories/subject.repository'
 import { learningGroupRepository } from '@/lib/data/repositories/learning-group.repository'
-
+import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
 /**
  * Verarbeitet Bulk-Erstellung von Subjects oder LearningGroups aus einem mehrzeiligen Text.
  * Erstellt ALLE Einträge (jede Zeile = ein Eintrag).
@@ -10,7 +9,7 @@ import { learningGroupRepository } from '@/lib/data/repositories/learning-group.
  *
  * @returns Array der erstellten Dokumente oder leeres Array, wenn keine Daten vorhanden sind
  */
-export async function processLearningGroupsSubjectBulkCreate({
+export async function processLearningGroupsLocationsBulkCreate({
   collection,
   bulkData,
 }: {
@@ -25,8 +24,8 @@ export async function processLearningGroupsSubjectBulkCreate({
   }
 
   // Verwende das entsprechende Repository basierend auf der Collection
-  if (collection === 'subjects') {
-    return await subjectRepository.createBulk(itemNames)
+  if (collection === 'learning-location') {
+    return await learningLocationRepository.createBulk(itemNames)
   } else if (collection === 'learning-groups') {
     return await learningGroupRepository.createBulk(itemNames)
   }

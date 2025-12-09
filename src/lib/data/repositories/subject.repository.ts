@@ -30,34 +30,6 @@ export class SubjectRepository {
     })
     return result.docs
   }
-
-  /**
-   * Create multiple subjects in bulk
-   * @param descriptions - Array of subject descriptions
-   * @returns Array of created subjects
-   */
-  async createBulk(descriptions: string[]): Promise<Subject[]> {
-    if (descriptions.length === 0) {
-      return []
-    }
-
-    const { payload, req } = await getPayloadWithAuth()
-
-    const createdSubjects = await Promise.all(
-      descriptions.map((description) =>
-        payload.create({
-          collection: 'subjects',
-          data: {
-            description,
-          },
-          req,
-          overrideAccess: false,
-        }),
-      ),
-    )
-
-    return createdSubjects
-  }
 }
 
 export const subjectRepository = new SubjectRepository()
