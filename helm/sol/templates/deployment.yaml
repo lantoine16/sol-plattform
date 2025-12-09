@@ -44,6 +44,42 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secrets.appSecrets }}
                   key: DATABASE_URI
+            - name: SCHOOL_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.appSecrets }}
+                  key: SCHOOL_NAME
+                  optional: true
+            - name: SCHOOL_STREET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.appSecrets }}
+                  key: SCHOOL_STREET
+                  optional: true
+            - name: SCHOOL_POSTAL_CODE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.appSecrets }}
+                  key: SCHOOL_POSTAL_CODE
+                  optional: true
+            - name: SCHOOL_CITY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.appSecrets }}
+                  key: SCHOOL_CITY
+                  optional: true
+            - name: SCHOOL_PHONE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.appSecrets }}
+                  key: SCHOOL_PHONE
+                  optional: true
+            - name: SCHOOL_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.appSecrets }}
+                  key: SCHOOL_EMAIL
+                  optional: true
           livenessProbe:
             httpGet:
               path: /

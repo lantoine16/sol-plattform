@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sol
+  namespace: argocd  # Adjust if ArgoCD is in a different namespace
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/lantoine16/sol-plattform.git  # GitHub Repository URL
+    targetRevision: main  # or your default branch
+    path: helm/sol
+    helm:
+      valueFiles:
+        - values.yaml
+      # Optional: Override values for different environments
+      # values: |
+      #   image:
+      #     tag: "v1.0.0"
+      #   ingress:
+      #     hosts:
+      #       - host: sol.production.example.com
+      #         paths:
+      #           - path: /
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sol  # Namespace where the app will be deployed
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+  revisionHistoryLimit: 10
+
+
