@@ -80,6 +80,12 @@ spec:
                   name: {{ .Values.secrets.appSecrets }}
                   key: SCHOOL_EMAIL
                   optional: true
+            - name: IMPRESSUM_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.appSecrets }}
+                  key: IMPRESSUM_URL
+                  optional: true
           livenessProbe:
             httpGet:
               path: /
