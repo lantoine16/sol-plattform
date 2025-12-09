@@ -1,0 +1,43 @@
+# Helm Chart Konfiguration für SOL (SelbstorganisiertesLernenCMS)
+# Diese Datei enthält alle konfigurierbaren Werte für das Deployment
+
+# Name der Anwendung (wird für alle Kubernetes Ressourcen verwendet)
+name: sol
+
+# Docker Image Konfiguration
+# Diese Werte werden vom CI/CD Pipeline aktualisiert
+image:
+  repository: ghcr.io/lantoine16/sol-plattform  # GitHub Container Registry Pfad
+  pullPolicy: Always  # Always = immer das neueste Image ziehen
+  tag: "latest"  # TODO: Passe an dein Tagging-Schema an
+
+# Kubernetes Service Konfiguration
+service:
+  type: LoadBalancer # Service Typ (LoadBalancer = extern erreichbar, NodePort = Port auf jedem Node)
+  port: 3000 # Port auf dem der Service läuft, muss mit dem Port im Dockerfile übereinstimmen
+
+# Ingress Konfiguration (externe Erreichbarkeit)
+ingress:
+  enabled: false # Ingress aktivieren
+  host: sol.example.com  # TODO: Ersetze mit deiner Domain
+  # Optional: Weitere Ingress-Annotations
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+# Secrets Konfiguration
+# WICHTIG: Die Secrets müssen vorher im Kubernetes Cluster erstellt werden!
+secrets:
+  dockerImages: ""  # Optional: Name des Image Pull Secrets (z.B. für private Registry)
+  appSecrets: "sol-secrets"  # Name des Secrets mit PAYLOAD_SECRET und DATABASE_URI
+
+# Ressourcen-Limits (optional, aber empfohlen)
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 500m
+    memory: 1Gi
+
+# Replica Count
+replicas: 2  # Anzahl der Pod-Instanzen für High Availability
