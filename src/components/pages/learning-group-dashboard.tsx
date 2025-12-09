@@ -1,5 +1,9 @@
 import type { AdminViewServerProps } from 'payload'
 
+// Ensure this page is always rendered dynamically so searchParams and auth headers
+// (for preference lookups) are available in production.
+export const dynamic = 'force-dynamic'
+
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { Gutter, SetStepNav, StepNavItem } from '@payloadcms/ui'
 import React from 'react'
@@ -58,7 +62,7 @@ export async function LearningGroupDashboardView({
   const [
     { ids: selectedLearningGroupIds, needToSyncParams: needToSyncLearningGroupParams },
     { ids: selectedSubjectIds, needToSyncParams: needToSyncSubjectParams },
-    {ids: sortParam, needToSyncParams: needToSyncSortParams}
+    { ids: sortParam, needToSyncParams: needToSyncSortParams },
   ] = await Promise.all([
     learningGroupDashboardService.getFilterValues(
       searchParams,
@@ -77,7 +81,7 @@ export async function LearningGroupDashboardView({
       SORT_SEARCH_PARAM_KEY,
       DASHBOARD_SORT_PREFERENCE_KEY,
       ['lastname'],
-    )
+    ),
   ])
 
   const {
