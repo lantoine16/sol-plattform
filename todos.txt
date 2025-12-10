@@ -16,6 +16,7 @@ Verschönerungen:
     - bei Aufgabe ersetllen -> Block hinzufügen bei nur einer Auswahlmöglichkeit diesen direkt hinzufügen
     - Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
     - API Button entfernen
+    - Padding bei Ansichten gleich
 
 Performance:
     - Performanceoptimierung bei Sammelabfragen
@@ -26,3 +27,10 @@ Wartung:
  TODO: Tailwind-Styles Workaround (uas custom.css wieder custom.scss machen sodass die layout.tsx unverädnert bleibt
 
     5. Spalten an Postion 3
+
+
+Hosting:
+
+Domain Mit TLS
+Impressumlink
+Filter Speichern

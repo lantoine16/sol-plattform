@@ -13,13 +13,13 @@ image:
 
 # Kubernetes Service Konfiguration
 service:
-  type: LoadBalancer # Service Typ (LoadBalancer = extern erreichbar, NodePort = Port auf jedem Node)
+  type: ClusterIP # Service Typ (LoadBalancer = extern erreichbar, NodePort = Port auf jedem Node)
   port: 3000 # Port auf dem der Service läuft, muss mit dem Port im Dockerfile übereinstimmen
 
 # Ingress Konfiguration (externe Erreichbarkeit)
 ingress:
-  enabled: false # Ingress aktivieren
-  host: sol.example.com  # TODO: Ersetze mit deiner Domain
+  enabled: true # Ingress aktivieren
+  host: sol.igs-ingelheim.de  # TODO: Ersetze mit deiner Domain
   # Optional: Weitere Ingress-Annotations
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
