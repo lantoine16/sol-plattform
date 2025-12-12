@@ -15,15 +15,6 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-      # Optional: Override values for different environments
-      # values: |
-      #   image:
-      #     tag: "v1.0.0"
-      #   ingress:
-      #     hosts:
-      #       - host: sol.production.example.com
-      #         paths:
-      #           - path: /
 
   destination:
     server: https://kubernetes.default.svc
@@ -36,6 +27,10 @@ spec:
       allowEmpty: false
     syncOptions:
       - CreateNamespace=true
+      - Replace=true  # Ersetzt Ressourcen statt sie zu aktualisieren (erzwingt komplette Neuinstallation)
+      - PrunePropagationPolicy=foreground  # Löscht abhängige Ressourcen zuerst
+      - PruneLast=true  # Prune wird zuletzt ausgeführt (keine Downtime)
+      - ApplyOutOfSyncOnly=false  # Wende auch an, wenn bereits synchronisiert
     retry:
       limit: 5
       backoff:
