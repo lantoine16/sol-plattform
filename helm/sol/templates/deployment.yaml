@@ -14,11 +14,6 @@ spec:
     metadata:
       labels:
         app: {{ .Values.name }}
-      annotations:
-        # Diese Annotation triggert einen Rollout, wenn sich das Image ändert
-        deployment.kubernetes.io/revision: "{{ .Release.Revision }}"
-        # Timestamp für Rollout-Trigger bei Änderungen
-        rollme: {{ now | unixEpoch }}
     spec:
       {{- if .Values.secrets.dockerImages }}
       imagePullSecrets:
