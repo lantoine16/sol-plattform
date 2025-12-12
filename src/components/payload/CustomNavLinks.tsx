@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { NavGroup, Link, useAuth } from '@payloadcms/ui'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   USER_ROLE_PUPIL,
   USER_ROLE_TEACHER,
@@ -10,6 +10,7 @@ import {
 
 export const BeforeNavLinks = () => {
   const pathname = usePathname()
+  const router = useRouter()
   const { user } = useAuth()
 
   const dashboardHref = '/dashboard'
@@ -27,6 +28,12 @@ export const BeforeNavLinks = () => {
             href={dashboardHref}
             className="nav__link"
             id="nav-dashboard"
+            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+              if (!isDashboardActive) {
+                e.preventDefault()
+                router.push(dashboardHref)
+              }
+            }}
             style={{
               cursor: isDashboardActive ? 'text' : 'pointer',
               pointerEvents: isDashboardActive ? 'none' : 'auto',
@@ -39,6 +46,12 @@ export const BeforeNavLinks = () => {
             href={detailViewHref}
             className="nav__link"
             id="nav-detail-view"
+            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+              if (!isDetailViewActive) {
+                e.preventDefault()
+                router.push(detailViewHref)
+              }
+            }}
             style={{
               cursor: isDetailViewActive ? 'text' : 'pointer',
               pointerEvents: isDetailViewActive ? 'none' : 'auto',
@@ -54,6 +67,12 @@ export const BeforeNavLinks = () => {
           href={taskBoardHref}
           className="nav__link"
           id="nav-task-board"
+          onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+            if (!isTaskBoardActive) {
+              e.preventDefault()
+              router.push(taskBoardHref)
+            }
+          }}
           style={{
             cursor: isTaskBoardActive ? 'text' : 'pointer',
             pointerEvents: isTaskBoardActive ? 'none' : 'auto',

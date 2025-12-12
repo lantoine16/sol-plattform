@@ -1,9 +1,5 @@
 import type { AdminViewServerProps } from 'payload'
 
-// Ensure this page is always rendered dynamically so searchParams and auth headers
-// (for preference lookups) are available in production.
-export const dynamic = 'force-dynamic'
-
 import { DefaultTemplate } from '@payloadcms/next/templates'
 import { Gutter, SetStepNav, StepNavItem } from '@payloadcms/ui'
 import React from 'react'

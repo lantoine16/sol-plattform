@@ -74,9 +74,8 @@ export async function LearningGroupDetailsView({
       SUBJECT_SEARCH_PARAM_KEY,
       SELECTED_SUBJECTS_PREFERENCE_KEY,
       subjects.map((subject) => subject.id),
-    )
+    ),
   ])
-
 
   const users = await userRepository.findPupilsByLearningGroup(
     selectedLearningGroupIds?.[0] ?? '',
@@ -143,7 +142,7 @@ export async function LearningGroupDetailsView({
         locale={initPageResult.locale}
         params={params}
         permissions={initPageResult.permissions}
-        user={initPageResult.req.user || undefined}
+        user={initPageResult.req.user}
         searchParams={searchParams}
       >
         <SetStepNav nav={steps} />

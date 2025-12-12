@@ -133,9 +133,6 @@ export class LearningGroupDashboardService {
           }
         })
 
-
-
-
         userDefaultLearningLocationIds.push({
           userId: user.id,
           learningLocationId:
