@@ -28,6 +28,7 @@ export const BeforeNavLinks = () => {
             href={dashboardHref}
             className="nav__link"
             id="nav-dashboard"
+            //prevent caching searchParams
             onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
               if (!isDashboardActive) {
                 e.preventDefault()
@@ -46,6 +47,7 @@ export const BeforeNavLinks = () => {
             href={detailViewHref}
             className="nav__link"
             id="nav-detail-view"
+            //prevent caching searchParams
             onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
               if (!isDetailViewActive) {
                 e.preventDefault()
@@ -67,6 +69,7 @@ export const BeforeNavLinks = () => {
           href={taskBoardHref}
           className="nav__link"
           id="nav-task-board"
+          //prevent caching searchParams
           onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
             if (!isTaskBoardActive) {
               e.preventDefault()
