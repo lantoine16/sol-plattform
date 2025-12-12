@@ -154,9 +154,7 @@ export async function LearningGroupDetailsView({
               selectedLearningGroupId={selectedLearningGroupIds}
               selectedSubjectIds={selectedSubjectIds}
             />
-            <div className="px-4">
-              <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
-            </div>
+            <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
           </div>
         </Gutter>
       </DefaultTemplate>

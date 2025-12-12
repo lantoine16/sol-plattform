@@ -114,7 +114,7 @@ export async function LearningGroupDashboardView({
         <SetStepNav nav={steps} />
         <Gutter>
           <div className="space-y-8">
-            <div className="flex justify-between items-center flex-wrap flex-row px-4">
+            <div className="flex justify-between items-center flex-wrap flex-row">
               <LearningGroupSubjectsSelectors
                 learningGroups={learningGroups}
                 subjects={subjects}
@@ -123,13 +123,11 @@ export async function LearningGroupDashboardView({
               />
               <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
             </div>
-            <div className="px-4">
-              <LearningGroupDashboardTable
-                users={usersWithTaskProgress}
-                learningLocations={learningLocations}
-                initialSortParam={sortParam as SortField[]}
-              />
-            </div>
+            <LearningGroupDashboardTable
+              users={usersWithTaskProgress}
+              learningLocations={learningLocations}
+              initialSortParam={sortParam as SortField[]}
+            />
           </div>
         </Gutter>
       </DefaultTemplate>
