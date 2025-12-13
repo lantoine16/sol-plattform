@@ -37,10 +37,9 @@ export default buildConfig({
       afterLogin: ['@/components/payload/LegalLinks'],
       // Nav: '@/components/CustomNav',
       views: {
-        // Learning Group Dashboard - zeigt alle Schüler der ausgewählten Lerngruppe
-        learningGroupDashboard: {
+        dashboard: {
           Component: '@/components/pages/learning-group-dashboard',
-          path: '/dashboard',
+          path: '/',
         },
         // Detailansicht - zeigt die Detailansicht für Lerngruppen im Admin-Bereich
         detailView: {

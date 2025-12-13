@@ -8,7 +8,7 @@ import { LearningGroupSubjectsSelectors } from '@/components/features/learning-g
 import { LearningGroupDashboardTable } from '@/components/features/dashboard/learning-group-dashboard-table'
 import { ResetUserStatuses } from '../features/reset-user-statuses'
 import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
-import { USER_ROLE_ADMIN, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
+import { USER_ROLE_ADMIN, USER_ROLE_PUPIL, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
 import {
   SELECTED_LEARNING_GROUP_PREFERENCE_KEY,
   SELECTED_SUBJECTS_PREFERENCE_KEY,
@@ -23,6 +23,7 @@ import {
 import { subjectRepository } from '@/lib/data/repositories/subject.repository'
 import { learningGroupRepository } from '@/lib/data/repositories/learning-group.repository'
 import type { SortField } from '@/components/features/dashboard/learning-group-dashboard-table'
+import { redirect } from 'next/navigation'
 export async function LearningGroupDashboardView({
   initPageResult,
   params,
@@ -32,6 +33,9 @@ export async function LearningGroupDashboardView({
     return <p>You must be logged in to view this page.</p>
   }
 
+  if (initPageResult.req.user.role === USER_ROLE_PUPIL) {
+    redirect('/taskboard')
+  }
   if (
     initPageResult.req.user.role !== USER_ROLE_ADMIN &&
     initPageResult.req.user.role !== USER_ROLE_TEACHER
@@ -43,12 +47,6 @@ export async function LearningGroupDashboardView({
     return <div>No search params</div>
   }
 
-  const steps: StepNavItem[] = [
-    {
-      url: '/dashboard',
-      label: 'Lerngruppenübersicht',
-    },
-  ]
 
   const [learningGroups, subjects] = await Promise.all([
     learningGroupRepository.findAllSorted(),
@@ -101,36 +99,24 @@ export async function LearningGroupDashboardView({
         sortParam={sortParam}
         needToSyncSortParams={needToSyncSortParams}
       />
-      <DefaultTemplate
-        visibleEntities={initPageResult.visibleEntities}
-        i18n={initPageResult.req.i18n}
-        payload={initPageResult.req.payload}
-        locale={initPageResult.locale}
-        params={params}
-        permissions={initPageResult.permissions}
-        user={initPageResult.req.user || undefined}
-        searchParams={searchParams}
-      >
-        <SetStepNav nav={steps} />
-        <Gutter>
-          <div className="space-y-8">
-            <div className="flex justify-between items-center flex-wrap flex-row">
-              <LearningGroupSubjectsSelectors
-                learningGroups={learningGroups}
-                subjects={subjects}
-                selectedLearningGroupId={selectedLearningGroupIds}
-                selectedSubjectIds={selectedSubjectIds}
-              />
-              <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
-            </div>
-            <LearningGroupDashboardTable
-              users={usersWithTaskProgress}
-              learningLocations={learningLocations}
-              initialSortParam={sortParam as SortField[]}
+      <Gutter>
+        <div className="space-y-8">
+          <div className="flex justify-between items-center flex-wrap flex-row">
+            <LearningGroupSubjectsSelectors
+              learningGroups={learningGroups}
+              subjects={subjects}
+              selectedLearningGroupId={selectedLearningGroupIds}
+              selectedSubjectIds={selectedSubjectIds}
             />
+            <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
           </div>
-        </Gutter>
-      </DefaultTemplate>
+          <LearningGroupDashboardTable
+            users={usersWithTaskProgress}
+            learningLocations={learningLocations}
+            initialSortParam={sortParam as SortField[]}
+          />
+        </div>
+      </Gutter>
     </>
   )
 }

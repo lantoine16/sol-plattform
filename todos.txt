@@ -4,7 +4,6 @@ Features:
     - Taskboard Lernort Filter nach oben rechts verschieben und in eine eigene Komponente packen
     - Email-adapter einrichten
     - Detailansicht: Scrollen, alle Zellen klickbar, Darkmode, Icons
-    - Dashboard auf Nutzerabhängige Ansichtsseite umleiten => vor allem bei Schülern wichtig
     
 Nutzer: 
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
@@ -17,6 +16,7 @@ Verschönerungen:
     - Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
     - API Button entfernen
     - Padding bei Ansichten gleich
+    - BreadcrumbIcon als Schüler nicht klickbar machen
 
 Performance:
     - Performanceoptimierung bei Sammelabfragen

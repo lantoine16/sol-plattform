@@ -13,10 +13,10 @@ export const BeforeNavLinks = () => {
   const router = useRouter()
   const { user } = useAuth()
 
-  const dashboardHref = '/dashboard'
+  const dashboardHref = '/'
   const detailViewHref = '/detailView'
   const taskBoardHref = '/taskboard'
-  const isDashboardActive = pathname.includes(dashboardHref)
+  const isDashboardActive = pathname === '/'
   const isDetailViewActive = pathname.includes(detailViewHref)
   const isTaskBoardActive = pathname.includes(taskBoardHref)
 
