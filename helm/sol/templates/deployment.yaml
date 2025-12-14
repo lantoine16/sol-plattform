@@ -9,6 +9,9 @@ metadata:
     argocd.argoproj.io/sync-wave: "0"
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    {{- if .Values.image.buildTimestamp }}
+    image.build-timestamp: "{{ .Values.image.buildTimestamp }}"
+    {{- end }}
 spec:
   replicas: {{ .Values.replicas }}
   selector:

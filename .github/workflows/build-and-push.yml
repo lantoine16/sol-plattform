@@ -27,12 +27,14 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write  # Wird benötigt um buildTimestamp in values.yaml zu committen
       packages: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -70,3 +72,26 @@ jobs:
           platforms: linux/amd64
           # Multi-arch builds kosten mehr Zeit/Minuten
           # Wenn du ARM64 brauchst, füge ,linux/arm64 hinzu
+
+      # Update Build Timestamp in Helm values für Argo CD Sync
+      - name: Update build timestamp in Helm values
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          # Aktueller Timestamp im ISO 8601 Format
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          
+          # Aktualisiere buildTimestamp in values.yaml
+          sed -i "s|buildTimestamp:.*|buildTimestamp: \"${TIMESTAMP}\"|g" helm/sol/values.yaml
+          
+          # Git konfigurieren
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Änderungen committen und pushen (nur wenn es Änderungen gibt)
+          git add helm/sol/values.yaml
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update build timestamp to ${TIMESTAMP}"
+            git push
+          fi

@@ -294,7 +294,7 @@ export default function DatenschutzPage() {
 
         <div className="mt-8 pt-6 border-t border-gray-200">
           <Link
-            href="/"
+            href="/login"
             className="text-gray-600 no-underline hover:text-gray-800 hover:underline transition-colors"
           >
             Zurück zur Login-Seite
