@@ -8,7 +8,11 @@ import { LearningGroupSubjectsSelectors } from '@/components/features/learning-g
 import { LearningGroupDashboardTable } from '@/components/features/dashboard/learning-group-dashboard-table'
 import { ResetUserStatuses } from '../features/reset-user-statuses'
 import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
-import { USER_ROLE_ADMIN, USER_ROLE_PUPIL, USER_ROLE_TEACHER } from '@/domain/constants/user-role.constants'
+import {
+  USER_ROLE_ADMIN,
+  USER_ROLE_PUPIL,
+  USER_ROLE_TEACHER,
+} from '@/domain/constants/user-role.constants'
 import {
   SELECTED_LEARNING_GROUP_PREFERENCE_KEY,
   SELECTED_SUBJECTS_PREFERENCE_KEY,
@@ -46,7 +50,6 @@ export async function LearningGroupDashboardView({
   if (!searchParams) {
     return <div>No search params</div>
   }
-
 
   const [learningGroups, subjects] = await Promise.all([
     learningGroupRepository.findAllSorted(),

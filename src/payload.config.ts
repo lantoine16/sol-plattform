@@ -40,15 +40,27 @@ export default buildConfig({
         dashboard: {
           Component: '@/components/pages/learning-group-dashboard',
           path: '/',
+          meta: {
+            title: 'Dashboard',
+            description: 'Dashboard für das Lernjobmonitoring',
+          },
         },
         // Detailansicht - zeigt die Detailansicht für Lerngruppen im Admin-Bereich
         detailView: {
           Component: '@/components/pages/learning-group-details',
           path: '/detailView',
+          meta: {
+            title: 'Detailansicht',
+            description: 'Detailansicht für das Lernjobmonitoring',
+          },
         },
         taskBoard: {
           Component: '@/components/pages/task-board-page',
           path: '/taskboard',
+          meta: {
+            title: 'Taskboard',
+            description: 'Taskboard für das Lernjobmonitoring',
+          },
         },
       },
     },
