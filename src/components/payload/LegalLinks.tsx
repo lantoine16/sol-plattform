@@ -1,29 +1,9 @@
-'use client'
-
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 export const LegalLinks = () => {
-  const [impressumUrl, setImpressumUrl] = useState<string>('')
+  const impressumUrl = process.env.IMPRESSUM_URL
   const datenschutzUrl = '/datenschutz'
-
-  // Lade Impressum-URL zur Laufzeit über API-Route
-  useEffect(() => {
-    fetch('/api/config')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.impressumUrl) {
-          setImpressumUrl(data.impressumUrl)
-        }
-      })
-      .catch(() => {
-        // Fallback auf NEXT_PUBLIC_ Variable, falls API nicht verfügbar
-        const fallbackUrl = process.env.NEXT_PUBLIC_IMPRESSUM_URL
-        if (fallbackUrl) {
-          setImpressumUrl(fallbackUrl)
-        }
-      })
-  }, [])
 
   return (
     <div className="flex flex-col items-center gap-2 py-4">
