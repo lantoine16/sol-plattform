@@ -16,20 +16,22 @@ import { LearningLocationSelector } from '../features/task-board/learning-locati
 import { SELECTED_SUBJECTS_PREFERENCE_KEY } from '@/domain/constants/preferences-keys.constants'
 import { SUBJECT_SEARCH_PARAM_KEY } from '@/domain/constants/search-param-keys.constants'
 import SyncSearchParams from '../features/learning-group-subjects-selectors/sync-search-params'
+import { redirect } from 'next/navigation'
+
 export async function TaskBoardPage({
   initPageResult,
   params,
   searchParams,
 }: AdminViewServerProps) {
   if (!initPageResult.req.user) {
-    return <p>You must be logged in to view this page.</p>
+    redirect('/login')
   }
 
   if (
     initPageResult.req.user.role !== USER_ROLE_ADMIN &&
     initPageResult.req.user.role !== USER_ROLE_PUPIL
   ) {
-    return <p>You are not authorized to view this page.</p>
+    redirect('/')
   }
 
   if (!searchParams) {

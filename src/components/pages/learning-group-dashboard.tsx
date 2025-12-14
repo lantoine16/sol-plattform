@@ -1,7 +1,6 @@
 import type { AdminViewServerProps } from 'payload'
 
-import { DefaultTemplate } from '@payloadcms/next/templates'
-import { Gutter, SetStepNav, StepNavItem } from '@payloadcms/ui'
+import { Gutter } from '@payloadcms/ui'
 import React from 'react'
 import { learningGroupDashboardService } from '@/lib/services/learning-group-dashboard.service'
 import { LearningGroupSubjectsSelectors } from '@/components/features/learning-group-subjects-selectors'
@@ -34,7 +33,7 @@ export async function LearningGroupDashboardView({
   searchParams,
 }: AdminViewServerProps) {
   if (!initPageResult.req.user) {
-    return <p>You must be logged in to view this page.</p>
+    redirect('/login')
   }
 
   if (initPageResult.req.user.role === USER_ROLE_PUPIL) {

@@ -26,6 +26,7 @@ import {
 import SyncSearchParams from '../features/learning-group-subjects-selectors/sync-search-params'
 import { subjectRepository } from '@/lib/data/repositories/subject.repository'
 import { learningGroupRepository } from '@/lib/data/repositories/learning-group.repository'
+import { redirect } from 'next/navigation'
 
 export async function LearningGroupDetailsView({
   initPageResult,
@@ -33,14 +34,14 @@ export async function LearningGroupDetailsView({
   searchParams,
 }: AdminViewServerProps) {
   if (!initPageResult.req.user) {
-    return <p>You must be logged in to view this page.</p>
+    redirect('/login')
   }
 
   if (
     initPageResult.req.user.role !== USER_ROLE_ADMIN &&
     initPageResult.req.user.role !== USER_ROLE_TEACHER
   ) {
-    return <p>You are not authorized to view this page.</p>
+    redirect('/taskboard')
   }
 
   if (!searchParams) {
