@@ -19,6 +19,7 @@ import type { LearningLocation } from '@/payload-types'
 import { usePreferences } from '@payloadcms/ui'
 import { DASHBOARD_SORT_PREFERENCE_KEY } from '@/domain/constants/preferences-keys.constants'
 import { SORT_SEARCH_PARAM_KEY } from '@/domain/constants/search-param-keys.constants'
+import { StatusIcon } from '../status-icon'
 export type SortField =
   | 'firstname'
   | '-firstname'
@@ -232,25 +233,25 @@ export function LearningGroupDashboardTable({
                   <td className="table__cell p-1 min-w-fit text-xs">
                     <div className="flex items-center gap-1">
                       <div className="flex items-center gap-1.5">
-                        <Circle className="h-3 w-3 text-gray-400" />
-                        <span className="text-xs text-gray-600">
+                        <StatusIcon status="not-started" iconSize="w-3 h-3" />
+                        <span className="text-xs text-red-700">
                           {userWithTaskProgress.amountOfNotStartedTasks}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Loader2 className="h-3 w-3 text-orange-500" />
-                        <span className="text-xs text-orange-600">
+                        <StatusIcon status="in-progress" iconSize="w-3 h-3" />
+                        <span className="text-xs text-yellow-600">
                           {userWithTaskProgress.progressTasksNames.length > 0 && (
                             <>{userWithTaskProgress.progressTasksNames.join(', ')}</>
                           )}
                           {userWithTaskProgress.progressTasksNames.length === 0 && (
-                            <span className="text-xs text-orange-600">0</span>
+                            <span className="text-xs text-yellow-600">0</span>
                           )}
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="h-3 w-3 text-green-600" />
-                        <span className="text-xs text-green-600">
+                        <StatusIcon status="finished" iconSize="w-3 h-3" />
+                        <span className="text-xs text-green-800">
                           {userWithTaskProgress.amountOfFinishedTasks}
                         </span>
                       </div>

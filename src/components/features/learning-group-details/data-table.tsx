@@ -1,31 +1,27 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useTheme } from 'next-themes'
 import type { LearningLocation, Task } from '@/payload-types'
 import type { UserWithTaskProgress } from '@/lib/types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TaskBoardComponent } from '../task-board/task-board-component'
-import { StatusIcon } from './status-icon'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
 import { useRouter } from 'next/navigation'
+import { StatusIcon } from '../status-icon'
 export function DataTable({
   columns,
   data,
   learningLocations,
 }: {
-  // This receives the tasks array
+  // This receives the tasks array (will be columns in the table)
   columns: Task[]
-  // This receives the pupils array
+  // This receives the pupils array (will be rows in the table)
   data: UserWithTaskProgress[]
   learningLocations: LearningLocation[]
 }) {
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
-  const { theme, resolvedTheme } = useTheme()
 
   const router = useRouter()
-
-  const isDarkMode = resolvedTheme === 'dark' || theme === 'dark'
 
   // Update selectedUser when data changes (e.g. after router.refresh)
   useEffect(() => {
@@ -37,7 +33,7 @@ export function DataTable({
     }
   }, [data, selectedUser])
 
-  const handleColumnClick = (user: UserWithTaskProgress) => {
+  const handleRowClick = (user: UserWithTaskProgress) => {
     setSelectedUser(user)
   }
 
@@ -67,25 +63,6 @@ export function DataTable({
     return map
   }, [data])
 
-  // Kompakte Namensdarstellung für Schüler: "Vorname + erster Buchstabe des Nachnamens"
-  const getCompactName = (userWithTask: UserWithTaskProgress) => {
-    const lastNameInitial = userWithTask.user.lastname?.charAt(0).toUpperCase() || ''
-    const fullName = `${userWithTask.user.firstname || ''} ${lastNameInitial}.`.trim()
-    // Maximal 14 Zeichen, sonst mit ... abkürzen
-    if (fullName.length > 14) {
-      return fullName.substring(0, 11) + '...'
-    }
-    return fullName
-  }
-
-  // Kürze Task-Beschreibungen für kompakte Darstellung
-  const getShortTaskDescription = (description: string | null | undefined, maxLength = 15) => {
-    if (!description) return ''
-    return description.length > maxLength
-      ? description.substring(0, maxLength) + '...'
-      : description
-  }
-
   // Hole Status für eine bestimmte Aufgabe × Schüler Kombination
   const getTaskStatusForUser = (taskId: string, userId: string) => {
     const userMap = userTaskStatusMap.get(userId)
@@ -103,132 +80,77 @@ export function DataTable({
     if (!subject || !subject.color) return null
 
     // Color ist als String-Wert gespeichert (z.B. 'blue', 'green')
-    return getSubjectColor(subject.color, isDarkMode)
+    return getSubjectColor(subject.color, true)
   }
 
   return (
     <>
-      <div className="w-full overflow-auto max-h-[calc(100vh-200px)]">
-        <div className="inline-block min-w-full">
-          <table
-            cellPadding="0"
-            cellSpacing="0"
-            className="border-collapse w-full"
-            style={{ tableLayout: 'auto' }}
-          >
-            <thead className="sticky top-0 z-10 bg-background">
-              <tr>
-                <th
-                  className="sticky left-0 z-20 bg-background border-r border-b p-1 text-left font-semibold text-[10px] leading-tight"
-                  style={{
-                    width: '70px',
-                    minWidth: '70px',
-                    maxWidth: '70px',
-                  }}
-                >
-                  Aufgabe
-                </th>
-                {data.map((userWithTask) => {
-                  const compactName = getCompactName(userWithTask)
-                  return (
-                    <th
-                      key={userWithTask.user.id}
-                      className="border-b border-r p-1 font-semibold text-[10px] leading-tight hover:bg-accent/50 transition-colors cursor-pointer"
-                      style={{
-                        minWidth: '28px',
-                        width: 'auto',
-                        height: '60px',
-                        writingMode: 'vertical-rl',
-                        textOrientation: 'mixed',
-                        verticalAlign: 'bottom',
-                        position: 'relative',
-                      }}
-                      title={`${userWithTask.user.lastname || ''}, useEffect${userWithTask.user.firstname || ''}`}
-                      onClick={() => handleColumnClick(userWithTask)}
-                    >
-                      <div
-                        className="whitespace-nowrap"
-                        style={{
-                          position: 'absolute',
-                          bottom: '4px',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                        }}
-                      >
-                        {compactName}
-                      </div>
-                    </th>
-                  )
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              {columns.length > 0 ? (
-                columns.map((task) => {
-                  const taskId = String(task.id)
-                  const shortDescription = getShortTaskDescription(task.title)
-                  const backgroundColor = getSubjectColorFromTask(task)
-
-                  return (
-                    <tr
-                      key={task.id}
-                      style={{
-                        height: '28px',
-                      }}
-                    >
-                      <td
-                        className="sticky left-0 z-10 border-r border-b p-1 text-[10px] leading-none"
-                        style={{
-                          width: '70px',
-                          minWidth: '70px',
-                          maxWidth: '70px',
-                        }}
-                        title={task.title || ''}
-                      >
-                        {shortDescription}
-                      </td>
-                      {data.map((userWithTask) => {
-                        const taskStatus = getTaskStatusForUser(taskId, userWithTask.user.id)
-                        return (
-                          <td
-                            key={userWithTask.user.id}
-                            className="border-r border-b p-0 text-center align-middle"
-                            style={{
-                              minWidth: '28px',
-                              width: 'auto',
-                              height: '28px',
-                              padding: '2px',
-                              backgroundColor: backgroundColor || undefined,
-                            }}
-                          >
-                            {taskStatus ? (
-                              <StatusIcon
-                                status={taskStatus.status}
-                                helpNeeded={taskStatus.helpNeeded}
-                                className="mx-auto"
-                              />
-                            ) : (
-                              <StatusIcon status={null} className="mx-auto" />
-                            )}
-                          </td>
-                        )
-                      })}
-                    </tr>
-                  )
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={data.length + 1}
-                    className="text-center p-4 text-sm text-muted-foreground"
+      <div id="learning-group-details-table" className="table__wrap text-sm">
+        <table className="table w-full">
+          <thead className="table__header">
+            <tr className="table__row">
+              <th className="table__header-cell min-w-fit ">
+                <span className="field-label unstyled">Vorname</span>
+              </th>
+              <th className="table__header-cell min-w-fit ">
+                <span className="field-label unstyled">Nachname</span>
+              </th>
+              {columns.map((task) => {
+                const backgroundColor = getSubjectColorFromTask(task)
+                return (
+                  <th
+                    key={task.id}
+                    className="table__header-cell min-w-fit  text-center"
+                    style={{
+                      color: backgroundColor || 'black',
+                    }}
+                    title={task.title || ''}
                   >
-                    Keine Daten vorhanden.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                    {task.title || ''}
+                  </th>
+                )
+              })}
+            </tr>
+          </thead>
+          <tbody className="table__body">
+            {data.length > 0 ? (
+              data.map((userWithTask) => {
+                return (
+                  <tr
+                    key={userWithTask.user.id}
+                    className="table__row cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    onClick={() => handleRowClick(userWithTask)}
+                  >
+                    <td className="table__cell min-w-fit">{userWithTask.user.firstname || ''}</td>
+                    <td className="table__cell min-w-fit">{userWithTask.user.lastname || ''}</td>
+                    {columns.map((task) => {
+                      const taskId = String(task.id)
+                      const taskStatus = getTaskStatusForUser(taskId, userWithTask.user.id)
+                      return (
+                        <td key={task.id} className="table__cell min-w-fit text-center">
+                          {taskStatus ? (
+                            <StatusIcon status={taskStatus.status} className="mx-auto" />
+                          ) : (
+                            <StatusIcon status={null} className="mx-auto" />
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                )
+              })
+            ) : (
+              <tr>
+                <td
+                  colSpan={columns.length + 2}
+                  className="table__cell text-center p-4 text-sm text-muted-foreground"
+                >
+                  Keine Daten vorhanden.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
       {selectedUser && (
         <TaskBoardComponent

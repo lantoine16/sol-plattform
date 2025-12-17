@@ -1,36 +1,42 @@
 Features:
     - „Bereit für Leistungsübersicht“ definieren
     - Bestätigen Button wenn man Stunde beendet
-    - Taskboard Lernort Filter nach oben rechts verschieben und in eine eigene Komponente packen
     - Email-adapter einrichten
-    - Detailansicht: Scrollen, alle Zellen klickbar, Darkmode, Icons
-    
-Nutzer: 
+    - Detailansicht: Scrollen, alle Zellen klickbar, Darkmode, Icons 
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
     - Benutzernamen unique machen
-
-Verschönerungen:
     - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
+
+Detailansicht:
+    - Performance: schauen ob man Zeile alle Werte nacheinandern schreiben kann ohne immer suchfuntkone zu nutzen
+    - Sortieren nach Vorname und Nachname und Speichern
+    - (eigene Sortkeys)
+    - sticky header
+
+UI Anpassungvorschläge:
+    - Dashboard:  5. Spalten an Postion 3, Name und Vorname zusammen (wird nicht umgesetzt)
+
+Beachten - komplizierter - Payload stellt das noch nich bereit:
+    - Tailwind-Styles Workaround (uas custom.css wieder custom.scss machen sodass die layout.tsx unverädnert bleibt
     - Bei Sammelerstellung [ohne Titel] Ertstelle wegmachen
     - bei Aufgabe ersetllen -> Block hinzufügen bei nur einer Auswahlmöglichkeit diesen direkt hinzufügen
-    - Bei Übersichtstabellen werden nur 10 Elemente des Joins angezeigt
     - API Button entfernen
-    - Padding bei Ansichten gleich
     - BreadcrumbIcon als Schüler nicht klickbar machen
+    - auf neustes Next.JS updaten sobald payload das unterstützt
+
 
 Performance:
     - Performanceoptimierung bei Sammelabfragen
 
-Wartung:
-    - Alle Packages updaten
-
- TODO: Tailwind-Styles Workaround (uas custom.css wieder custom.scss machen sodass die layout.tsx unverädnert bleibt
-
-    5. Spalten an Postion 3
+Nice To Have:
+Button Stundenanfang -> Stundneende wer hat wie viel emacht oder Staertdatum bie Tasks
+Spalten tauschen -> Aufgabne aan 3. Position
+Farben bei rot nicht angefangen, orange angefangen, Grün fertig
 
 
 Hosting:
-
-Domain Mit TLS
 Impressumlink
-Filter Speichern
+
+Leistungsnachweis: Eigener Typ definieren welche Aufgabne dazugehören
+
+PDF an Aufgabne hinzufügen
