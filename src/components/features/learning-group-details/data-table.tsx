@@ -7,7 +7,6 @@ import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TaskBoardComponent } from '../task-board/task-board-component'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
 import { useRouter } from 'next/navigation'
-import { StatusIcon } from '../status-icon'
 export function DataTable({
   columns,
   data,
@@ -126,13 +125,42 @@ export function DataTable({
                     {columns.map((task) => {
                       const taskId = String(task.id)
                       const taskStatus = getTaskStatusForUser(taskId, userWithTask.user.id)
+                      const subjectColor = getSubjectColorFromTask(task)
+                      const status = taskStatus?.status || null
+
+                      // Bestimme die Darstellung basierend auf dem Status
+                      let cellContent = null
+                      if (status === 'in-progress' && subjectColor) {
+                        // Dreieck (Hälfte des Rechtecks) mit Fachfarbe - von oben links
+                        cellContent = (
+                          <div
+                            style={{
+                              backgroundColor: subjectColor,
+                              clipPath: 'polygon(0 0, 0 100%, 100% 0)',
+                            }}
+                            className="w-full h-full"
+                          />
+                        )
+                      } else if (status === 'finished' && subjectColor) {
+                        // Vollständig gefüllt mit Fachfarbe
+                        cellContent = (
+                          <div
+                            style={{
+                              backgroundColor: subjectColor,
+                            }}
+                            className="w-full h-full"
+                          />
+                        )
+                      }
+                      // Wenn status null oder 'not-started', bleibt cellContent null (leer)
+
                       return (
-                        <td key={task.id} className="table__cell min-w-fit text-center">
-                          {taskStatus ? (
-                            <StatusIcon status={taskStatus.status} className="mx-auto" />
-                          ) : (
-                            <StatusIcon status={null} className="mx-auto" />
-                          )}
+                        <td
+                          key={task.id}
+                          className="table__cell min-w-fit text-center p-1"
+                          style={{ height: '40px'}}
+                        >
+                          {cellContent}
                         </td>
                       )
                     })}

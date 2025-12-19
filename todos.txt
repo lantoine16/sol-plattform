@@ -9,9 +9,13 @@ Features:
 
 Detailansicht:
     - Performance: schauen ob man Zeile alle Werte nacheinandern schreiben kann ohne immer suchfuntkone zu nutzen
-    - Sortieren nach Vorname und Nachname und Speichern
-    - (eigene Sortkeys)
     - sticky header
+    - Tabelle nach rechts scrollbar
+    - Hilfe und Partnerarbeit einfügen
+    - Ansicht Aufgabe nicht zugeordnet
+    - Statusicon immer nehmen für alle Icosn und größen bei Dashboard
+    - Namen kürten,
+    - Lernord und Level als letzte Spalte
 
 UI Anpassungvorschläge:
     - Dashboard:  5. Spalten an Postion 3, Name und Vorname zusammen (wird nicht umgesetzt)
