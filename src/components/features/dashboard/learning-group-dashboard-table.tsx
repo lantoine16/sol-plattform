@@ -1,15 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import {
-  Circle,
-  Loader2,
-  CheckCircle2,
-  HelpCircle,
-  Users,
-  ChevronUp,
-  ChevronDown,
-} from 'lucide-react'
+import { HelpCircle, Users, ChevronUp, ChevronDown } from 'lucide-react'
 import type { UserWithTaskProgressInformation } from '@/lib/services/learning-group-dashboard.service'
 import { GraduationIcon } from '@/components/ui/graduation-icon'
 import { TaskBoardComponent } from '@/components/features/task-board/task-board-component'
@@ -158,7 +150,7 @@ export function LearningGroupDashboardTable({
       <table className="table w-full">
         <thead className="table__header">
           <tr className="table__row">
-            <th className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs">
+            <th className="table__header-cell table__header-cell--sortable min-w-fit ">
               <div className="sort-column">
                 <span className="sort-column__label">
                   <span className="field-label unstyled">Vorname</span>
@@ -166,7 +158,7 @@ export function LearningGroupDashboardTable({
                 <SortButtons field="firstname" label="Vorname" />
               </div>
             </th>
-            <th className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs">
+            <th className="table__header-cell table__header-cell--sortable min-w-fit ">
               <div className="sort-column">
                 <span className="sort-column__label">
                   <span className="field-label unstyled">Nachname</span>
@@ -174,7 +166,13 @@ export function LearningGroupDashboardTable({
                 <SortButtons field="lastname" label="Nachname" />
               </div>
             </th>
-            <th className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs">
+            <th className="table__header-cell min-w-fit ">
+              <span>Aufgaben</span>
+            </th>
+            <th className="table__header-cell min-w-fit ">
+              <span>Hilfe & Partner</span>
+            </th>
+            <th className="table__header-cell table__header-cell--sortable min-w-fit ">
               <div className="sort-column">
                 <span className="sort-column__label">
                   <span className="field-label unstyled">Level</span>
@@ -182,19 +180,13 @@ export function LearningGroupDashboardTable({
                 <SortButtons field="level" label="Level" />
               </div>
             </th>
-            <th className="table__header-cell table__header-cell--sortable min-w-fit p-1 text-xs">
+            <th className="table__header-cell table__header-cell--sortable min-w-fit ">
               <div className="sort-column">
                 <span className="sort-column__label">
                   <span className="field-label unstyled">Lernort</span>
                 </span>
                 <SortButtons field="learningLocation" label="Lernort" />
               </div>
-            </th>
-            <th className="table__header-cell min-w-fit p-1 text-xs">
-              <span>Aufgaben</span>
-            </th>
-            <th className="table__header-cell min-w-fit p-1 text-xs">
-              <span>Hilfe & Partner</span>
             </th>
           </tr>
         </thead>
@@ -207,13 +199,60 @@ export function LearningGroupDashboardTable({
                   className="table__row cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   onClick={() => handleRowClick(userWithTaskProgress)}
                 >
-                  <td className="table__cell p-1 min-w-fit text-xs">
+                  <td className="table__cell min-w-fit ">
                     {userWithTaskProgress.user.firstname || ''}
                   </td>
-                  <td className="table__cell p-1 min-w-fit text-xs">
+                  <td className="table__cell min-w-fit ">
                     {userWithTaskProgress.user.lastname || ''}
                   </td>
-                  <td className="table__cell min-w-fit p-1 text-xs">
+                  <td className="table__cell min-w-fit ">
+                    <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1.5">
+                        <StatusIcon status="not-started" />
+                        <span className=" text-red-700">
+                          {userWithTaskProgress.amountOfNotStartedTasks}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <StatusIcon status="in-progress" />
+                        <span className=" text-yellow-600">
+                          {userWithTaskProgress.progressTasksNames.length > 0 && (
+                            <>{userWithTaskProgress.progressTasksNames.join(', ')}</>
+                          )}
+                          {userWithTaskProgress.progressTasksNames.length === 0 && (
+                            <span className=" text-yellow-600">0</span>
+                          )}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <StatusIcon status="finished" />
+                        <span className=" text-green-800">
+                          {userWithTaskProgress.amountOfFinishedTasks}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="table__cell min-w-fit ">
+                    <div className="flex items-center gap-1">
+                      {userWithTaskProgress.needHelpTasksNames.length > 0 && (
+                        <div className="flex items-center gap-1.5">
+                          <HelpCircle className="h-4.5 w-4.5 text-red-500" />
+                          <span className=" text-red-600">
+                            {userWithTaskProgress.needHelpTasksNames.join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {userWithTaskProgress.searchPartnerTasksNames.length > 0 && (
+                        <div className="flex items-center gap-1.5">
+                          <Users className="h-4.5 w-4.5 text-blue-500" />
+                          <span className=" text-blue-600">
+                            {userWithTaskProgress.searchPartnerTasksNames.join(', ')}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                  <td className="table__cell min-w-fit ">
                     <GraduationIcon
                       number={
                         userWithTaskProgress.user.graduation &&
@@ -221,61 +260,14 @@ export function LearningGroupDashboardTable({
                           ? userWithTaskProgress.user.graduation?.number
                           : 1
                       }
-                      className="h-4 w-4"
+                      className="h-4.5 w-4.5"
                     />
                   </td>
-                  <td className="table__cell p-1 min-w-fit text-xs">
+                  <td className="table__cell min-w-fit ">
                     {userWithTaskProgress.user.currentLearningLocation &&
                     typeof userWithTaskProgress.user.currentLearningLocation === 'object'
                       ? userWithTaskProgress.user.currentLearningLocation?.description
                       : '-'}
-                  </td>
-                  <td className="table__cell p-1 min-w-fit text-xs">
-                    <div className="flex items-center gap-1">
-                      <div className="flex items-center gap-1.5">
-                        <StatusIcon status="not-started" iconSize="w-3 h-3" />
-                        <span className="text-xs text-red-700">
-                          {userWithTaskProgress.amountOfNotStartedTasks}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <StatusIcon status="in-progress" iconSize="w-3 h-3" />
-                        <span className="text-xs text-yellow-600">
-                          {userWithTaskProgress.progressTasksNames.length > 0 && (
-                            <>{userWithTaskProgress.progressTasksNames.join(', ')}</>
-                          )}
-                          {userWithTaskProgress.progressTasksNames.length === 0 && (
-                            <span className="text-xs text-yellow-600">0</span>
-                          )}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <StatusIcon status="finished" iconSize="w-3 h-3" />
-                        <span className="text-xs text-green-800">
-                          {userWithTaskProgress.amountOfFinishedTasks}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="table__cell p-1 min-w-fit text-xs">
-                    <div className="flex items-center gap-1">
-                      {userWithTaskProgress.needHelpTasksNames.length > 0 && (
-                        <div className="flex items-center gap-1.5">
-                          <HelpCircle className="h-3 w-3 text-red-500" />
-                          <span className="text-xs text-red-600">
-                            {userWithTaskProgress.needHelpTasksNames.join(', ')}
-                          </span>
-                        </div>
-                      )}
-                      {userWithTaskProgress.searchPartnerTasksNames.length > 0 && (
-                        <div className="flex items-center gap-1.5">
-                          <Users className="h-3 w-3 text-blue-500" />
-                          <span className="text-xs text-blue-600">
-                            {userWithTaskProgress.searchPartnerTasksNames.join(', ')}
-                          </span>
-                        </div>
-                      )}
-                    </div>
                   </td>
                 </tr>
               )
