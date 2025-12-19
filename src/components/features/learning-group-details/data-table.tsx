@@ -84,14 +84,27 @@ export function DataTable({
 
   return (
     <>
-      <div id="learning-group-details-table" className="table__wrap text-sm">
+      <div
+        id="learning-group-details-table"
+        className="table__wrap text-sm overflow-x-auto overflow-y-auto h-full max-w-full"
+      >
         <table className="table w-full">
-          <thead className="table__header">
+          <thead className="table__header sticky top-0 z-10">
             <tr className="table__row">
-              <th className="table__header-cell min-w-fit ">
+              <th
+                className="table__header-cell min-w-fit sticky left-0 z-20"
+                style={{
+                  backgroundColor: 'var(--theme-elevation-0)',
+                }}
+              >
                 <span className="field-label unstyled">Vorname</span>
               </th>
-              <th className="table__header-cell min-w-fit ">
+              <th
+                className="table__header-cell min-w-fit sticky left-0 z-20"
+                style={{
+                  backgroundColor: 'var(--theme-elevation-0)',
+                }}
+              >
                 <span className="field-label unstyled">Nachname</span>
               </th>
               {columns.map((task) => {
@@ -99,9 +112,10 @@ export function DataTable({
                 return (
                   <th
                     key={task.id}
-                    className="table__header-cell min-w-fit  text-center"
+                    className="table__header-cell min-w-fit text-center"
                     style={{
                       color: backgroundColor || 'black',
+                      backgroundColor: 'var(--theme-elevation-0)',
                     }}
                     title={task.title || ''}
                   >
@@ -155,11 +169,7 @@ export function DataTable({
                       // Wenn status null oder 'not-started', bleibt cellContent null (leer)
 
                       return (
-                        <td
-                          key={task.id}
-                          className="table__cell min-w-fit text-center p-1"
-                          style={{ height: '40px'}}
-                        >
+                        <td key={task.id} className="table__cell min-w-fit text-center p-1 h-10">
                           {cellContent}
                         </td>
                       )

@@ -148,14 +148,18 @@ export async function LearningGroupDetailsView({
       >
         <SetStepNav nav={steps} />
         <Gutter>
-          <div className="space-y-8">
-            <LearningGroupSubjectsSelectors
-              learningGroups={learningGroups}
-              subjects={subjects}
-              selectedLearningGroupId={selectedLearningGroupIds}
-              selectedSubjectIds={selectedSubjectIds}
-            />
-            <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
+          <div className="flex flex-col h-[calc(100vh-100px)]">
+            <div className="shrink-0 mb-8">
+              <LearningGroupSubjectsSelectors
+                learningGroups={learningGroups}
+                subjects={subjects}
+                selectedLearningGroupId={selectedLearningGroupIds}
+                selectedSubjectIds={selectedSubjectIds}
+              />
+            </div>
+            <div className="flex-1 min-h-0">
+              <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
+            </div>
           </div>
         </Gutter>
       </DefaultTemplate>
