@@ -80,16 +80,16 @@ export async function LearningGroupDashboardView({
     ),
   ])
 
-  const {
-    users: usersWithTaskProgress,
-    taskProgressIds,
-    userDefaultLearningLocationIds,
-  } = await learningGroupDashboardService.getUsersWithTaskProgress(
-    selectedLearningGroupIds?.[0],
-    selectedSubjectIds,
-  )
-
-  const learningLocations = await learningLocationRepository.findAll()
+  const [
+    { users: usersWithTaskProgress, taskProgressIds, userDefaultLearningLocationIds },
+    learningLocations,
+  ] = await Promise.all([
+    learningGroupDashboardService.getUsersWithTaskProgress(
+      selectedLearningGroupIds?.[0],
+      selectedSubjectIds,
+    ),
+    learningLocationRepository.findAll(),
+  ])
 
   return (
     <>
