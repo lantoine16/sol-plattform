@@ -10,7 +10,7 @@ image:
   repository: ghcr.io/lantoine16/sol-plattform  # GitHub Container Registry Pfad
   pullPolicy: Always  # Always = immer das neueste Image ziehen
   tag: "latest"  # TODO: Passe an dein Tagging-Schema an
-  buildTimestamp: "2025-12-20T22:05:46Z"
+  buildTimestamp: "2025-12-20T22:19:52Z"
 
 # Kubernetes Service Konfiguration
 service:
