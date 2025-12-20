@@ -2,23 +2,17 @@ Features:
     - „Bereit für Leistungsübersicht“ definieren
     - Bestätigen Button wenn man Stunde beendet
     - Email-adapter einrichten
-    - Detailansicht: Scrollen, alle Zellen klickbar, Darkmode, Icons 
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
     - Benutzernamen unique machen
     - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
 
 Detailansicht:
     - Performance: schauen ob man Zeile alle Werte nacheinandern schreiben kann ohne immer suchfuntkone zu nutzen
-    - sticky header
-    - Tabelle nach rechts scrollbar
-    - Hilfe und Partnerarbeit einfügen
+ 
     - Ansicht Aufgabe nicht zugeordnet
     - Statusicon immer nehmen für alle Icosn und größen bei Dashboard
     - Namen kürten,
     - Lernord und Level als letzte Spalte
-
-UI Anpassungvorschläge:
-    - Dashboard:  5. Spalten an Postion 3, Name und Vorname zusammen (wird nicht umgesetzt)
 
 Beachten - komplizierter - Payload stellt das noch nich bereit:
     - Tailwind-Styles Workaround (uas custom.css wieder custom.scss machen sodass die layout.tsx unverädnert bleibt
@@ -34,8 +28,6 @@ Performance:
 
 Nice To Have:
 Button Stundenanfang -> Stundneende wer hat wie viel emacht oder Staertdatum bie Tasks
-Spalten tauschen -> Aufgabne aan 3. Position
-Farben bei rot nicht angefangen, orange angefangen, Grün fertig
 
 
 Hosting:

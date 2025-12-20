@@ -4,7 +4,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'blue',
     colors: {
       light: '#DBEAFE', // blue-100 (kräftiger)
-      dark: '#1D4ED8', // blue-700 (kräftiger)
+      dark: '#3B82F6', // blue-500 (heller für Darkmode)
     },
   },
   {
@@ -12,7 +12,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'green',
     colors: {
       light: '#DCFCE7', // green-100 (kräftiger)
-      dark: '#15803D', // green-700 (kräftiger)
+      dark: '#22C55E', // green-500 (heller für Darkmode)
     },
   },
   {
@@ -20,7 +20,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'yellow',
     colors: {
       light: '#FEF9C3', // yellow-100 (kräftiger)
-      dark: '#A16207', // yellow-700 (kräftiger)
+      dark: '#EAB308', // yellow-500 (heller für Darkmode)
     },
   },
   {
@@ -28,7 +28,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'orange',
     colors: {
       light: '#FFEDD5', // orange-100 (kräftiger)
-      dark: '#C2410C', // orange-700 (kräftiger)
+      dark: '#F97316', // orange-500 (heller für Darkmode)
     },
   },
   {
@@ -36,7 +36,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'red',
     colors: {
       light: '#FEE2E2', // red-100 (kräftiger)
-      dark: '#B91C1C', // red-700 (kräftiger)
+      dark: '#EF4444', // red-500 (heller für Darkmode)
     },
   },
   {
@@ -44,7 +44,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'violet',
     colors: {
       light: '#EDE9FE', // violet-100 (kräftiger)
-      dark: '#6D28D9', // violet-700 (kräftiger)
+      dark: '#8B5CF6', // violet-500 (heller für Darkmode)
     },
   },
   {
@@ -52,7 +52,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'pink',
     colors: {
       light: '#FCE7F3', // pink-100 (kräftiger)
-      dark: '#BE185D', // pink-700 (kräftiger)
+      dark: '#EC4899', // pink-500 (heller für Darkmode)
     },
   },
   {
@@ -60,7 +60,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'cyan',
     colors: {
       light: '#CFFAFE', // cyan-100 (kräftiger)
-      dark: '#0E7490', // cyan-700 (kräftiger)
+      dark: '#06B6D4', // cyan-500 (heller für Darkmode)
     },
   },
   {
@@ -68,7 +68,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'lime',
     colors: {
       light: '#ECFCCB', // lime-100 (kräftiger)
-      dark: '#4D7C0F', // lime-700 (kräftiger)
+      dark: '#84CC16', // lime-500 (heller für Darkmode)
     },
   },
   {
@@ -76,7 +76,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'indigo',
     colors: {
       light: '#E0E7FF', // indigo-100 (kräftiger)
-      dark: '#4338CA', // indigo-700 (kräftiger)
+      dark: '#6366F1', // indigo-500 (heller für Darkmode)
     },
   },
   {
@@ -84,7 +84,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'teal',
     colors: {
       light: '#CCFBF1', // teal-100 (etwas schwächer)
-      dark: '#0F766E', // teal-700 (etwas schwächer)
+      dark: '#14B8A6', // teal-500 (heller für Darkmode)
     },
   },
   {
@@ -92,7 +92,7 @@ export const SUBJECT_COLOR_OPTIONS = [
     value: 'purple',
     colors: {
       light: '#F3E8FF', // purple-100 (kräftiger)
-      dark: '#7E22CE', // purple-700 (kräftiger)
+      dark: '#A855F7', // purple-500 (heller für Darkmode)
     },
   },
 ] as const

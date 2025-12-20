@@ -7,6 +7,7 @@ import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TaskBoardComponent } from '../task-board/task-board-component'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
 import { useRouter } from 'next/navigation'
+import { Users } from 'lucide-react'
 export function DataTable({
   columns,
   data,
@@ -43,16 +44,23 @@ export function DataTable({
 
   // Erstelle eine Map für schnellen Zugriff: userId -> taskId -> status
   const userTaskStatusMap = useMemo(() => {
-    const map = new Map<string, Map<string, { status: TaskStatusValue; helpNeeded: boolean }>>()
+    const map = new Map<
+      string,
+      Map<string, { status: TaskStatusValue; helpNeeded: boolean; searchPartner: boolean }>
+    >()
 
     data.forEach((user) => {
-      const taskMap = new Map<string, { status: TaskStatusValue; helpNeeded: boolean }>()
+      const taskMap = new Map<
+        string,
+        { status: TaskStatusValue; helpNeeded: boolean; searchPartner: boolean }
+      >()
       user.taskProgresses.forEach((taskProgress) => {
         taskMap.set(
           String(typeof taskProgress.task === 'object' ? taskProgress.task?.id : taskProgress.task),
           {
             status: taskProgress.status,
             helpNeeded: taskProgress.helpNeeded || false,
+            searchPartner: taskProgress.searchPartner || false,
           },
         )
       })
@@ -141,6 +149,8 @@ export function DataTable({
                       const taskStatus = getTaskStatusForUser(taskId, userWithTask.user.id)
                       const subjectColor = getSubjectColorFromTask(task)
                       const status = taskStatus?.status || null
+                      const helpNeeded = taskStatus?.helpNeeded || false
+                      const searchPartner = taskStatus?.searchPartner || false
 
                       // Bestimme die Darstellung basierend auf dem Status
                       let cellContent = null
@@ -169,8 +179,25 @@ export function DataTable({
                       // Wenn status null oder 'not-started', bleibt cellContent null (leer)
 
                       return (
-                        <td key={task.id} className="table__cell min-w-fit text-center p-1 h-10">
+                        <td
+                          key={task.id}
+                          className="table__cell min-w-fit text-center p-1 h-10 relative"
+                        >
                           {cellContent}
+                          {(helpNeeded || searchPartner) && (
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-1 z-10">
+                              {helpNeeded && (
+                                <span className=" font-bold text-5xl leading-none ">?</span>
+                              )}
+                              {searchPartner && (
+                                <Users
+                                  className="mt-2 h-8 w-8"
+                                  strokeWidth={3}
+                                  style={{ fill: 'currentColor' }}
+                                />
+                              )}
+                            </div>
+                          )}
                         </td>
                       )
                     })}
