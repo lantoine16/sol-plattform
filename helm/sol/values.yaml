@@ -5,11 +5,11 @@
 name: sol
 
 # Docker Image Konfiguration
-# Diese Werte werden vom CI/CD Pipeline aktualisiert
+# Diese Werte werden vom deploy.sh Script überschrieben
 image:
-  repository: ghcr.io/lantoine16/sol-plattform  # GitHub Container Registry Pfad
-  pullPolicy: Always  # Always = immer das neueste Image ziehen
-  tag: "latest"  # TODO: Passe an dein Tagging-Schema an
+  repository: sol-plattform  # Lokaler Image Name (wird vom deploy Script gesetzt)
+  pullPolicy: IfNotPresent  # Nutzt lokales Image, pullt nicht von Registry
+  tag: "latest"
   buildTimestamp: "2025-12-20T22:05:46Z"
 
 # Kubernetes Service Konfiguration
