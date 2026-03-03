@@ -6,6 +6,7 @@ import type { UserWithTaskProgress } from '@/lib/types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TaskBoardComponent } from '../task-board/task-board-component'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
+import { formatUserName } from '@/domain/utils/format-user-name.util'
 import { useRouter } from 'next/navigation'
 import { Users } from 'lucide-react'
 export function DataTable({
@@ -105,15 +106,7 @@ export function DataTable({
                   backgroundColor: 'var(--theme-elevation-0)',
                 }}
               >
-                <span className="field-label unstyled">Vorname</span>
-              </th>
-              <th
-                className="table__header-cell min-w-fit sticky left-0 z-20"
-                style={{
-                  backgroundColor: 'var(--theme-elevation-0)',
-                }}
-              >
-                <span className="field-label unstyled">Nachname</span>
+                <span className="field-label unstyled">Name</span>
               </th>
               {columns.map((task) => {
                 const backgroundColor = getSubjectColorFromTask(task)
@@ -142,8 +135,7 @@ export function DataTable({
                     className="table__row cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     onClick={() => handleRowClick(userWithTask)}
                   >
-                    <td className="table__cell min-w-fit">{userWithTask.user.firstname || ''}</td>
-                    <td className="table__cell min-w-fit">{userWithTask.user.lastname || ''}</td>
+                    <td className="table__cell min-w-fit">{formatUserName(userWithTask.user.firstname, userWithTask.user.lastname)}</td>
                     {columns.map((task) => {
                       const taskId = String(task.id)
                       const taskStatus = getTaskStatusForUser(taskId, userWithTask.user.id)
