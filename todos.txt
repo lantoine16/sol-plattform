@@ -5,14 +5,17 @@ Features:
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
     - Benutzernamen unique machen
     - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
-
+    - HInzufügen ob Schüler es auf dem Niveau Kenner, Macher, Profi
+    - lehrer sollen nicht mehr die email anderer Nutzer setzen können
 Detailansicht:
     - Performance: schauen ob man Zeile alle Werte nacheinandern schreiben kann ohne immer suchfuntkone zu nutzen
  
     - Ansicht Aufgabe nicht zugeordnet
     - Statusicon immer nehmen für alle Icosn und größen bei Dashboard
     - Namen kürten,
-    - Lernord und Level als letzte Spalte
+    - Lernord und Level als letzte Spalte oder ersetllen
+    - Überschriften besser sichtbar
+
 
 Beachten - komplizierter - Payload stellt das noch nich bereit:
     - Tailwind-Styles Workaround (uas custom.css wieder custom.scss machen sodass die layout.tsx unverädnert bleibt
