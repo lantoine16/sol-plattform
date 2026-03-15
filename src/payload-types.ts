@@ -285,7 +285,7 @@ export interface User {
 export interface Graduation {
   id: string;
   description: string;
-  number: number;
+  abbreviation: string;
   canChangeLearningLocation?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -501,7 +501,7 @@ export interface SubjectsSelect<T extends boolean = true> {
  */
 export interface GraduationsSelect<T extends boolean = true> {
   description?: T;
-  number?: T;
+  abbreviation?: T;
   canChangeLearningLocation?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -22,9 +22,9 @@ export const Graduations: CollectionConfig = {
       unique: true,
     },
     {
-      name: 'number',
-      label: 'Zahl',
-      type: 'number',
+      name: 'abbreviation',
+      label: 'Kürzel',
+      type: 'text',
       required: true,
     },
     {
