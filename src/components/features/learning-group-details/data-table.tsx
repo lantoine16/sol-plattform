@@ -9,6 +9,7 @@ import { getSubjectColor } from '@/domain/constants/subject-color.constants'
 import { formatUserName } from '@/domain/utils/format-user-name.util'
 import { useRouter } from 'next/navigation'
 import { Users } from 'lucide-react'
+import { GraduationIcon } from '@/components/ui/graduation-icon'
 export function DataTable({
   columns,
   data,
@@ -106,7 +107,15 @@ export function DataTable({
                   backgroundColor: 'var(--theme-elevation-0)',
                 }}
               >
-                <span className="field-label unstyled">Name</span>
+                <span className="field-label unstyled">Schüler</span>
+              </th>
+              <th
+                className="table__header-cell min-w-fit sticky left-0 z-20"
+                style={{
+                  backgroundColor: 'var(--theme-elevation-0)',
+                }}
+              >
+                <span className="field-label unstyled">Lernort</span>
               </th>
               {columns.map((task) => {
                 const backgroundColor = getSubjectColorFromTask(task)
@@ -135,7 +144,23 @@ export function DataTable({
                     className="table__row cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     onClick={() => handleRowClick(userWithTask)}
                   >
-                    <td className="table__cell min-w-fit">{formatUserName(userWithTask.user.firstname, userWithTask.user.lastname)}</td>
+                    <td className="table__cell min-w-fit flex flex-row  items-center justify-between">
+                      {formatUserName(userWithTask.user.firstname, userWithTask.user.lastname)}
+                      <GraduationIcon
+                        abbreviation={
+                          userWithTask.user.graduation &&
+                          typeof userWithTask.user.graduation === 'object'
+                            ? userWithTask.user.graduation?.abbreviation
+                            : ''
+                        }
+                        className="h-4.5 w-4.5"
+                      />
+                    </td>
+                    <td className="table__cell min-w-fit">
+                      {typeof userWithTask.user.currentLearningLocation === 'object'
+                        ? userWithTask.user.currentLearningLocation?.description
+                        : userWithTask.user.currentLearningLocation}
+                    </td>
                     {columns.map((task) => {
                       const taskId = String(task.id)
                       const taskStatus = getTaskStatusForUser(taskId, userWithTask.user.id)
