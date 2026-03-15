@@ -4,10 +4,15 @@ import { Circle } from 'lucide-react'
 import type { LucideProps } from 'lucide-react'
 
 type GraduationIconProps = LucideProps & {
-  number: number
+  abbreviation: string
 }
 
-export function GraduationIcon({ number, className, size = 16, ...props }: GraduationIconProps) {
+export function GraduationIcon({
+  abbreviation,
+  className,
+  size = 16,
+  ...props
+}: GraduationIconProps) {
   const iconSize = typeof size === 'number' ? size : 16
   const fontSize = iconSize * 0.5
 
@@ -24,7 +29,7 @@ export function GraduationIcon({ number, className, size = 16, ...props }: Gradu
           lineHeight: '1',
         }}
       >
-        {number}
+        {abbreviation}
       </span>
     </div>
   )

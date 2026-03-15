@@ -54,14 +54,14 @@ export function LearningGroupDashboardTable({
         bValue = (b.user.lastname || '').toLowerCase()
       } else if (sortParam === 'level' || sortParam === '-level') {
         // Sortiere nach Graduation Number
-        aValue =
-          a.user.graduation && typeof a.user.graduation === 'object'
-            ? a.user.graduation.number || 1
-            : 1
+
+        a.user.graduation && typeof a.user.graduation === 'object'
+          ? a.user.graduation.abbreviation
+          : ''
         bValue =
           b.user.graduation && typeof b.user.graduation === 'object'
-            ? b.user.graduation.number || 1
-            : 1
+            ? b.user.graduation.abbreviation
+            : ''
       } else if (sortParam === 'learningLocation' || sortParam === '-learningLocation') {
         // Sortiere nach Lernort-Beschreibung
         aValue =
@@ -254,11 +254,11 @@ export function LearningGroupDashboardTable({
                   </td>
                   <td className="table__cell min-w-fit ">
                     <GraduationIcon
-                      number={
+                      abbreviation={
                         userWithTaskProgress.user.graduation &&
                         typeof userWithTaskProgress.user.graduation === 'object'
-                          ? userWithTaskProgress.user.graduation?.number
-                          : 1
+                          ? userWithTaskProgress.user.graduation?.abbreviation
+                          : ''
                       }
                       className="h-4.5 w-4.5"
                     />
