@@ -7,7 +7,10 @@ import { DefaultTemplate } from '@payloadcms/next/templates'
 import { Gutter, SetStepNav, StepNavItem } from '@payloadcms/ui'
 import React from 'react'
 import { learningGroupDashboardService } from '@/lib/services/learning-group-dashboard.service'
-import { userRepository } from '@/lib/data/repositories/user.repository'
+import {
+  SetLearningLocationsOptions,
+  userRepository,
+} from '@/lib/data/repositories/user.repository'
 import { taskProgressRepository } from '@/lib/data/repositories/task-progress.repository'
 import { learningLocationRepository } from '@/lib/data/repositories/learning-location.repository'
 import { SortService } from '@/lib/services/sort.service'
@@ -27,6 +30,7 @@ import SyncSearchParams from '../features/learning-group-subjects-selectors/sync
 import { subjectRepository } from '@/lib/data/repositories/subject.repository'
 import { learningGroupRepository } from '@/lib/data/repositories/learning-group.repository'
 import { redirect } from 'next/navigation'
+import { ResetUserStatuses } from '../features/reset-user-statuses'
 
 export async function LearningGroupDetailsView({
   initPageResult,
@@ -128,6 +132,15 @@ export async function LearningGroupDetailsView({
 
   const learningLocations = await learningLocationRepository.findAll()
 
+  const userDefaultLearningLocationIds: SetLearningLocationsOptions[] = users.map((user) => ({
+    userId: user.id,
+    learningLocationId:
+      typeof user.defaultLearningLocation === 'object'
+        ? (user.defaultLearningLocation?.id ?? '')
+        : (user.defaultLearningLocation ?? ''),
+  }))
+
+  const taskProgressIds: string[] = taskProgressEntries.map((tp) => tp.id)
   return (
     <>
       <SyncSearchParams
@@ -148,18 +161,22 @@ export async function LearningGroupDetailsView({
       >
         <SetStepNav nav={steps} />
         <Gutter>
-          <div className="flex flex-col h-[calc(100vh-100px)]">
-            <div className="shrink-0 mb-8">
+          <div className="space-y-8">
+            <div className="flex justify-between items-center flex-wrap flex-row">
               <LearningGroupSubjectsSelectors
                 learningGroups={learningGroups}
                 subjects={subjects}
                 selectedLearningGroupId={selectedLearningGroupIds}
                 selectedSubjectIds={selectedSubjectIds}
               />
+              <ResetUserStatuses
+                data={{
+                  taskProgressIds,
+                  userDefaultLearningLocationIds,
+                }}
+              />
             </div>
-            <div className="flex-1 min-h-0">
-              <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
-            </div>
+            <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
           </div>
         </Gutter>
       </DefaultTemplate>
