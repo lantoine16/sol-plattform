@@ -3,6 +3,10 @@ import { SetLearningLocationsOptions } from '@/lib/data/repositories/user.reposi
 import { resetUserStatuses as resetUserStatusesAction } from '@/lib/actions/reset-user-statuses.actions'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { ConfirmationModal, useModal } from '@payloadcms/ui'
+
+const modalSlug = 'confirm-reset-user-statuses'
+
 export type ResetUserStatusesProps = {
   taskProgressIds: string[]
   userDefaultLearningLocationIds: SetLearningLocationsOptions[]
@@ -10,7 +14,9 @@ export type ResetUserStatusesProps = {
 export function ResetUserStatuses({ data }: { data: ResetUserStatusesProps }) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const handleReset = async () => {
+  const { openModal } = useModal()
+
+  const handleConfirm = async () => {
     setIsLoading(true)
     const result = await resetUserStatusesAction(
       data.taskProgressIds,
@@ -22,6 +28,7 @@ export function ResetUserStatuses({ data }: { data: ResetUserStatusesProps }) {
     router.refresh()
     setIsLoading(false)
   }
+
   const buttonClassName = [
     'btn',
     'btn--icon-style-without-border',
@@ -35,8 +42,23 @@ export function ResetUserStatuses({ data }: { data: ResetUserStatusesProps }) {
     .join(' ')
 
   return (
-    <button type="button" onClick={handleReset} disabled={isLoading} className={buttonClassName}>
-      Stundenende
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => openModal(modalSlug)}
+        disabled={isLoading}
+        className={buttonClassName}
+      >
+        Stundenende
+      </button>
+      <ConfirmationModal
+        modalSlug={modalSlug}
+        heading="Stundenende bestätigen"
+        body="Alle Schüler werden in ihren Standardlernort geschickt und Fragen sowie Gruppensuchen der Klasse werden zurückgesetzt. Möchten Sie das wirklich durchführen?"
+        confirmLabel="Ja, Stundenende"
+        cancelLabel="Abbrechen"
+        onConfirm={handleConfirm}
+      />
+    </>
   )
 }
