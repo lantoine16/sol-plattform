@@ -1,6 +1,5 @@
 Features:
     - „Bereit für Leistungsübersicht“ definieren
-    - Bestätigen Button wenn man Stunde beendet
     - Email-adapter einrichten
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
     - Benutzernamen unique machen
