@@ -33,7 +33,12 @@ volumes:
 # ========================================
 # WICHTIGE DOCKER COMPOSE BEFEHLE
 # ========================================
-#
+# SOL bauen
+# docker build -t sol-app .
+
+# SOL starten
+# docker run -d --network host --env-file .env --name sol-app sol-app
+
 # SERVICES STARTEN:
 # docker-compose up                              # Alle Services starten
 # docker-compose up -d                           # Alle Services im Hintergrund starten
