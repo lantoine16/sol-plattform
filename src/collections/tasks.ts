@@ -121,6 +121,23 @@ export const Tasks: CollectionConfig = {
       required: true,
     },
     {
+      name: 'learningLevels',
+      label: 'Lernlevel',
+      type: 'relationship',
+      relationTo: 'learning-levels',
+      required: false,
+      hasMany: true,
+
+      admin: {
+        condition: (data) => {
+          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
+          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
+        },
+      },
+    },
+    {
       name: 'learningGroup',
       label: 'Lerngruppe',
       type: 'relationship',

@@ -1,12 +1,10 @@
 'use server'
 
-import {
-  processBlockTaskCreate,
-  type BlockTaskCreateOptions,
-} from '@/lib/services/create-tasks.service'
+import { processBlockTaskCreate } from '@/lib/services/create-tasks.service'
 import { Task } from '@/payload-types'
+import { CreateTaskData } from '../types'
 
-export async function blockCreateTasksAction(input: BlockTaskCreateOptions): Promise<Task[]> {
+export async function blockCreateTasksAction(input: CreateTaskData): Promise<Task[]> {
   if (!input.blocks || input.blocks.length === 0) {
     throw new Error('Keine Aufgaben-Blöcke angegeben')
   }
@@ -18,7 +16,7 @@ export async function blockCreateTasksAction(input: BlockTaskCreateOptions): Pro
   return processBlockTaskCreate({
     blocks: input.blocks,
     subject: input.subject,
-    learningGroup: input.learningGroup ?? null,
-    user: input.user ?? null,
+    learningGroups: input.learningGroups ?? null,
+    users: input.users ?? null,
   })
 }

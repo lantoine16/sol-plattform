@@ -1,17 +1,8 @@
+import { CreateTaskData } from '@/lib/types'
 import { getPayloadWithAuth } from '../payload-client'
 import type { Task } from '@/payload-types'
 
-export interface TaskCreateData {
-  title: string
-  description?: string | null
-}
 
-export interface TasksCreateOptions {
-  tasks: TaskCreateData[]
-  subject: string
-  learningGroups?: string[] | null
-  users?: string[] | null
-}
 export class TaskRepository {
   /**
    * Find all tasks with optional filters
@@ -113,10 +104,10 @@ export class TaskRepository {
     return this.getTasksFromLearningGroupsAndUsers(learningGroupIds, [], options)
   }
 
-  async createTasks(tasks: TasksCreateOptions): Promise<Task[]> {
+  async createTasks(tasks: CreateTaskData): Promise<Task[]> {
     const { payload, req } = await getPayloadWithAuth()
     const createdTasks = await Promise.all(
-      tasks.tasks.map((taskData) => {
+      tasks.blocks.map((taskData) => {
         // Validate that title is not empty
         if (!taskData.title || taskData.title.trim() === '') {
           throw new Error('Titel darf nicht leer sein')
@@ -126,6 +117,7 @@ export class TaskRepository {
         const createData: any = {
           title: taskData.title.trim(),
           description: taskData.description?.trim() || null,
+          learningLevels: taskData.learningLevels,
           subject: tasks.subject,
           learningGroup: tasks.learningGroups || null,
           user: tasks.users || null,

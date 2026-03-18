@@ -22,5 +22,13 @@ export const TitleDescriptionBlock: Block = {
       type: 'textarea',
       required: false,
     },
+    {
+      name: 'learningLevels',
+      label: 'Lernlevel',
+      type: 'relationship',
+      relationTo: 'learning-levels',
+      required: true,
+      hasMany: true,
+    },
   ],
 }

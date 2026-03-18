@@ -166,9 +166,20 @@ export interface UserAuthOperations {
 export interface TitleDescription {
   title: string;
   description?: string | null;
+  learningLevels: (string | LearningLevel)[];
   id?: string | null;
   blockName?: string | null;
   blockType: 'title-description';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-levels".
+ */
+export interface LearningLevel {
+  id: string;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -180,6 +191,7 @@ export interface Task {
     | {
         title: string;
         description?: string | null;
+        learningLevels: (string | LearningLevel)[];
         id?: string | null;
         blockName?: string | null;
         blockType: 'title-description';
@@ -188,6 +200,7 @@ export interface Task {
   title?: string | null;
   description?: string | null;
   subject: string | Subject;
+  learningLevels?: (string | LearningLevel)[] | null;
   learningGroup?: (string | LearningGroup)[] | null;
   user?: (string | User)[] | null;
   taskProgress?: {
@@ -325,16 +338,6 @@ export interface TaskProgress {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "learning-levels".
- */
-export interface LearningLevel {
-  id: string;
-  description: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -444,6 +447,7 @@ export interface TasksSelect<T extends boolean = true> {
           | {
               title?: T;
               description?: T;
+              learningLevels?: T;
               id?: T;
               blockName?: T;
             };
@@ -451,6 +455,7 @@ export interface TasksSelect<T extends boolean = true> {
   title?: T;
   description?: T;
   subject?: T;
+  learningLevels?: T;
   learningGroup?: T;
   user?: T;
   taskProgress?: T;

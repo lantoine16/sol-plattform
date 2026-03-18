@@ -8,3 +8,16 @@ export interface UserWithTaskProgress {
   user: User
   taskProgresses: TaskProgress[]
 }
+
+export interface CreateTaskBlock {
+  title: string
+  description?: string
+  learningLevels?: string[]
+}
+
+export interface CreateTaskData {
+  blocks: Array<CreateTaskBlock>
+  subject: string
+  learningGroups?: string[] | null
+  users?: string[] | null
+}

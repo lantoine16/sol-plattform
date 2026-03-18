@@ -1,17 +1,10 @@
 import { userRepository } from '../data/repositories/user.repository'
-import { taskRepository, type TaskCreateData } from '../data/repositories/task.repository'
 import { taskProgressRepository } from '../data/repositories/task-progress.repository'
 import { Task } from '@/payload-types'
+import {  CreateTaskBlock, CreateTaskData } from '../types'
+import { taskRepository } from '../data/repositories/task.repository'
 
-export interface BlockTaskCreateOptions {
-  blocks: Array<{
-    title?: string
-    description?: string
-  }>
-  subject: string
-  learningGroup?: string[] | null
-  user?: string[] | null
-}
+
 
 /**
  * Verarbeitet Block-basierte Erstellung von Tasks.
@@ -25,15 +18,16 @@ export interface BlockTaskCreateOptions {
 export async function processBlockTaskCreate({
   blocks,
   subject,
-  learningGroup,
-  user,
-}: BlockTaskCreateOptions): Promise<Task[]> {
+  learningGroups,
+  users,
+}: CreateTaskData): Promise<Task[]> {
   // Filtere nur Blocks mit nicht-leeren Titeln und extrahiere die Daten
-  const taskData: TaskCreateData[] = blocks
+  const taskData: CreateTaskBlock[] = blocks
     .filter((block) => block.title && block.title.trim().length > 0)
     .map((block) => ({
       title: block.title!.trim(), // Non-null assertion because we filtered above
-      description: block.description?.trim() || null,
+      description: block.description?.trim() || undefined,
+      learningLevels: block.learningLevels
     }))
 
   if (taskData.length === 0) {
@@ -41,13 +35,13 @@ export async function processBlockTaskCreate({
   }
 
   const createdTasks = await taskRepository.createTasks({
-    tasks: taskData,
+    blocks: taskData,
     subject,
-    learningGroups: learningGroup,
-    users: user,
+    learningGroups,
+    users,
   })
 
-  const userIds = await getUsersFromLearningGroupsAndUsers(learningGroup, user)
+  const userIds = await getUsersFromLearningGroupsAndUsers(learningGroups, users)
 
   const _createdTaskProgresses = await taskProgressRepository.createTaskProgresses({
     user: userIds,

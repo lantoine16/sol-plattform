@@ -5,6 +5,7 @@ import { useField, useDocumentInfo, toast, useFormFields } from '@payloadcms/ui'
 import { useRouter } from 'next/navigation'
 import { BulkSaveButton } from './BulkSaveButton'
 import { blockCreateTasksAction } from '@/lib/actions/bulk-create-tasks.actions'
+import { CreateTaskBlock } from '@/lib/types'
 
 export function TasksSaveButton() {
   const router = useRouter()
@@ -22,10 +23,7 @@ export function TasksSaveButton() {
       return []
     }
 
-    const blocks: Array<{
-      title: string
-      description?: string
-    }> = []
+    const blocks: Array<CreateTaskBlock> = []
 
     // Get the number of blocks
     const blockCount = (allFields.taskBlocks.value as number) || 0
@@ -34,15 +32,19 @@ export function TasksSaveButton() {
     for (let i = 0; i < blockCount; i++) {
       const titleField = allFields[`taskBlocks.${i}.title`] as { value?: string } | undefined
       const descField = allFields[`taskBlocks.${i}.description`] as { value?: string } | undefined
+      const learningLevelsField = allFields[`taskBlocks.${i}.learningLevels`] as
+        | { value?: string[] }
+        | undefined
 
       const title = titleField?.value?.trim() || ''
       const description = descField?.value?.trim() || ''
-
+      const learningLevels = learningLevelsField?.value
       // Only add blocks that have a title
       if (title) {
         blocks.push({
           title,
           description: description || undefined,
+          learningLevels: learningLevels ?? [],
         })
       }
     }
@@ -56,8 +58,7 @@ export function TasksSaveButton() {
 
   // Nur auf Create-Seite anzeigen (wenn keine ID vorhanden)
   const isCreatePage = !id
-  const hasValidBlocks =
-    taskBlocks && taskBlocks.length > 0
+  const hasValidBlocks = taskBlocks && taskBlocks.length > 0
   const isDisabled = !isCreatePage || isLoading || !hasValidBlocks || !subject
 
   const handleBlockCreate = async () => {
@@ -77,8 +78,8 @@ export function TasksSaveButton() {
       const createdTasks = await blockCreateTasksAction({
         blocks: taskBlocks,
         subject: Array.isArray(subject) ? subject[0] : subject,
-        learningGroup: learningGroup ?? null,
-        user: user ?? null,
+        learningGroups: learningGroup ?? null,
+        users: user ?? null,
       })
 
       const amountOfCreatedTasks = createdTasks.length
@@ -87,8 +88,8 @@ export function TasksSaveButton() {
           (amountOfCreatedTasks === 1 ? ' Aufgabe wurde ' : ' Aufgaben wurden ') +
           'erfolgreich erstellt.',
       )
+      setIsLoading(false)
       router.push('/collections/tasks')
-      router.refresh()
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unbekannter Fehler'
       setError(errorMessage)
