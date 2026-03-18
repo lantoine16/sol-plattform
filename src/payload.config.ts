@@ -11,6 +11,7 @@ import { de } from '@payloadcms/translations/languages/de'
 import { Users } from './collections/Users'
 import { LearningGroups } from './collections/learning-groups'
 import { LearningLocations } from './collections/learning-location'
+import { LearningLevel } from './collections/learning-level'
 import { Subjects } from './collections/subjects'
 import { Tasks } from './collections/tasks'
 import { TaskProgress } from './collections/task-progress'
@@ -85,6 +86,7 @@ export default buildConfig({
     Graduations,
     LearningGroups,
     LearningLocations,
+    LearningLevel,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

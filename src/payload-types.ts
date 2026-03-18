@@ -76,6 +76,7 @@ export interface Config {
     graduations: Graduation;
     'learning-groups': LearningGroup;
     'learning-location': LearningLocation;
+    'learning-levels': LearningLevel;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -106,6 +107,7 @@ export interface Config {
     graduations: GraduationsSelect<false> | GraduationsSelect<true>;
     'learning-groups': LearningGroupsSelect<false> | LearningGroupsSelect<true>;
     'learning-location': LearningLocationSelect<false> | LearningLocationSelect<true>;
+    'learning-levels': LearningLevelsSelect<false> | LearningLevelsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -323,6 +325,16 @@ export interface TaskProgress {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-levels".
+ */
+export interface LearningLevel {
+  id: string;
+  description: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -372,6 +384,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'learning-location';
         value: string | LearningLocation;
+      } | null)
+    | ({
+        relationTo: 'learning-levels';
+        value: string | LearningLevel;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -525,6 +541,15 @@ export interface LearningGroupsSelect<T extends boolean = true> {
 export interface LearningLocationSelect<T extends boolean = true> {
   description?: T;
   users?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-levels_select".
+ */
+export interface LearningLevelsSelect<T extends boolean = true> {
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -6,6 +6,7 @@ Features:
     - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
     - HInzufügen ob Schüler es auf dem Niveau Kenner, Macher, Profi
     - lehrer sollen nicht mehr die email anderer Nutzer setzen können
+    - Gruppensuche
 Detailansicht:
     - Performance: schauen ob man Zeile alle Werte nacheinandern schreiben kann ohne immer suchfuntkone zu nutzen
  
