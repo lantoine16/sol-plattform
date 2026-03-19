@@ -63,7 +63,6 @@ export class TaskProgressRepository {
     return result.docs
   }
 
-
   /**
    * Find task progress entries for users filtered by subject
    * Returns all tasks with their progress for the given users that belong to the specified subject
@@ -217,6 +216,7 @@ export class TaskProgressRepository {
               user: userId,
               task: taskId,
               status: TASK_PROGRESS_DEFAULT_STATUS_VALUE,
+              learningLevel: null,
               helpNeeded: false,
               searchPartner: false,
             },

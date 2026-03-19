@@ -331,6 +331,7 @@ export interface TaskProgress {
   user: string | User;
   task: string | Task;
   status: 'not-started' | 'in-progress' | 'finished';
+  learningLevel?: (string | null) | LearningLevel;
   helpNeeded?: boolean | null;
   searchPartner?: boolean | null;
   updatedAt: string;
@@ -470,6 +471,7 @@ export interface TaskProgressSelect<T extends boolean = true> {
   user?: T;
   task?: T;
   status?: T;
+  learningLevel?: T;
   helpNeeded?: T;
   searchPartner?: T;
   updatedAt?: T;

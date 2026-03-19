@@ -41,6 +41,13 @@ export const TaskProgress: CollectionConfig = {
       options: [...TASK_STATUS_OPTIONS],
     },
     {
+      name: 'learningLevel',
+      label: 'Lernlevel',
+      type: 'relationship',
+      relationTo: 'learning-levels',
+      required: false,
+    },
+    {
       name: 'helpNeeded',
       label: 'Schüler benötigt Hilfe',
       type: 'checkbox',
