@@ -4,13 +4,14 @@ Features:
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
     - Benutzernamen unique machen
     - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
-    - HInzufügen ob Schüler es auf dem Niveau Kenner, Macher, Profi
     - lehrer sollen nicht mehr die email anderer Nutzer setzen können
     - Gruppensuche
     - Tasks nach update create und deltet müssen alle Taskprogresses für Lernniveau geupdatet werden - 
     ungültige auf null setzen, wenn lernniveau gelöscht wird dann deises aus alle nTasks löschen; 
-    was machen wenn das Lernlevel gelöscht wurde, Lernlevel in Auswahlfelder anzeigen
+    was machen wenn das Lernlevel gelöscht wurde, 
+    - Lernlevel in Detailansicht in tabelle visualisieren
     - alle Felder die manuell bei mcreate nicht angzeigt werden, können beim BulkEdit nicht bearbeitet werden
+    - deatilanischt tabelle oben und links sticky machen -> oben wie bei altem commit vor 15.3
 Detailansicht:
     - Performance: schauen ob man Zeile alle Werte nacheinandern schreiben kann ohne immer suchfuntkone zu nutzen
  
