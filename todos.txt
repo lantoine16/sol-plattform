@@ -7,7 +7,10 @@ Features:
     - HInzufügen ob Schüler es auf dem Niveau Kenner, Macher, Profi
     - lehrer sollen nicht mehr die email anderer Nutzer setzen können
     - Gruppensuche
-    - Tasks nach update create und deltet müssen alle Taskprogresses für Lernniveau geupdatet werden; was machen wenn das Lernlevel gelöscht wurde, Lernlevel in Auswahlfelder anzeigen
+    - Tasks nach update create und deltet müssen alle Taskprogresses für Lernniveau geupdatet werden - 
+    ungültige auf null setzen, wenn lernniveau gelöscht wird dann deises aus alle nTasks löschen; 
+    was machen wenn das Lernlevel gelöscht wurde, Lernlevel in Auswahlfelder anzeigen
+    - alle Felder die manuell bei mcreate nicht angzeigt werden, können beim BulkEdit nicht bearbeitet werden
 Detailansicht:
     - Performance: schauen ob man Zeile alle Werte nacheinandern schreiben kann ohne immer suchfuntkone zu nutzen
  

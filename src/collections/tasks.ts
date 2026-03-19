@@ -56,7 +56,7 @@ export const Tasks: CollectionConfig = {
   fields: [
     {
       name: 'taskBlocks',
-      label: 'Titel und Beschreibung der Aufgaben',
+      label: 'Titel, Beschreibung und verfügbare Lernlevel der Aufgaben',
       type: 'blocks',
       blocks: [TitleDescriptionBlock],
       defaultValue: () => [
@@ -67,6 +67,8 @@ export const Tasks: CollectionConfig = {
         },
       ],
       admin: {
+        disableBulkEdit: true,
+        disableListColumn: true,
         condition: (data) => {
           // Nur auf der Create-Seite anzeigen (wenn keine ID vorhanden)
           // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
@@ -91,6 +93,7 @@ export const Tasks: CollectionConfig = {
       type: 'text',
       required: true,
       admin: {
+        disableBulkEdit: true,
         condition: (data) => {
           // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
           // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
@@ -127,7 +130,6 @@ export const Tasks: CollectionConfig = {
       relationTo: 'learning-levels',
       required: false,
       hasMany: true,
-
       admin: {
         condition: (data) => {
           // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)

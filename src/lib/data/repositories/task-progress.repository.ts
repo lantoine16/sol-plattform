@@ -340,6 +340,31 @@ export class TaskProgressRepository {
   }
 
   /**
+   * Update learningLevel for a task progress entry
+   */
+  async updateLearningLevel(
+    taskId: string,
+    userId: string,
+    learningLevelId: string | null,
+  ): Promise<TaskProgress> {
+    const existing = await this.findByUserAndTask([taskId], [userId])
+
+    if (existing && existing.length > 0) {
+      const { payload, req } = await getPayloadWithAuth()
+      return payload.update({
+        collection: 'task-progress',
+        id: existing[0].id,
+        data: {
+          learningLevel: learningLevelId,
+        },
+        req,
+        overrideAccess: false,
+      })
+    }
+    throw new Error('Failed to find task progress for learningLevel update')
+  }
+
+  /**
    * Update searchPartner flag for a task progress entry
    * Creates a new entry if it doesn't exist
    */

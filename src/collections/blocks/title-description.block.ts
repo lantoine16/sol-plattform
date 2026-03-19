@@ -27,7 +27,7 @@ export const TitleDescriptionBlock: Block = {
       label: 'Lernlevel',
       type: 'relationship',
       relationTo: 'learning-levels',
-      required: true,
+      required: false,
       hasMany: true,
     },
   ],

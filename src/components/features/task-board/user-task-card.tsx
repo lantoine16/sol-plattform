@@ -5,14 +5,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useState } from 'react'
+import { Select } from '@payloadcms/ui'
 import {
   updateTaskProgress,
   updateTaskHelpNeeded,
   updateTaskSearchPartner,
+  updateTaskLearningLevel,
 } from '@/lib/actions/task-progress.actions'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TASK_ICONS } from '@/domain/constants/task-icons.constants'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
+import { LearningLevel } from '@/payload-types'
 
 type UserTaskCardProps = {
   taskId: string
@@ -23,10 +26,13 @@ type UserTaskCardProps = {
   nextStatus?: TaskStatusValue
   helpNeeded?: boolean
   searchPartner?: boolean
+  learningLevels?: LearningLevel[]
+  selectedLearningLevel?: string
   subjectColor?: string | null
   onStatusChange?: (taskId: string, status: TaskStatusValue) => void
   onHelpNeededChange?: (taskId: string, helpNeeded: boolean) => void
   onSearchPartnerChange?: (taskId: string, searchPartner: boolean) => void
+  onLearningLevelChange?: (taskId: string, learningLevelId: string, description: string) => void
 }
 
 export function UserTaskCard({
@@ -38,14 +44,29 @@ export function UserTaskCard({
   nextStatus,
   helpNeeded = false,
   searchPartner = false,
+  selectedLearningLevel,
+  learningLevels,
   subjectColor,
   onStatusChange,
   onHelpNeededChange,
   onSearchPartnerChange,
+  onLearningLevelChange,
 }: UserTaskCardProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isHelpNeededLoading, setIsHelpNeededLoading] = useState(false)
   const [isSearchPartnerLoading, setIsSearchPartnerLoading] = useState(false)
+  const [isLearningLevelLoading, setIsLearningLevelLoading] = useState(false)
+  const [currentLearningLevel, setCurrentLearningLevel] = useState<{
+    value: string
+    label: string
+  } | null>(
+    selectedLearningLevel && learningLevels
+      ? {
+          value: learningLevels.find((l) => l.description === selectedLearningLevel)?.id || '',
+          label: selectedLearningLevel,
+        }
+      : null,
+  )
 
   // Berechne die Farben basierend auf dem Subject
   const backgroundColor = getSubjectColor(subjectColor, false) // Light Mode Farbe für Hintergrund
@@ -102,6 +123,23 @@ export function UserTaskCard({
     }
   }
 
+  const handleLearningLevelChange = async (option: { value: string; label: string }) => {
+    setIsLearningLevelLoading(true)
+    try {
+      const result = await updateTaskLearningLevel(taskId, userId, option.value)
+      if (result.success) {
+        setCurrentLearningLevel(option)
+        onLearningLevelChange?.(taskId, option.value, option.label)
+      } else {
+        console.error('Failed to update learning level:', result.error)
+      }
+    } catch (error) {
+      console.error('Failed to update learning level:', error)
+    } finally {
+      setIsLearningLevelLoading(false)
+    }
+  }
+
   const HelpIcon = TASK_ICONS.helpNeeded
   const SearchPartnerIcon = TASK_ICONS.searchPartner
 
@@ -114,9 +152,26 @@ export function UserTaskCard({
       }}
     >
       <CardHeader>
-        <CardTitle className="overflow-hidden text-ellipsis">{title}</CardTitle>
+        <CardTitle className="overflow-hidden text-ellipsis">
+          {title}
+        </CardTitle>
         <CardDescription className="flex flex-col gap-2">
           <div>{description}</div>
+          {learningLevels && learningLevels.length > 0 && (
+            <Select
+              options={learningLevels.map((level) => ({
+                value: level.id,
+                label: level.description,
+              }))}
+              value={currentLearningLevel ? [currentLearningLevel] : undefined}
+              onChange={(value) =>
+                handleLearningLevelChange(value as { value: string; label: string })
+              }
+              disabled={isLearningLevelLoading}
+              isClearable={false}
+              placeholder="Niveau auswählen"
+            />
+          )}
           <div className="flex gap-2 mt-1 flex-wrap justify-between">
             <div className="flex items-center gap-2">
               <Button

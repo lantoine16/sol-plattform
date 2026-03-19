@@ -4,8 +4,16 @@ import { Separator } from '@/components/ui/separator'
 import { UserTaskCard } from './user-task-card'
 import { UserTaskStatusService } from '@/lib/services/user-task-status.service'
 import { SortService } from '@/lib/services/sort.service'
-import type { TaskProgress } from '@/payload-types'
+import type { TaskProgress, LearningLevel } from '@/payload-types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
+
+const isLearningLevelArray = (value: unknown): value is LearningLevel[] => {
+  return (
+    Array.isArray(value) &&
+    value.length > 0 &&
+    value.every((item) => typeof item === 'object' && item !== null && 'id' in item)
+  )
+}
 
 type UserTasksOverviewProps = {
   userId: string
@@ -13,6 +21,7 @@ type UserTasksOverviewProps = {
   onTaskProgressUpdate?: (taskId: string, status: TaskStatusValue) => void
   onHelpNeededUpdate?: (taskId: string, helpNeeded: boolean) => void
   onSearchPartnerUpdate?: (taskId: string, searchPartner: boolean) => void
+  onLearningLevelUpdate?: (taskId: string, learningLevelId: string, description: string) => void
 }
 export function UserTasksOverview({
   userId,
@@ -20,6 +29,7 @@ export function UserTasksOverview({
   onTaskProgressUpdate,
   onHelpNeededUpdate,
   onSearchPartnerUpdate,
+  onLearningLevelUpdate,
 }: UserTasksOverviewProps) {
   const { notStartedTasks, inProgressTasks, finishedTasks } =
     UserTaskStatusService.groupTasksByStatus(userTaskStatuses)
@@ -82,10 +92,19 @@ export function UserTasksOverview({
                 nextStatus={TASK_STATUS_OPTIONS[1].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
+                selectedLearningLevel={
+                  typeof taskStatus?.learningLevel === 'object'
+                    ? taskStatus.learningLevel?.description
+                    : taskStatus?.learningLevel
+                }
+                learningLevels={
+                  isLearningLevelArray(task.learningLevels) ? task.learningLevels : undefined
+                }
                 subjectColor={subjectColor}
                 onStatusChange={onTaskProgressUpdate}
                 onHelpNeededChange={onHelpNeededUpdate}
                 onSearchPartnerChange={onSearchPartnerUpdate}
+                onLearningLevelChange={onLearningLevelUpdate}
               />
             )
           })}
@@ -111,10 +130,19 @@ export function UserTasksOverview({
                 nextStatus={TASK_STATUS_OPTIONS[2].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
+                selectedLearningLevel={
+                  typeof taskStatus?.learningLevel === 'object'
+                    ? taskStatus.learningLevel?.description
+                    : taskStatus?.learningLevel
+                }
+                learningLevels={
+                  isLearningLevelArray(task.learningLevels) ? task.learningLevels : undefined
+                }
                 subjectColor={subjectColor}
                 onStatusChange={onTaskProgressUpdate}
                 onHelpNeededChange={onHelpNeededUpdate}
                 onSearchPartnerChange={onSearchPartnerUpdate}
+                onLearningLevelChange={onLearningLevelUpdate}
               />
             )
           })}
@@ -140,10 +168,19 @@ export function UserTasksOverview({
                 nextStatus={undefined}
                 helpNeeded={taskStatus?.helpNeeded || false}
                 searchPartner={taskStatus?.searchPartner || false}
+                selectedLearningLevel={
+                  typeof taskStatus?.learningLevel === 'object'
+                    ? taskStatus.learningLevel?.description
+                    : taskStatus?.learningLevel
+                }
+                learningLevels={
+                  isLearningLevelArray(task.learningLevels) ? task.learningLevels : undefined
+                }
                 subjectColor={subjectColor}
                 onStatusChange={onTaskProgressUpdate}
                 onHelpNeededChange={onHelpNeededUpdate}
                 onSearchPartnerChange={onSearchPartnerUpdate}
+                onLearningLevelChange={onLearningLevelUpdate}
               />
             )
           })}

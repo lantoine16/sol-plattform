@@ -166,7 +166,7 @@ export interface UserAuthOperations {
 export interface TitleDescription {
   title: string;
   description?: string | null;
-  learningLevels: (string | LearningLevel)[];
+  learningLevels?: (string | LearningLevel)[] | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'title-description';
@@ -191,7 +191,7 @@ export interface Task {
     | {
         title: string;
         description?: string | null;
-        learningLevels: (string | LearningLevel)[];
+        learningLevels?: (string | LearningLevel)[] | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'title-description';

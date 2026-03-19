@@ -116,6 +116,27 @@ export function TaskBoardComponent({
     })
   }
 
+  const handleLearningLevelUpdate = (taskId: string, learningLevelId: string, description: string) => {
+    setTaskProgressEntries((prevEntries) => {
+      const entryIndex = prevEntries.findIndex((entry) => {
+        const entryTaskId = typeof entry.task === 'string' ? entry.task : entry.task.id
+        return entryTaskId === taskId
+      })
+
+      if (entryIndex === -1) {
+        return prevEntries
+      }
+
+      const updatedEntries = [...prevEntries]
+      updatedEntries[entryIndex] = {
+        ...updatedEntries[entryIndex],
+        learningLevel: { id: learningLevelId, description, updatedAt: '', createdAt: '' },
+      }
+
+      return updatedEntries
+    })
+  }
+
   const currentLearningLocation =
     user.currentLearningLocation && typeof user.currentLearningLocation === 'object'
       ? {
@@ -209,6 +230,7 @@ export function TaskBoardComponent({
               onTaskProgressUpdate={handleTaskProgressUpdate}
               onHelpNeededUpdate={handleHelpNeededUpdate}
               onSearchPartnerUpdate={handleSearchPartnerUpdate}
+              onLearningLevelUpdate={handleLearningLevelUpdate}
             />
           </div>
         </div>

@@ -84,6 +84,22 @@ export async function updateTaskSearchPartner(
     }
   }
 }
+export async function updateTaskLearningLevel(
+  taskId: string,
+  userId: string,
+  learningLevelId: string | null,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await taskProgressRepository.updateLearningLevel(taskId, userId, learningLevelId)
+    return { success: true }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    }
+  }
+}
+
 export async function getTaskProgressEntries(
   userIds: string[],
   subjectIds: string[],
