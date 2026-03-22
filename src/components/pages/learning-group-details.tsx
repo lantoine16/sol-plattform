@@ -161,8 +161,8 @@ export async function LearningGroupDetailsView({
       >
         <SetStepNav nav={steps} />
         <Gutter>
-          <div className="space-y-8">
-            <div className="flex justify-between items-center flex-wrap flex-row">
+          <div className=" flex flex-col h-[calc(100vh-100px)]">
+            <div className="flex flex-row justify-between gap-2">
               <LearningGroupSubjectsSelectors
                 learningGroups={learningGroups}
                 subjects={subjects}
@@ -176,7 +176,9 @@ export async function LearningGroupDetailsView({
                 }}
               />
             </div>
-            <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
+            <div className="min-h-0">
+              <DataTable columns={tasks} data={tasksByUser} learningLocations={learningLocations} />
+            </div>
           </div>
         </Gutter>
       </DefaultTemplate>

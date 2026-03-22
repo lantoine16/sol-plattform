@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { LearningLocation, Task } from '@/payload-types'
 import type { UserWithTaskProgress } from '@/lib/types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
@@ -22,8 +22,21 @@ export function DataTable({
   learningLocations: LearningLocation[]
 }) {
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
+  const [firstColWidth, setFirstColWidth] = useState(0)
+  const firstColRef = useRef<HTMLTableCellElement>(null)
 
   const router = useRouter()
+
+  // Measure first column width so the second sticky column knows its left offset
+  useEffect(() => {
+    if (!firstColRef.current) return
+    const observer = new ResizeObserver(() => {
+      setFirstColWidth(firstColRef.current?.getBoundingClientRect().width ?? 0)
+    })
+    setFirstColWidth(firstColRef.current.getBoundingClientRect().width)
+    observer.observe(firstColRef.current)
+    return () => observer.disconnect()
+  }, [])
 
   // Update selectedUser when data changes (e.g. after router.refresh)
   useEffect(() => {
@@ -99,9 +112,10 @@ export function DataTable({
         className="table__wrap text-sm overflow-x-auto overflow-y-auto h-full max-w-full"
       >
         <table className="table w-full">
-          <thead className="table__header sticky top-0 z-10">
+          <thead className="table__header sticky top-0 z-20">
             <tr className="table__row">
               <th
+                ref={firstColRef}
                 className="table__header-cell min-w-fit sticky left-0 z-20"
                 style={{
                   backgroundColor: 'var(--theme-elevation-0)',
@@ -110,9 +124,10 @@ export function DataTable({
                 <span className="field-label unstyled">Schüler</span>
               </th>
               <th
-                className="table__header-cell min-w-fit sticky left-0 z-20"
+                className="table__header-cell min-w-fit sticky z-20"
                 style={{
                   backgroundColor: 'var(--theme-elevation-0)',
+                  left: firstColWidth,
                 }}
               >
                 <span className="field-label unstyled">Lernort</span>
@@ -137,26 +152,45 @@ export function DataTable({
           </thead>
           <tbody className="table__body">
             {data.length > 0 ? (
-              data.map((userWithTask) => {
+              data.map((userWithTask, index) => {
                 return (
                   <tr
                     key={userWithTask.user.id}
                     className="table__row cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     onClick={() => handleRowClick(userWithTask)}
                   >
-                    <td className="table__cell min-w-fit flex flex-row  items-center justify-between">
-                      {formatUserName(userWithTask.user.firstname, userWithTask.user.lastname)}
-                      <GraduationIcon
-                        abbreviation={
-                          userWithTask.user.graduation &&
-                          typeof userWithTask.user.graduation === 'object'
-                            ? userWithTask.user.graduation?.abbreviation
-                            : ''
-                        }
-                        className="h-4.5 w-4.5"
-                      />
+                    <td
+                      className="table__cell min-w-fit sticky left-0 z-10"
+                      style={{
+                        backgroundColor:
+                          index % 2 === 0
+                            ? 'var(--theme-elevation-50)'
+                            : 'var(--theme-elevation-0)',
+                      }}
+                    >
+                      <div className="flex flex-row items-center justify-between">
+                        {formatUserName(userWithTask.user.firstname, userWithTask.user.lastname)}
+                        <GraduationIcon
+                          abbreviation={
+                            userWithTask.user.graduation &&
+                            typeof userWithTask.user.graduation === 'object'
+                              ? userWithTask.user.graduation?.abbreviation
+                              : ''
+                          }
+                          className="h-4.5 w-4.5"
+                        />
+                      </div>
                     </td>
-                    <td className="table__cell min-w-fit">
+                    <td
+                      className="table__cell min-w-fit sticky z-10"
+                      style={{
+                        left: firstColWidth,
+                        backgroundColor:
+                          index % 2 === 0
+                            ? 'var(--theme-elevation-50)'
+                            : 'var(--theme-elevation-0)',
+                      }}
+                    >
                       {typeof userWithTask.user.currentLearningLocation === 'object'
                         ? userWithTask.user.currentLearningLocation?.description
                         : userWithTask.user.currentLearningLocation}
