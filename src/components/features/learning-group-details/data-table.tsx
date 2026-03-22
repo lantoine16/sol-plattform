@@ -156,17 +156,11 @@ export function DataTable({
                 return (
                   <tr
                     key={userWithTask.user.id}
-                    className="table__row cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    className="table__row cursor-pointer group hover:bg-gray-50! dark:hover:bg-gray-800! transition-colors"
                     onClick={() => handleRowClick(userWithTask)}
                   >
                     <td
-                      className="table__cell min-w-fit sticky left-0 z-10"
-                      style={{
-                        backgroundColor:
-                          index % 2 === 0
-                            ? 'var(--theme-elevation-50)'
-                            : 'var(--theme-elevation-0)',
-                      }}
+                      className={`table__cell min-w-fit sticky left-0 z-10 group-hover:bg-gray-50! dark:group-hover:bg-gray-800! ${index % 2 === 0 ? 'bg-(--theme-elevation-50)' : 'bg-(--theme-elevation-0)'}`}
                     >
                       <div className="flex flex-row items-center justify-between">
                         {formatUserName(userWithTask.user.firstname, userWithTask.user.lastname)}
@@ -182,14 +176,8 @@ export function DataTable({
                       </div>
                     </td>
                     <td
-                      className="table__cell min-w-fit sticky z-10"
-                      style={{
-                        left: firstColWidth,
-                        backgroundColor:
-                          index % 2 === 0
-                            ? 'var(--theme-elevation-50)'
-                            : 'var(--theme-elevation-0)',
-                      }}
+                      className={`table__cell min-w-fit sticky z-10 group-hover:bg-gray-50! dark:group-hover:bg-gray-800! ${index % 2 === 0 ? 'bg-(--theme-elevation-50)' : 'bg-(--theme-elevation-0)'}`}
+                      style={{ left: firstColWidth }}
                     >
                       {typeof userWithTask.user.currentLearningLocation === 'object'
                         ? userWithTask.user.currentLearningLocation?.description
