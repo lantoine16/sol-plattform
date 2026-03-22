@@ -10,7 +10,7 @@ image:
   repository: sol-plattform  # Lokaler Image Name (wird vom deploy Script gesetzt)
   pullPolicy: IfNotPresent  # Nutzt lokales Image, pullt nicht von Registry
   tag: "latest"
-  buildTimestamp: "2026-03-22T09:54:41Z"
+  buildTimestamp: "2026-03-22T10:12:31Z"
 
 # Kubernetes Service Konfiguration
 service:
