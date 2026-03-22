@@ -102,8 +102,8 @@ export async function LearningGroupDashboardView({
         needToSyncSortParams={needToSyncSortParams}
       />
       <Gutter>
-        <div className="space-y-8">
-          <div className="flex justify-between items-center flex-wrap flex-row">
+        <div className=" flex flex-col h-[calc(100vh-100px)]">
+          <div className="flex flex-row justify-between gap-2">
             <LearningGroupSubjectsSelectors
               learningGroups={learningGroups}
               subjects={subjects}
@@ -112,11 +112,13 @@ export async function LearningGroupDashboardView({
             />
             <ResetUserStatuses data={{ taskProgressIds, userDefaultLearningLocationIds }} />
           </div>
-          <LearningGroupDashboardTable
-            users={usersWithTaskProgress}
-            learningLocations={learningLocations}
-            initialSortParam={sortParam as SortField[]}
-          />
+          <div className="min-h-0">
+            <LearningGroupDashboardTable
+              users={usersWithTaskProgress}
+              learningLocations={learningLocations}
+              initialSortParam={sortParam as SortField[]}
+            />
+          </div>
         </div>
       </Gutter>
     </>

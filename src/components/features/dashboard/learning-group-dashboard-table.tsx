@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { HelpCircle, Users, ChevronUp, ChevronDown } from 'lucide-react'
 import type { UserWithTaskProgressInformation } from '@/lib/services/learning-group-dashboard.service'
 import { GraduationIcon } from '@/components/ui/graduation-icon'
@@ -34,9 +34,22 @@ export function LearningGroupDashboardTable({
   const { setPreference } = usePreferences()
   const [sortParam, setSortParam] = useState<SortField | undefined>(initialSortParam?.[0])
   const [selectedUser, setSelectedUser] = useState<UserWithTaskProgress | null>(null)
+  const [firstColWidth, setFirstColWidth] = useState(0)
+  const firstColRef = useRef<HTMLTableCellElement>(null)
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  // Measure first column width so the second sticky column knows its left offset
+  useEffect(() => {
+    if (!firstColRef.current) return
+    const observer = new ResizeObserver(() => {
+      setFirstColWidth(firstColRef.current?.getBoundingClientRect().width ?? 0)
+    })
+    setFirstColWidth(firstColRef.current.getBoundingClientRect().width)
+    observer.observe(firstColRef.current)
+    return () => observer.disconnect()
+  }, [])
   // Sortierte Benutzerliste
   const sortedUsers = useMemo(() => {
     if (!sortParam) {
@@ -146,11 +159,15 @@ export function LearningGroupDashboardTable({
   }
 
   return (
-    <div id="learning-group-dashboard-table" className="table__wrap text-sm">
+    <div id="learning-group-dashboard-table" className="table__wrap text-sm overflow-x-auto overflow-y-auto h-full max-w-full">
       <table className="table w-full">
-        <thead className="table__header">
+        <thead className="table__header sticky top-0 z-20">
           <tr className="table__row">
-            <th className="table__header-cell table__header-cell--sortable min-w-fit ">
+            <th
+              ref={firstColRef}
+              className="table__header-cell table__header-cell--sortable min-w-fit sticky left-0 z-20"
+              style={{ backgroundColor: 'var(--theme-elevation-0)' }}
+            >
               <div className="sort-column">
                 <span className="sort-column__label">
                   <span className="field-label unstyled">Vorname</span>
@@ -158,7 +175,10 @@ export function LearningGroupDashboardTable({
                 <SortButtons field="firstname" label="Vorname" />
               </div>
             </th>
-            <th className="table__header-cell table__header-cell--sortable min-w-fit ">
+            <th
+              className="table__header-cell table__header-cell--sortable min-w-fit sticky z-20"
+              style={{ backgroundColor: 'var(--theme-elevation-0)', left: firstColWidth }}
+            >
               <div className="sort-column">
                 <span className="sort-column__label">
                   <span className="field-label unstyled">Nachname</span>
@@ -166,13 +186,13 @@ export function LearningGroupDashboardTable({
                 <SortButtons field="lastname" label="Nachname" />
               </div>
             </th>
-            <th className="table__header-cell min-w-fit ">
+            <th className="table__header-cell min-w-fit" style={{ backgroundColor: 'var(--theme-elevation-0)' }}>
               <span>Aufgaben</span>
             </th>
-            <th className="table__header-cell min-w-fit ">
+            <th className="table__header-cell min-w-fit" style={{ backgroundColor: 'var(--theme-elevation-0)' }}>
               <span>Hilfe & Partner</span>
             </th>
-            <th className="table__header-cell table__header-cell--sortable min-w-fit ">
+            <th className="table__header-cell table__header-cell--sortable min-w-fit" style={{ backgroundColor: 'var(--theme-elevation-0)' }}>
               <div className="sort-column">
                 <span className="sort-column__label">
                   <span className="field-label unstyled">Level</span>
@@ -180,7 +200,7 @@ export function LearningGroupDashboardTable({
                 <SortButtons field="level" label="Level" />
               </div>
             </th>
-            <th className="table__header-cell table__header-cell--sortable min-w-fit ">
+            <th className="table__header-cell table__header-cell--sortable min-w-fit" style={{ backgroundColor: 'var(--theme-elevation-0)' }}>
               <div className="sort-column">
                 <span className="sort-column__label">
                   <span className="field-label unstyled">Lernort</span>
@@ -192,17 +212,22 @@ export function LearningGroupDashboardTable({
         </thead>
         <tbody className="table__body">
           {sortedUsers.length > 0 ? (
-            sortedUsers.map((userWithTaskProgress) => {
+            sortedUsers.map((userWithTaskProgress, index) => {
               return (
                 <tr
                   key={userWithTaskProgress.user.id}
-                  className="table__row cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                  className="table__row cursor-pointer group hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   onClick={() => handleRowClick(userWithTaskProgress)}
                 >
-                  <td className="table__cell min-w-fit ">
+                  <td
+                    className={`table__cell min-w-fit sticky left-0 z-10 group-hover:bg-gray-50! dark:group-hover:bg-gray-800! ${index % 2 === 0 ? 'bg-(--theme-elevation-50)' : 'bg-(--theme-elevation-0)'}`}
+                  >
                     {userWithTaskProgress.user.firstname || ''}
                   </td>
-                  <td className="table__cell min-w-fit ">
+                  <td
+                    className={`table__cell min-w-fit sticky z-10 group-hover:bg-gray-50! dark:group-hover:bg-gray-800! ${index % 2 === 0 ? 'bg-(--theme-elevation-50)' : 'bg-(--theme-elevation-0)'}`}
+                    style={{ left: firstColWidth }}
+                  >
                     {userWithTaskProgress.user.lastname || ''}
                   </td>
                   <td className="table__cell min-w-fit ">
