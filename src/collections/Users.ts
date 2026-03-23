@@ -73,7 +73,7 @@ export const Users: CollectionConfig = {
     {
       name: 'email',
       type: 'text',
-      required: true,
+      required: false,
       unique: true,
       access: {
         update: ({ req, doc }) => {
@@ -294,42 +294,6 @@ export const Users: CollectionConfig = {
     },
   ],
   hooks: {
-    //TODO: Eigentlich sollte das mit unique:true im users klappen, das hier nur workaround, checken warum das anderen nicht funktioniert
-    //Prüft ob username unique ist
-    beforeChange: [
-      async ({ data, req, operation, originalDoc }) => {
-        // Prüfe nur wenn data und username gesetzt sind
-        if (!data || !data.username) {
-          return data
-        }
-
-        // Suche nach anderen Benutzern mit dem gleichen Benutzernamen
-        const existingUser = await req.payload.find({
-          collection: 'users',
-          where: {
-            username: {
-              equals: data.username,
-            },
-          },
-          limit: 1,
-        })
-
-        // Wenn ein Benutzer gefunden wurde
-        if (existingUser.docs.length > 0) {
-          const foundUser = existingUser.docs[0]
-
-          // Beim Update: Erlaube es, wenn es derselbe Benutzer ist
-          if (operation === 'update' && originalDoc && foundUser.id === originalDoc.id) {
-            return data
-          }
-
-          // Beim Create oder Update zu einem anderen Benutzer: Fehler werfen
-          throw new Error(`Der Benutzername "${data.username}" ist bereits vergeben.`)
-        }
-
-        return data
-      },
-    ],
     afterOperation: [
       async ({ operation, result, req }) => {
         //Schüler können Lerngruppe nich updaten, daher müssen sie die TaskProgresses nicht updaten

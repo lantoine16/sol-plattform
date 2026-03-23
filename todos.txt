@@ -2,7 +2,6 @@ Features:
     - „Bereit für Leistungsübersicht“ definieren
     - Email-adapter einrichten
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
-    - Benutzernamen unique machen
     - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
     - Gruppensuche
     - Lernlevel in Detailansicht in tabelle visualisieren
