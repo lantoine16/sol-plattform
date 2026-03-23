@@ -425,6 +425,21 @@ export class TaskProgressRepository {
       overrideAccess: true,
     })
   }
+
+  /**
+   * Setzt learningLevel auf null für die angegebenen task-progress Einträge (per ID).
+   */
+  async clearLearningLevelByIds(progressIds: string[]): Promise<void> {
+    if (progressIds.length === 0) return
+    const { payload, req } = await getPayloadWithAuth()
+    await payload.update({
+      collection: 'task-progress',
+      where: { id: { in: progressIds } },
+      data: { learningLevel: null },
+      req,
+      overrideAccess: true,
+    })
+  }
 }
 
 export const taskProgressRepository = new TaskProgressRepository()

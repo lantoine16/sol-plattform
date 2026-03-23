@@ -94,6 +94,19 @@ export async function updateTaskProgressesForTask(task: Task): Promise<void> {
   if (userIdsWithTaskProgressToDelete && userIdsWithTaskProgressToDelete?.length > 0) {
     await taskProgressRepository.deleteTaskProgresses(userIdsWithTaskProgressToDelete, [task.id])
   }
+
+  // Lernlevel in task-progress auf null setzen, wenn es nicht mehr in der Aufgabe vorhanden ist
+  const validLevelIds = (task.learningLevels ?? []).map((ll) =>
+    typeof ll === 'string' ? ll : ll.id,
+  )
+  const progressIdsToReset = (existingTaskProgresses ?? [])
+    .filter((tp) => {
+      if (!tp.learningLevel) return false
+      const levelId = typeof tp.learningLevel === 'string' ? tp.learningLevel : tp.learningLevel.id
+      return !validLevelIds.includes(levelId)
+    })
+    .map((tp) => tp.id)
+  await taskProgressRepository.clearLearningLevelByIds(progressIdsToReset)
 }
 
 export async function getUsersFromLearningGroupsAndUsers(
