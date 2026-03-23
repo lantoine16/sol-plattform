@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { USER_ROLE_ADMIN } from '@/domain/constants/user-role.constants'
+import { learningLevelService } from '@/lib/services/learning-level.service'
 
 export const LearningLevel: CollectionConfig = {
   slug: 'learning-levels',
@@ -12,6 +13,21 @@ export const LearningLevel: CollectionConfig = {
     hidden: ({ user }) => {
       return !(user?.role === USER_ROLE_ADMIN)
     },
+  },
+  hooks: {
+    afterOperation: [
+      async ({ operation, result }) => {
+        if (operation === 'deleteByID') {
+          const level = result as { id: string }
+          await learningLevelService.removeLearningLevelsFromTasksAndProgress([level.id])
+        } else if (operation === 'delete') {
+          const docs = (result as { docs: { id: string }[] }).docs
+          await learningLevelService.removeLearningLevelsFromTasksAndProgress(
+            docs.map((level) => level.id),
+          )
+        }
+      },
+    ],
   },
   fields: [
     {

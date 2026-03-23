@@ -75,8 +75,8 @@ export interface Config {
     subjects: Subject;
     graduations: Graduation;
     'learning-groups': LearningGroup;
-    'learning-location': LearningLocation;
     'learning-levels': LearningLevel;
+    'learning-location': LearningLocation;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -106,8 +106,8 @@ export interface Config {
     subjects: SubjectsSelect<false> | SubjectsSelect<true>;
     graduations: GraduationsSelect<false> | GraduationsSelect<true>;
     'learning-groups': LearningGroupsSelect<false> | LearningGroupsSelect<true>;
-    'learning-location': LearningLocationSelect<false> | LearningLocationSelect<true>;
     'learning-levels': LearningLevelsSelect<false> | LearningLevelsSelect<true>;
+    'learning-location': LearningLocationSelect<false> | LearningLocationSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -386,12 +386,12 @@ export interface PayloadLockedDocument {
         value: string | LearningGroup;
       } | null)
     | ({
-        relationTo: 'learning-location';
-        value: string | LearningLocation;
-      } | null)
-    | ({
         relationTo: 'learning-levels';
         value: string | LearningLevel;
+      } | null)
+    | ({
+        relationTo: 'learning-location';
+        value: string | LearningLocation;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -543,20 +543,20 @@ export interface LearningGroupsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "learning-location_select".
+ * via the `definition` "learning-levels_select".
  */
-export interface LearningLocationSelect<T extends boolean = true> {
+export interface LearningLevelsSelect<T extends boolean = true> {
   description?: T;
-  users?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "learning-levels_select".
+ * via the `definition` "learning-location_select".
  */
-export interface LearningLevelsSelect<T extends boolean = true> {
+export interface LearningLocationSelect<T extends boolean = true> {
   description?: T;
+  users?: T;
   updatedAt?: T;
   createdAt?: T;
 }

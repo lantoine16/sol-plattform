@@ -410,6 +410,21 @@ export class TaskProgressRepository {
       throw new Error('Failed to create or update task progress for searchPartner')
     }
   }
+
+  /**
+   * Setzt learningLevel auf null für alle Einträge die das gegebene Lernlevel referenzieren.
+   * Wird aufgerufen wenn ein Lernlevel gelöscht wird.
+   */
+  async clearLearningLevels(levelIds: string[]): Promise<void> {
+    const { payload, req } = await getPayloadWithAuth()
+    await payload.update({
+      collection: 'task-progress',
+      where: { learningLevel: { in: levelIds } },
+      data: { learningLevel: null },
+      req,
+      overrideAccess: true,
+    })
+  }
 }
 
 export const taskProgressRepository = new TaskProgressRepository()

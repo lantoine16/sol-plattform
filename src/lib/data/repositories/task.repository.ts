@@ -2,7 +2,6 @@ import { CreateTaskData } from '@/lib/types'
 import { getPayloadWithAuth } from '../payload-client'
 import type { Task } from '@/payload-types'
 
-
 export class TaskRepository {
   /**
    * Find all tasks with optional filters
@@ -134,6 +133,38 @@ export class TaskRepository {
       }),
     )
     return createdTasks as Task[]
+  }
+
+  /**
+   * Entfernt ein Lernlevel aus dem learningLevels-Array aller betroffenen Aufgaben.
+   * Wird aufgerufen wenn ein Lernlevel gelöscht wird.
+   */
+  async removeLearningLevels(levelIds: string[]): Promise<void> {
+    const { payload, req } = await getPayloadWithAuth()
+
+    const tasksResult = await payload.find({
+      collection: 'tasks',
+      where: { learningLevels: { in: levelIds } },
+      limit: 0,
+      depth: 0,
+      req,
+      overrideAccess: true,
+    })
+
+    await Promise.all(
+      tasksResult.docs.map((task: Task) => {
+        const updatedLevels = ((task.learningLevels as string[]) ?? []).filter(
+          (id) => !levelIds.includes(id),
+        )
+        return payload.update({
+          collection: 'tasks',
+          id: task.id,
+          data: { learningLevels: updatedLevels },
+          req,
+          overrideAccess: true,
+        })
+      }),
+    )
   }
 }
 
