@@ -6,19 +6,13 @@ Features:
     - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
     - lehrer sollen nicht mehr die email anderer Nutzer setzen können
     - Gruppensuche
-    - Tasks nach update create und deltet müssen alle Taskprogresses für Lernniveau geupdatet werden - 
-    ungültige auf null setzen, wenn lernniveau gelöscht wird dann deises aus alle nTasks löschen; 
-    was machen wenn das Lernlevel gelöscht wurde, 
     - Lernlevel in Detailansicht in tabelle visualisieren
-    - alle Felder die manuell bei mcreate nicht angzeigt werden, können beim BulkEdit nicht bearbeitet werden
-    - deatilanischt tabelle oben und links sticky machen -> oben wie bei altem commit vor 15.3
+    - alle Felder die manuell bei create nicht angzeigt werden, können beim BulkEdit nicht bearbeitet werden ->
+      außer lernlevel bei Schüler, so könnte man es bei den anderen auch machen
 Detailansicht:
     - Performance: schauen ob man Zeile alle Werte nacheinandern schreiben kann ohne immer suchfuntkone zu nutzen
- 
     - Ansicht Aufgabe nicht zugeordnet
     - Statusicon immer nehmen für alle Icosn und größen bei Dashboard
-    - Namen kürten,
-    - Lernord und Level als letzte Spalte oder ersetllen
     - Überschriften besser sichtbar
 
 
@@ -28,7 +22,9 @@ Beachten - komplizierter - Payload stellt das noch nich bereit:
     - bei Aufgabe ersetllen -> Block hinzufügen bei nur einer Auswahlmöglichkeit diesen direkt hinzufügen
     - API Button entfernen
     - BreadcrumbIcon als Schüler nicht klickbar machen
-    - auf neustes Next.JS updaten sobald payload das unterstützt
+
+Bugs Payload:
+    - BulkEdit -> Array Feld -> wenn man alle Werte löschen will geht das nicht, alter Wert bleibt gespeichert
 
 
 Performance:

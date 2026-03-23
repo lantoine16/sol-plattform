@@ -201,7 +201,7 @@ export function DataTable({
                               backgroundColor: subjectColor,
                               clipPath: 'polygon(0 0, 0 100%, 100% 0)',
                             }}
-                            className="w-full h-full"
+                            className="absolute inset-0"
                           />
                         )
                       } else if (status === 'finished' && subjectColor) {
@@ -211,7 +211,7 @@ export function DataTable({
                             style={{
                               backgroundColor: subjectColor,
                             }}
-                            className="w-full h-full"
+                            className="absolute inset-0"
                           />
                         )
                       }
@@ -220,11 +220,11 @@ export function DataTable({
                       return (
                         <td
                           key={task.id}
-                          className="table__cell min-w-fit text-center p-1 h-10 relative"
+                          className="table__cell min-w-fit text-center p-1 relative"
                         >
                           {cellContent}
                           {(helpNeeded || searchPartner) && (
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-1 z-10">
+                            <div className="absolute inset-0 flex items-center justify-center gap-1 z-10">
                               {helpNeeded && (
                                 <span className=" font-bold text-5xl leading-none ">?</span>
                               )}
