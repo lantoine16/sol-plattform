@@ -10,6 +10,7 @@ export const Subjects: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'description',
+    defaultColumns: ['description', 'color', 'updatedAt'],
     hidden: ({ user }) => {
       return !(user?.role === USER_ROLE_ADMIN)
     },

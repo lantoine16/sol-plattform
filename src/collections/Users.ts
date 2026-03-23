@@ -17,6 +17,7 @@ export const Users: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'firstname',
+    defaultColumns: ['firstname', 'lastname', 'role', 'learningGroup', 'graduation', 'currentLearningLocation', 'defaultLearningLocation', 'updatedAt'],
     components: {
       edit: {
         SaveButton: '@/components/payload/UsersSaveButton',

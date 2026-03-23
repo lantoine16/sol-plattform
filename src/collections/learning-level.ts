@@ -10,6 +10,7 @@ export const LearningLevel: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'description',
+    defaultColumns: ['description', 'updatedAt'],
     hidden: ({ user }) => {
       return !(user?.role === USER_ROLE_ADMIN)
     },

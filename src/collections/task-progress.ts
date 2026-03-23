@@ -13,6 +13,7 @@ export const TaskProgress: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'task',
+    defaultColumns: ['user', 'task', 'status', 'learningLevel', 'updatedAt'],
     // Schüler können diese Collection im Admin-Panel nicht sehen
     hidden: ({ user }) => {
       return user?.role === USER_ROLE_PUPIL

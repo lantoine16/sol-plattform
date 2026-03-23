@@ -9,6 +9,7 @@ export const Graduations: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'description',
+    defaultColumns: ['description', 'abbreviation', 'canChangeLearningLocation', 'updatedAt'],
     hidden: ({ user }) => {
       return !(user?.role === USER_ROLE_ADMIN)
     },

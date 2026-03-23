@@ -17,6 +17,14 @@ export const Tasks: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    defaultColumns: [
+      'title',
+      'description',
+      'learningLevels',
+      'subject',
+      'learningGroup',
+      'updatedAt',
+    ],
     components: {
       edit: {
         SaveButton: '@/components/payload/TasksSaveButton',

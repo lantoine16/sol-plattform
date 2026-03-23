@@ -2,11 +2,11 @@ Features:
     - „Bereit für Leistungsübersicht“ definieren
     - Email-adapter einrichten
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
-    - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
     - Gruppensuche
     - Lernlevel in Detailansicht in tabelle visualisieren
     - alle Felder die manuell bei create nicht angzeigt werden, können beim BulkEdit nicht bearbeitet werden ->
       außer lernlevel bei Schüler, so könnte man es bei den anderen auch machen
+    - BulkEdit -> Array Feld -> wenn man alle Werte löschen will geht das nicht, alter Wert bleibt gespeichert
 Detailansicht:
     - Performance: schauen ob man Zeile alle Werte nacheinandern schreiben kann ohne immer suchfuntkone zu nutzen
     - Ansicht Aufgabe nicht zugeordnet
@@ -20,10 +20,6 @@ Beachten - komplizierter - Payload stellt das noch nich bereit:
     - bei Aufgabe ersetllen -> Block hinzufügen bei nur einer Auswahlmöglichkeit diesen direkt hinzufügen
     - API Button entfernen
     - BreadcrumbIcon als Schüler nicht klickbar machen
-
-Bugs Payload:
-    - BulkEdit -> Array Feld -> wenn man alle Werte löschen will geht das nicht, alter Wert bleibt gespeichert
-
 
 Performance:
     - Performanceoptimierung bei Sammelabfragen

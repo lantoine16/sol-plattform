@@ -9,6 +9,7 @@ export const LearningLocations: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'description',
+    defaultColumns: ['description', 'updatedAt'],
     components: {
       edit: {
         SaveButton: '@/components/payload/LearningLocationsSaveButton',
