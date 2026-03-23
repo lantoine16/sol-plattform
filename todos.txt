@@ -4,7 +4,6 @@ Features:
     - Auswahl Schüler bei Tasks: Vorname und Nachname 
     - Benutzernamen unique machen
     - Bei Payloadtabellen Standardspalten die angezeigt werden definieren
-    - lehrer sollen nicht mehr die email anderer Nutzer setzen können
     - Gruppensuche
     - Lernlevel in Detailansicht in tabelle visualisieren
     - alle Felder die manuell bei create nicht angzeigt werden, können beim BulkEdit nicht bearbeitet werden ->

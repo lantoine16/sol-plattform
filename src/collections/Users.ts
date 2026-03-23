@@ -71,6 +71,26 @@ export const Users: CollectionConfig = {
       },
     },
     {
+      name: 'email',
+      type: 'text',
+      required: true,
+      unique: true,
+      access: {
+        update: ({ req, doc }) => {
+          const user = req.user
+          if (!user) return false
+          return user.role === USER_ROLE_ADMIN || user.id === doc?.id
+        },
+      },
+      admin: {
+        condition: (data) => {
+          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
+          const hasId = data?.id || data?.createdAt || data?.updatedAt
+          return hasId
+        },
+      },
+    },
+    {
       name: 'password',
       label: 'Passwort',
       type: 'text',
