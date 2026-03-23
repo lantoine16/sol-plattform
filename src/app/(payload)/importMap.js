@@ -1,3 +1,4 @@
+import { default as default_87cc81246d188779b789124fd5100437 } from '@/components/payload/LearningLevelsField'
 import { default as default_a5e57bc04a6d26fb36996766a67d6c17 } from '@/components/payload/TasksSaveButton'
 import { default as default_e296ff360e36f227fadad2fa6f13dbaa } from '@/components/payload/HideAuthFieldsOnCreate'
 import { BulkUserField as BulkUserField_e463fece887a24674e4aba025e6814e6 } from '@/components/payload/BulkGroupField'
@@ -15,6 +16,7 @@ import { default as default_8f7f05e9320c6649d298c9fc3708304b } from '@/component
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
+  "@/components/payload/LearningLevelsField#default": default_87cc81246d188779b789124fd5100437,
   "@/components/payload/TasksSaveButton#default": default_a5e57bc04a6d26fb36996766a67d6c17,
   "@/components/payload/HideAuthFieldsOnCreate#default": default_e296ff360e36f227fadad2fa6f13dbaa,
   "@/components/payload/BulkGroupField#BulkUserField": BulkUserField_e463fece887a24674e4aba025e6814e6,

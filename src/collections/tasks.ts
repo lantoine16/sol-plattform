@@ -108,6 +108,7 @@ export const Tasks: CollectionConfig = {
       type: 'textarea',
       required: false,
       admin: {
+        disableBulkEdit: true,
         condition: (data) => {
           // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
           // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
@@ -131,11 +132,8 @@ export const Tasks: CollectionConfig = {
       required: false,
       hasMany: true,
       admin: {
-        condition: (data) => {
-          // Nur beim Bearbeiten anzeigen (wenn ID vorhanden)
-          // Prüfe sowohl id als auch createdAt/updatedAt, da diese nur bei gespeicherten Dokumenten vorhanden sind
-          const hasId = data?.id || data?.createdAt || data?.updatedAt
-          return hasId
+        components: {
+          Field: '@/components/payload/LearningLevelsField',
         },
       },
     },
