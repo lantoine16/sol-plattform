@@ -20,6 +20,7 @@ type UserTasksOverviewProps = {
   userTaskStatuses: TaskProgress[]
   onTaskProgressUpdate?: (taskId: string, status: TaskStatusValue) => void
   onHelpNeededUpdate?: (taskId: string, helpNeeded: boolean) => void
+  onReadyForExamUpdate?: (taskId: string, readyForExam: boolean) => void
   onSearchPartnerUpdate?: (taskId: string, searchPartner: boolean) => void
   onLearningLevelUpdate?: (taskId: string, learningLevelId: string, description: string) => void
 }
@@ -28,6 +29,7 @@ export function UserTasksOverview({
   userTaskStatuses,
   onTaskProgressUpdate,
   onHelpNeededUpdate,
+  onReadyForExamUpdate,
   onSearchPartnerUpdate,
   onLearningLevelUpdate,
 }: UserTasksOverviewProps) {
@@ -91,6 +93,7 @@ export function UserTasksOverview({
                 previousStatus={undefined}
                 nextStatus={TASK_STATUS_OPTIONS[1].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
+                readyForExam={taskStatus?.readyForExam || false}
                 searchPartner={taskStatus?.searchPartner || false}
                 selectedLearningLevel={
                   typeof taskStatus?.learningLevel === 'object'
@@ -103,6 +106,7 @@ export function UserTasksOverview({
                 subjectColor={subjectColor}
                 onStatusChange={onTaskProgressUpdate}
                 onHelpNeededChange={onHelpNeededUpdate}
+                onReadyForExamChange={onReadyForExamUpdate}
                 onSearchPartnerChange={onSearchPartnerUpdate}
                 onLearningLevelChange={onLearningLevelUpdate}
               />
@@ -129,6 +133,7 @@ export function UserTasksOverview({
                 previousStatus={TASK_STATUS_OPTIONS[0].value}
                 nextStatus={TASK_STATUS_OPTIONS[2].value}
                 helpNeeded={taskStatus?.helpNeeded || false}
+                readyForExam={taskStatus?.readyForExam || false}
                 searchPartner={taskStatus?.searchPartner || false}
                 selectedLearningLevel={
                   typeof taskStatus?.learningLevel === 'object'
@@ -141,6 +146,7 @@ export function UserTasksOverview({
                 subjectColor={subjectColor}
                 onStatusChange={onTaskProgressUpdate}
                 onHelpNeededChange={onHelpNeededUpdate}
+                onReadyForExamChange={onReadyForExamUpdate}
                 onSearchPartnerChange={onSearchPartnerUpdate}
                 onLearningLevelChange={onLearningLevelUpdate}
               />
@@ -167,6 +173,7 @@ export function UserTasksOverview({
                 previousStatus={TASK_STATUS_OPTIONS[1].value}
                 nextStatus={undefined}
                 helpNeeded={taskStatus?.helpNeeded || false}
+                readyForExam={taskStatus?.readyForExam || false}
                 searchPartner={taskStatus?.searchPartner || false}
                 selectedLearningLevel={
                   typeof taskStatus?.learningLevel === 'object'
@@ -179,6 +186,7 @@ export function UserTasksOverview({
                 subjectColor={subjectColor}
                 onStatusChange={onTaskProgressUpdate}
                 onHelpNeededChange={onHelpNeededUpdate}
+                onReadyForExamChange={onReadyForExamUpdate}
                 onSearchPartnerChange={onSearchPartnerUpdate}
                 onLearningLevelChange={onLearningLevelUpdate}
               />

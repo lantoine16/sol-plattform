@@ -8,7 +8,7 @@ import { TaskBoardComponent } from '../task-board/task-board-component'
 import { getSubjectColor } from '@/domain/constants/subject-color.constants'
 import { formatUserName } from '@/domain/utils/format-user-name.util'
 import { useRouter } from 'next/navigation'
-import { Users } from 'lucide-react'
+import { NotebookPen, Users } from 'lucide-react'
 import { GraduationIcon } from '@/components/ui/graduation-icon'
 export function DataTable({
   columns,
@@ -61,13 +61,26 @@ export function DataTable({
   const userTaskStatusMap = useMemo(() => {
     const map = new Map<
       string,
-      Map<string, { status: TaskStatusValue; helpNeeded: boolean; searchPartner: boolean }>
+      Map<
+        string,
+        {
+          status: TaskStatusValue
+          helpNeeded: boolean
+          readyForExam: boolean
+          searchPartner: boolean
+        }
+      >
     >()
 
     data.forEach((user) => {
       const taskMap = new Map<
         string,
-        { status: TaskStatusValue; helpNeeded: boolean; searchPartner: boolean }
+        {
+          status: TaskStatusValue
+          helpNeeded: boolean
+          readyForExam: boolean
+          searchPartner: boolean
+        }
       >()
       user.taskProgresses.forEach((taskProgress) => {
         taskMap.set(
@@ -75,6 +88,7 @@ export function DataTable({
           {
             status: taskProgress.status,
             helpNeeded: taskProgress.helpNeeded || false,
+            readyForExam: taskProgress.readyForExam || false,
             searchPartner: taskProgress.searchPartner || false,
           },
         )
@@ -189,6 +203,7 @@ export function DataTable({
                       const subjectColor = getSubjectColorFromTask(task)
                       const status = taskStatus?.status || null
                       const helpNeeded = taskStatus?.helpNeeded || false
+                      const readyForExam = taskStatus?.readyForExam || false
                       const searchPartner = taskStatus?.searchPartner || false
 
                       // Bestimme die Darstellung basierend auf dem Status
@@ -223,11 +238,12 @@ export function DataTable({
                           className="table__cell min-w-fit text-center p-1 relative"
                         >
                           {cellContent}
-                          {(helpNeeded || searchPartner) && (
+                          {(helpNeeded || readyForExam || searchPartner) && (
                             <div className="absolute inset-0 flex items-center justify-center gap-1 z-10">
                               {helpNeeded && (
                                 <span className=" font-bold text-5xl leading-none ">?</span>
                               )}
+                              {readyForExam && <NotebookPen className="h-8 w-8" strokeWidth={3} />}
                               {searchPartner && (
                                 <Users
                                   className="mt-2 h-8 w-8"

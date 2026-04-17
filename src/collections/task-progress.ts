@@ -55,6 +55,12 @@ export const TaskProgress: CollectionConfig = {
       required: false,
     },
     {
+      name: 'readyForExam',
+      label: 'Ready for exam',
+      type: 'checkbox',
+      required: false,
+    },
+    {
       name: 'searchPartner',
       label: 'Schüler sucht Partner',
       type: 'checkbox',

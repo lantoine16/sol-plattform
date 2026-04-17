@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { HelpCircle, Users, ChevronUp, ChevronDown } from 'lucide-react'
+import { HelpCircle, NotebookPen, Users, ChevronUp, ChevronDown } from 'lucide-react'
 import type { UserWithTaskProgressInformation } from '@/lib/services/learning-group-dashboard.service'
 import { GraduationIcon } from '@/components/ui/graduation-icon'
 import { TaskBoardComponent } from '@/components/features/task-board/task-board-component'
@@ -272,6 +272,14 @@ export function LearningGroupDashboardTable({
                           <Users className="h-4.5 w-4.5 text-blue-500" />
                           <span className=" text-blue-600">
                             {userWithTaskProgress.searchPartnerTasksNames.join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {userWithTaskProgress.readyForExamTasksNames.length > 0 && (
+                        <div className="flex items-center gap-1.5">
+                          <NotebookPen className="h-4.5 w-4.5 text-green-600" />
+                          <span className=" text-green-700">
+                            {userWithTaskProgress.readyForExamTasksNames.join(', ')}
                           </span>
                         </div>
                       )}

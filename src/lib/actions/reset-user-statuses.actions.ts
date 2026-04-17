@@ -7,7 +7,7 @@ import {
 } from '@/lib/data/repositories/user.repository'
 
 /**
- * Reset user statuses (helpNeeded and searchPartner) and update learning locations
+ * Reset user statuses (helpNeeded, readyForExam and searchPartner) and update learning locations
  * @param taskProgressIds - Array of task progress IDs to reset
  * @param userDefaultLearningLocationIds - Array of user learning location updates
  * @returns Success status and error message if any

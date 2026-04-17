@@ -28,9 +28,6 @@ Nice To Have:
 Button Stundenanfang -> Stundneende wer hat wie viel emacht oder Staertdatum bie Tasks
 
 
-Hosting:
-Impressumlink
-
 Leistungsnachweis: Eigener Typ definieren welche Aufgabne dazugehören
 
 PDF an Aufgabne hinzufügen

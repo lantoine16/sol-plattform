@@ -333,6 +333,7 @@ export interface TaskProgress {
   status: 'not-started' | 'in-progress' | 'finished';
   learningLevel?: (string | null) | LearningLevel;
   helpNeeded?: boolean | null;
+  readyForExam?: boolean | null;
   searchPartner?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -473,6 +474,7 @@ export interface TaskProgressSelect<T extends boolean = true> {
   status?: T;
   learningLevel?: T;
   helpNeeded?: T;
+  readyForExam?: T;
   searchPartner?: T;
   updatedAt?: T;
   createdAt?: T;

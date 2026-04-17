@@ -94,6 +94,27 @@ export function TaskBoardComponent({
     })
   }
 
+  const handleReadyForExamUpdate = (taskId: string, readyForExam: boolean) => {
+    setTaskProgressEntries((prevEntries) => {
+      const entryIndex = prevEntries.findIndex((entry) => {
+        const entryTaskId = typeof entry.task === 'string' ? entry.task : entry.task.id
+        return entryTaskId === taskId
+      })
+
+      if (entryIndex === -1) {
+        return prevEntries
+      }
+
+      const updatedEntries = [...prevEntries]
+      updatedEntries[entryIndex] = {
+        ...updatedEntries[entryIndex],
+        readyForExam,
+      }
+
+      return updatedEntries
+    })
+  }
+
   const handleSearchPartnerUpdate = (taskId: string, searchPartner: boolean) => {
     // Optimistically update the local state
     setTaskProgressEntries((prevEntries) => {
@@ -229,6 +250,7 @@ export function TaskBoardComponent({
               userTaskStatuses={taskProgressEntries}
               onTaskProgressUpdate={handleTaskProgressUpdate}
               onHelpNeededUpdate={handleHelpNeededUpdate}
+              onReadyForExamUpdate={handleReadyForExamUpdate}
               onSearchPartnerUpdate={handleSearchPartnerUpdate}
               onLearningLevelUpdate={handleLearningLevelUpdate}
             />

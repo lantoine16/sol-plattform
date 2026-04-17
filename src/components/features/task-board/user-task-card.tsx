@@ -9,6 +9,7 @@ import { Select } from '@payloadcms/ui'
 import {
   updateTaskProgress,
   updateTaskHelpNeeded,
+  updateTaskReadyForExam,
   updateTaskSearchPartner,
   updateTaskLearningLevel,
 } from '@/lib/actions/task-progress.actions'
@@ -25,12 +26,14 @@ type UserTaskCardProps = {
   previousStatus?: TaskStatusValue
   nextStatus?: TaskStatusValue
   helpNeeded?: boolean
+  readyForExam?: boolean
   searchPartner?: boolean
   learningLevels?: LearningLevel[]
   selectedLearningLevel?: string
   subjectColor?: string | null
   onStatusChange?: (taskId: string, status: TaskStatusValue) => void
   onHelpNeededChange?: (taskId: string, helpNeeded: boolean) => void
+  onReadyForExamChange?: (taskId: string, readyForExam: boolean) => void
   onSearchPartnerChange?: (taskId: string, searchPartner: boolean) => void
   onLearningLevelChange?: (taskId: string, learningLevelId: string, description: string) => void
 }
@@ -43,17 +46,20 @@ export function UserTaskCard({
   previousStatus,
   nextStatus,
   helpNeeded = false,
+  readyForExam = false,
   searchPartner = false,
   selectedLearningLevel,
   learningLevels,
   subjectColor,
   onStatusChange,
   onHelpNeededChange,
+  onReadyForExamChange,
   onSearchPartnerChange,
   onLearningLevelChange,
 }: UserTaskCardProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isHelpNeededLoading, setIsHelpNeededLoading] = useState(false)
+  const [isReadyForExamLoading, setIsReadyForExamLoading] = useState(false)
   const [isSearchPartnerLoading, setIsSearchPartnerLoading] = useState(false)
   const [isLearningLevelLoading, setIsLearningLevelLoading] = useState(false)
   const [currentLearningLevel, setCurrentLearningLevel] = useState<{
@@ -123,6 +129,22 @@ export function UserTaskCard({
     }
   }
 
+  const handleReadyForExamChange = async (checked: boolean) => {
+    setIsReadyForExamLoading(true)
+    try {
+      const result = await updateTaskReadyForExam(taskId, userId, checked)
+      if (result.success) {
+        onReadyForExamChange?.(taskId, checked)
+      } else {
+        console.error('Failed to update ready for exam:', result.error)
+      }
+    } catch (error) {
+      console.error('Failed to update ready for exam:', error)
+    } finally {
+      setIsReadyForExamLoading(false)
+    }
+  }
+
   const handleLearningLevelChange = async (option: { value: string; label: string }) => {
     setIsLearningLevelLoading(true)
     try {
@@ -141,6 +163,7 @@ export function UserTaskCard({
   }
 
   const HelpIcon = TASK_ICONS.helpNeeded
+  const ReadyForExamIcon = TASK_ICONS.readyForExam
   const SearchPartnerIcon = TASK_ICONS.searchPartner
 
   return (
@@ -219,6 +242,20 @@ export function UserTaskCard({
                   className="size-9"
                 />
                 <SearchPartnerIcon className="h-4 w-4" />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Checkbox
+                  id={`ready-for-exam-${taskId}`}
+                  checked={readyForExam}
+                  onCheckedChange={(checked) => {
+                    handleReadyForExamChange(checked === true)
+                  }}
+                  disabled={isReadyForExamLoading}
+                  aria-label="Ready for exam"
+                  onClick={(e) => e.stopPropagation()}
+                  className="size-9"
+                />
+                <ReadyForExamIcon className="h-4 w-4" />
               </div>
             </div>
           </div>

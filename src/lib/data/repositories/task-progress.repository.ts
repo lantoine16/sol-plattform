@@ -196,6 +196,7 @@ export class TaskProgressRepository {
         task: data.task,
         status: data.status,
         helpNeeded: false,
+        readyForExam: false,
         searchPartner: false,
       },
       req,
@@ -218,6 +219,7 @@ export class TaskProgressRepository {
               status: TASK_PROGRESS_DEFAULT_STATUS_VALUE,
               learningLevel: null,
               helpNeeded: false,
+              readyForExam: false,
               searchPartner: false,
             },
             req,
@@ -264,7 +266,7 @@ export class TaskProgressRepository {
   }
 
   /**
-   * Reset helpNeeded and searchPartner flags to false for all task progress entries of given user IDs
+   * Reset helpNeeded, readyForExam and searchPartner flags to false for all task progress entries of given user IDs
    * @param userIds - Array of user IDs
    */
   async resetStatuses(ids: string[]): Promise<TaskProgress[]> {
@@ -274,13 +276,14 @@ export class TaskProgressRepository {
 
     const { payload, req } = await getPayloadWithAuth()
 
-    // Update all entries to set helpNeeded and searchPartner to false
+    // Update all entries to reset helper flags
     const updatePromises = ids.map((id) =>
       payload.update({
         collection: 'task-progress',
         id: id,
         data: {
           helpNeeded: false,
+          readyForExam: false,
           searchPartner: false,
         },
         req,
@@ -408,6 +411,53 @@ export class TaskProgressRepository {
         })
       }
       throw new Error('Failed to create or update task progress for searchPartner')
+    }
+  }
+
+  /**
+   * Update readyForExam flag for a task progress entry
+   * Creates a new entry if it doesn't exist
+   */
+  async updateReadyForExam(
+    taskId: string,
+    userId: string,
+    readyForExam: boolean,
+  ): Promise<TaskProgress> {
+    const existing = await this.findByUserAndTask([taskId], [userId])
+
+    if (existing && existing.length > 0) {
+      const { payload, req } = await getPayloadWithAuth()
+      return payload.update({
+        collection: 'task-progress',
+        id: existing[0].id,
+        data: {
+          readyForExam,
+        },
+        req,
+        overrideAccess: false,
+      })
+    } else {
+      await this.createOrUpdate({
+        user: userId,
+        task: taskId,
+        status: 'not-started',
+      })
+
+      const created = await this.findByUserAndTask([taskId], [userId])
+      if (created && created.length > 0) {
+        const { payload, req } = await getPayloadWithAuth()
+        return payload.update({
+          collection: 'task-progress',
+          id: created[0].id,
+          data: {
+            readyForExam,
+          },
+          req,
+          overrideAccess: false,
+        })
+      }
+
+      throw new Error('Failed to create or update task progress for readyForExam')
     }
   }
 

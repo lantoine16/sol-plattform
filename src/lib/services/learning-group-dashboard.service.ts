@@ -10,6 +10,7 @@ export interface UserWithTaskProgressInformation {
   amountOfFinishedTasks: number
   progressTasksNames: string[]
   needHelpTasksNames: string[]
+  readyForExamTasksNames: string[]
   searchPartnerTasksNames: string[]
 }
 
@@ -99,6 +100,7 @@ export class LearningGroupDashboardService {
           inProgress: [] as string[],
           finished: 0,
           needHelp: [] as string[],
+          readyForExam: [] as string[],
           searchPartner: [] as string[],
         }
 
@@ -128,6 +130,10 @@ export class LearningGroupDashboardService {
             taskStatuses.needHelp.push(task.title)
           }
 
+          if (tp.readyForExam && task.title) {
+            taskStatuses.readyForExam.push(task.title)
+          }
+
           if (tp.searchPartner && task.title) {
             taskStatuses.searchPartner.push(task.title)
           }
@@ -147,6 +153,7 @@ export class LearningGroupDashboardService {
           amountOfFinishedTasks: taskStatuses.finished,
           progressTasksNames: taskStatuses.inProgress,
           needHelpTasksNames: taskStatuses.needHelp,
+          readyForExamTasksNames: taskStatuses.readyForExam,
           searchPartnerTasksNames: taskStatuses.searchPartner,
           taskProgresses: userTaskProgress,
         }

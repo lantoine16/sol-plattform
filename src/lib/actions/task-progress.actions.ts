@@ -84,6 +84,32 @@ export async function updateTaskSearchPartner(
     }
   }
 }
+
+/**
+ * Update readyForExam flag for a task progress entry
+ * @param taskId - The task ID
+ * @param userId - The user ID
+ * @param readyForExam - The new readyForExam value
+ * @returns Success status and error message if any
+ */
+export async function updateTaskReadyForExam(
+  taskId: string,
+  userId: string,
+  readyForExam: boolean,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await taskProgressRepository.updateReadyForExam(taskId, userId, readyForExam)
+
+    return {
+      success: true,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    }
+  }
+}
 export async function updateTaskLearningLevel(
   taskId: string,
   userId: string,
