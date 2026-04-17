@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { SUBJECT_COLOR_OPTIONS } from '@/domain/constants/color.constants'
+import { COLOR_OPTIONS } from '@/domain/constants/color.constants'
 import { USER_ROLE_ADMIN } from '@/domain/constants/user-role.constants'
 
 export const Subjects: CollectionConfig = {
@@ -28,7 +28,7 @@ export const Subjects: CollectionConfig = {
       label: 'Farbe',
       type: 'select',
       required: false,
-      options: SUBJECT_COLOR_OPTIONS.map((option) => ({
+      options: COLOR_OPTIONS.map((option) => ({
         label: option.label,
         value: option.value,
       })),

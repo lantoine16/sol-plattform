@@ -1,5 +1,5 @@
 import { USER_ROLE_ADMIN } from '@/domain/constants/user-role.constants'
-import { SUBJECT_COLOR_OPTIONS } from '@/domain/constants/color.constants'
+import { COLOR_OPTIONS } from '@/domain/constants/color.constants'
 import type { CollectionConfig } from 'payload'
 
 export const Graduations: CollectionConfig = {
@@ -10,7 +10,13 @@ export const Graduations: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'description',
-    defaultColumns: ['description', 'abbreviation', 'color', 'canChangeLearningLocation', 'updatedAt'],
+    defaultColumns: [
+      'description',
+      'abbreviation',
+      'color',
+      'canChangeLearningLocation',
+      'updatedAt',
+    ],
     hidden: ({ user }) => {
       return !(user?.role === USER_ROLE_ADMIN)
     },
@@ -34,7 +40,7 @@ export const Graduations: CollectionConfig = {
       label: 'Farbe',
       type: 'select',
       required: false,
-      options: SUBJECT_COLOR_OPTIONS.map((option) => ({
+      options: COLOR_OPTIONS.map((option) => ({
         label: option.label,
         value: option.value,
       })),

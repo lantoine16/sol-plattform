@@ -1,4 +1,4 @@
-export const SUBJECT_COLOR_OPTIONS = [
+export const COLOR_OPTIONS = [
   {
     label: 'Blau',
     value: 'blue',
@@ -121,8 +121,8 @@ export const SUBJECT_COLOR_OPTIONS = [
   },
 ] as const
 
-export type SubjectColorValue = (typeof SUBJECT_COLOR_OPTIONS)[number]['value']
-export type SubjectColorOption = (typeof SUBJECT_COLOR_OPTIONS)[number]
+export type SubjectColorValue = (typeof COLOR_OPTIONS)[number]['value']
+export type SubjectColorOption = (typeof COLOR_OPTIONS)[number]
 
 /**
  * Gibt die Farbe für einen Paletten-Schlüssel zurück (Fächer, Graduierung, …).
@@ -134,7 +134,7 @@ export function getSubjectColor(
   if (!colorValue) {
     return isDarkMode ? '#1F2937' : '#F9FAFB' // Standard-Grau
   }
-  const option = SUBJECT_COLOR_OPTIONS.find((opt) => opt.value === colorValue)
+  const option = COLOR_OPTIONS.find((opt) => opt.value === colorValue)
   if (!option) {
     return isDarkMode ? '#1F2937' : '#F9FAFB' // Standard-Grau
   }
