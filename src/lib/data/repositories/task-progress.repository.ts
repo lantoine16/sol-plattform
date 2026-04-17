@@ -266,7 +266,8 @@ export class TaskProgressRepository {
   }
 
   /**
-   * Reset helpNeeded, readyForExam and searchPartner flags to false for all task progress entries of given user IDs
+   * Reset helpNeeded and searchPartner flags to false for all task progress entries of given user IDs.
+   * readyForExam is intentionally not reset (persists across Stundenende).
    * @param userIds - Array of user IDs
    */
   async resetStatuses(ids: string[]): Promise<TaskProgress[]> {
@@ -283,7 +284,6 @@ export class TaskProgressRepository {
         id: id,
         data: {
           helpNeeded: false,
-          readyForExam: false,
           searchPartner: false,
         },
         req,
