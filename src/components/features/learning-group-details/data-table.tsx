@@ -5,7 +5,7 @@ import type { LearningLocation, Task } from '@/payload-types'
 import type { UserWithTaskProgress } from '@/lib/types'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TaskBoardComponent } from '../task-board/task-board-component'
-import { getSubjectColor } from '@/domain/constants/subject-color.constants'
+import { getSubjectColor } from '@/domain/constants/color.constants'
 import { formatUserName } from '@/domain/utils/format-user-name.util'
 import { useRouter } from 'next/navigation'
 import { NotebookPen, Users } from 'lucide-react'
@@ -185,7 +185,13 @@ export function DataTable({
                               ? userWithTask.user.graduation?.abbreviation
                               : ''
                           }
-                          className="h-4.5 w-4.5"
+                          paletteColor={
+                            userWithTask.user.graduation &&
+                            typeof userWithTask.user.graduation === 'object'
+                              ? userWithTask.user.graduation?.color ?? undefined
+                              : undefined
+                          }
+                          className="h-6 w-6 shrink-0"
                         />
                       </div>
                     </td>

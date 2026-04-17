@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { SUBJECT_COLOR_OPTIONS } from '@/domain/constants/subject-color.constants'
+import { SUBJECT_COLOR_OPTIONS } from '@/domain/constants/color.constants'
 import { USER_ROLE_ADMIN } from '@/domain/constants/user-role.constants'
 
 export const Subjects: CollectionConfig = {

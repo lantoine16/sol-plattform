@@ -232,6 +232,9 @@ export interface Subject {
         | 'indigo'
         | 'teal'
         | 'purple'
+        | 'lilac'
+        | 'mint'
+        | 'apricot'
       )
     | null;
   tasks?: {
@@ -303,6 +306,25 @@ export interface Graduation {
   id: string;
   description: string;
   abbreviation: string;
+  color?:
+    | (
+        | 'blue'
+        | 'green'
+        | 'yellow'
+        | 'orange'
+        | 'red'
+        | 'violet'
+        | 'pink'
+        | 'cyan'
+        | 'lime'
+        | 'indigo'
+        | 'teal'
+        | 'purple'
+        | 'lilac'
+        | 'mint'
+        | 'apricot'
+      )
+    | null;
   canChangeLearningLocation?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -529,6 +551,7 @@ export interface SubjectsSelect<T extends boolean = true> {
 export interface GraduationsSelect<T extends boolean = true> {
   description?: T;
   abbreviation?: T;
+  color?: T;
   canChangeLearningLocation?: T;
   updatedAt?: T;
   createdAt?: T;

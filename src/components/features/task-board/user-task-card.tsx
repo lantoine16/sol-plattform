@@ -15,7 +15,7 @@ import {
 } from '@/lib/actions/task-progress.actions'
 import type { TaskStatusValue } from '@/domain/constants/task-status.constants'
 import { TASK_ICONS } from '@/domain/constants/task-icons.constants'
-import { getSubjectColor } from '@/domain/constants/subject-color.constants'
+import { getSubjectColor } from '@/domain/constants/color.constants'
 import { LearningLevel } from '@/payload-types'
 
 type UserTaskCardProps = {

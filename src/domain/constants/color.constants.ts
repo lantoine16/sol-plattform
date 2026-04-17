@@ -95,16 +95,37 @@ export const SUBJECT_COLOR_OPTIONS = [
       dark: '#A855F7', // purple-500 (heller für Darkmode)
     },
   },
+  {
+    label: 'Flieder',
+    value: 'lilac',
+    colors: {
+      light: '#EDE4F7',
+      dark: '#9B7FD8',
+    },
+  },
+  {
+    label: 'Mint',
+    value: 'mint',
+    colors: {
+      light: '#D8FAF0',
+      dark: '#34D399',
+    },
+  },
+  {
+    label: 'Apricot',
+    value: 'apricot',
+    colors: {
+      light: '#FFEBD9',
+      dark: '#F4A261',
+    },
+  },
 ] as const
 
 export type SubjectColorValue = (typeof SUBJECT_COLOR_OPTIONS)[number]['value']
 export type SubjectColorOption = (typeof SUBJECT_COLOR_OPTIONS)[number]
 
 /**
- * Gibt die Farbe für einen Subject-Color-Wert zurück
- * @param colorValue - Der Farbwert (z.B. 'blue', 'green')
- * @param isDarkMode - Ob Dark Mode aktiv ist
- * @returns Die entsprechende Farbe
+ * Gibt die Farbe für einen Paletten-Schlüssel zurück (Fächer, Graduierung, …).
  */
 export function getSubjectColor(
   colorValue: string | null | undefined,

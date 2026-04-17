@@ -293,7 +293,13 @@ export function LearningGroupDashboardTable({
                           ? userWithTaskProgress.user.graduation?.abbreviation
                           : ''
                       }
-                      className="h-4.5 w-4.5"
+                      paletteColor={
+                        userWithTaskProgress.user.graduation &&
+                        typeof userWithTaskProgress.user.graduation === 'object'
+                          ? userWithTaskProgress.user.graduation?.color ?? undefined
+                          : undefined
+                      }
+                      className="h-6 w-6 shrink-0"
                     />
                   </td>
                   <td className="table__cell min-w-fit ">
