@@ -36,6 +36,10 @@ export async function LearningGroupDashboardView({
     redirect('/login')
   }
 
+  if (initPageResult.req.user.role === USER_ROLE_TEACHER) {
+    redirect('/detailView')
+  }
+
   if (initPageResult.req.user.role === USER_ROLE_PUPIL) {
     redirect('/taskboard')
   }

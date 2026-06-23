@@ -22,47 +22,47 @@ export const BeforeNavLinks = () => {
 
   return (
     <NavGroup label={'Ansichten'}>
+      {user?.role === USER_ROLE_ADMIN ? (
+        <Link
+          href={dashboardHref}
+          className="nav__link"
+          id="nav-dashboard"
+          //prevent caching searchParams
+          onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+            if (!isDashboardActive) {
+              e.preventDefault()
+              router.push(dashboardHref)
+            }
+          }}
+          style={{
+            cursor: isDashboardActive ? 'text' : 'pointer',
+            pointerEvents: isDashboardActive ? 'none' : 'auto',
+          }}
+        >
+          {isDashboardActive && <div className="nav__link-indicator" />}
+          <span className="nav__link-label">Dashboard</span>
+        </Link>
+      ) : null}
       {user?.role === USER_ROLE_ADMIN || user?.role === USER_ROLE_TEACHER ? (
-        <>
-          <Link
-            href={dashboardHref}
-            className="nav__link"
-            id="nav-dashboard"
-            //prevent caching searchParams
-            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-              if (!isDashboardActive) {
-                e.preventDefault()
-                router.push(dashboardHref)
-              }
-            }}
-            style={{
-              cursor: isDashboardActive ? 'text' : 'pointer',
-              pointerEvents: isDashboardActive ? 'none' : 'auto',
-            }}
-          >
-            {isDashboardActive && <div className="nav__link-indicator" />}
-            <span className="nav__link-label">Dashboard</span>
-          </Link>
-          <Link
-            href={detailViewHref}
-            className="nav__link"
-            id="nav-detail-view"
-            //prevent caching searchParams
-            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-              if (!isDetailViewActive) {
-                e.preventDefault()
-                router.push(detailViewHref)
-              }
-            }}
-            style={{
-              cursor: isDetailViewActive ? 'text' : 'pointer',
-              pointerEvents: isDetailViewActive ? 'none' : 'auto',
-            }}
-          >
-            {isDetailViewActive && <div className="nav__link-indicator" />}
-            <span className="nav__link-label">Detailansicht</span>
-          </Link>
-        </>
+        <Link
+          href={detailViewHref}
+          className="nav__link"
+          id="nav-detail-view"
+          //prevent caching searchParams
+          onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+            if (!isDetailViewActive) {
+              e.preventDefault()
+              router.push(detailViewHref)
+            }
+          }}
+          style={{
+            cursor: isDetailViewActive ? 'text' : 'pointer',
+            pointerEvents: isDetailViewActive ? 'none' : 'auto',
+          }}
+        >
+          {isDetailViewActive && <div className="nav__link-indicator" />}
+          <span className="nav__link-label">Detailansicht</span>
+        </Link>
       ) : null}
       {user?.role === USER_ROLE_ADMIN || user?.role === USER_ROLE_PUPIL ? (
         <Link
