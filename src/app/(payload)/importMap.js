@@ -15,6 +15,7 @@ import { default as default_a22c3a6f8a49b6e0731bef381a517330 } from '@/component
 import { default as default_8f7f05e9320c6649d298c9fc3708304b } from '@/components/pages/task-board-page'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
+/** @type import('payload').ImportMap */
 export const importMap = {
   "@/components/payload/LearningLevelsField#default": default_87cc81246d188779b789124fd5100437,
   "@/components/payload/TasksSaveButton#default": default_a5e57bc04a6d26fb36996766a67d6c17,
