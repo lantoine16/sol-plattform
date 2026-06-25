@@ -3,3 +3,7 @@
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme="dark"] *));
 
+/* Passwort vergessen Link ausblenden */
+.login__form a[href*="/forgot"] {
+  display: none !important;
+}
