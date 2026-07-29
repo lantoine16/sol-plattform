@@ -93,7 +93,7 @@ export const Tasks: CollectionConfig = {
       minRows: 1,
       // Make this field not required for API operations
       required: false,
-      virtual: true,
+      virtual: false,
     },
     {
       name: 'title',
